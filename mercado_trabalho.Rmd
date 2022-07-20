@@ -12,6 +12,7 @@ library(basedosdados)
 library(tidyverse)
 #install.packages("dbplyr")
 library(dbplyr)
+library(scales)
 
 # aqui você define o seu projeto billing_id
 basedosdados::set_billing_id("porto-ma")
@@ -60,8 +61,12 @@ theme_classic() +
         axis.title.x = element_text(size = 10L, face = "bold"),
         panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
         legend.position = "none")+
-  geom_text(aes(label=prettyNum(n, big.mark = ".", decimal.mark = ",")), size =2.5,  
+  geom_text(aes(label= prettyNum(n, big.mark = ".", decimal.mark = ",")), 
+            size =2.5,  
             hjust=-.01, vjust=0.5, colour="black") +
-  scale_fill_manual(values = c("lightblue", "#4682B4"))
+  scale_fill_manual(values = c("lightblue", "#4682B4")) +
+  scale_y_continuous(breaks = seq(0,12000, 3000), limits = c(0, 12000),
+                     labels = number_format(big.mark = ".", decimal.mark = ","))
+  
 
 ```
