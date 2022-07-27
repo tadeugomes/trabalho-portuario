@@ -1,16 +1,16 @@
 ---
 title: "Mercado de Trabalho no Setor Portuário - Maranhão"
 output: 
-  pdf_document:
+  html_document:
     keep_tex: true
 ---
 
 ```{r, results='hide'}
 #install.packages("basedosdados")
 library(basedosdados)
-#install.packages("tidyverse")
+#install.packages("tidyverse") #
 library(tidyverse)
-#install.packages("dbplyr")
+#install.packages("dbplyr") #
 library(dbplyr)
 library(scales)
 
@@ -27,12 +27,6 @@ GROUP BY sigla_uf
 ORDER BY n DESC")
 
 rais <- read_sql(query)
-
-rais <-
-uf <- rais_ %>% 
-  group_by(sigla_uf) %>% 
-    count (vinculo_ativo_3112) %>% 
-    arrange(desc(n))
 
 
 # cumsum(uf$n) # total de vinculos acumulados 
