@@ -5,20 +5,22 @@ output:
     keep_tex: true
 ---
 
-```{r, results='hide'}
-#install.packages("basedosdados")
+
+```{r, results='hide', include=FALSE}
+
+# install.packages(c("basedosdados", "tidyverse", "dbplyr",
+# "scales"))
+
 library(basedosdados)
-#install.packages("tidyverse") #
 library(tidyverse)
-#install.packages("dbplyr") #
 library(dbplyr)
 library(scales)
-
 # aqui você define o seu projeto billing_id
 basedosdados::set_billing_id("porto-ma")
 ```
 
-```{r, results='hide'}
+# Trabalhadores de Operações Portuárias
+```{r import-data, include=FALSE}
 #### Dados da RAIS para operacoes portuarias 
 query <- c("SELECT sigla_uf, COUNT(vinculo_ativo_3112) AS n
 FROM `basedosdados.br_me_rais.microdados_vinculos`
@@ -36,7 +38,7 @@ rais <- rais %>% mutate(sigla_uf = fct_reorder(sigla_uf, n),
 
 ```
 
-```{r}
+```{r, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 rais %>%
   mutate(fill = ifelse(sigla_uf == "MA", "um", "dois")) %>%
 ggplot(aes(x = sigla_uf, y = n,
@@ -62,5 +64,52 @@ theme_classic() +
   scale_y_continuous(breaks = seq(0,12000, 3000), limits = c(0, 12000),
                      labels = number_format(big.mark = ".", decimal.mark = ","))
   
+```
 
+
+# Administração da Infraestrutura Portuária
+```{r include=FALSE}
+#### Dados da RAIS para operacoes portuarias 
+query <- c("SELECT sigla_uf, COUNT(vinculo_ativo_3112) AS n
+FROM `basedosdados.br_me_rais.microdados_vinculos`
+WHERE vinculo_ativo_3112 = 1 AND ano = 2020 AND cnae_2_subclasse = '5231101'
+GROUP BY sigla_uf
+ORDER BY n DESC")
+
+rais <- read_sql(query)
+
+
+# cumsum(uf$n) # total de vinculos acumulados 
+
+rais <- rais %>% mutate(sigla_uf = fct_reorder(sigla_uf, n),
+                        n = as.numeric(n))
+
+```
+
+```{r, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+rais %>%
+  mutate(fill = ifelse(sigla_uf == "MA", "um", "dois")) %>%
+ggplot(aes(x = sigla_uf, y = n,
+           fill = fill, 
+           size = .5))+
+  geom_bar(stat="identity") +
+  coord_flip() +
+  labs(x = "UF", y = "Número de vínculos", 
+       title = "Quantidade de trabalhadores da/nAdministração da Infraestrura Portuária/npor estado", 
+       subtitle = "São 35.357 vínculos de trabalho em todo o país",
+         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2000. ") +
+theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 10L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 10L, face = "bold"), 
+        axis.title.x = element_text(size = 10L, face = "bold"),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
+        legend.position = "none")+
+  geom_text(aes(label= prettyNum(n, big.mark = ".", decimal.mark = ",")), 
+            size =2.5,  
+            hjust=-.01, vjust=0.5, colour="black") +
+  scale_fill_manual(values = c("lightblue", "#4682B4")) +
+  scale_y_continuous(breaks = seq(0,12000, 3000), limits = c(0, 12000),
+                     labels = number_format(big.mark = ".", decimal.mark = ","))
+  
 ```
