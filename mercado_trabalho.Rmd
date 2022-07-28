@@ -3,6 +3,8 @@ title: "Mercado de Trabalho no Setor Portuário - Maranhão"
 output: 
   html_document:
     keep_tex: true
+    fig_width: 12
+    fig_height: 8
 ---
 
 
@@ -22,34 +24,48 @@ basedosdados::set_billing_id("porto-ma")
 # Trabalhadores de Operações Portuárias
 ```{r import-data, include=FALSE}
 #### Dados da RAIS para operacoes portuarias 
-query <- c("SELECT sigla_uf, COUNT(vinculo_ativo_3112) AS n
+query <- c("SELECT sigla_uf, cnae_2_subclasse, COUNT(vinculo_ativo_3112) AS n
 FROM `basedosdados.br_me_rais.microdados_vinculos`
-WHERE vinculo_ativo_3112 = 1 AND ano = 2020 AND cnae_2_subclasse = '5231102'
-GROUP BY sigla_uf
+WHERE (vinculo_ativo_3112 = 1) 
+      AND (ano = 2020) 
+      AND (cnae_2_subclasse = '5231101' OR cnae_2_subclasse = '5231102')
+GROUP BY sigla_uf, cnae_2_subclasse
 ORDER BY n DESC")
 
+# lendo a query do chuck anterior
 rais <- read_sql(query)
 
+# alterando o tipo de dado da coluna sigla_uf para fator 
+# e de n para númerico
+rais <- rais %>% mutate(n = as.numeric(n))
 
-# cumsum(uf$n) # total de vinculos acumulados 
-
-rais <- rais %>% mutate(sigla_uf = fct_reorder(sigla_uf, n),
-                        n = as.numeric(n))
+# criando o arquivo csv
+write_csv(rais, file = "rais.csv")
+# lendo o arquivo csv
+rais <- read_csv("rais.csv")
 
 ```
 
+
 ```{r, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 rais %>%
-  mutate(fill = ifelse(sigla_uf == "MA", "um", "dois")) %>%
+  filter(cnae_2_subclasse == "5231102") %>% 
+  mutate(sigla_uf = fct_reorder(sigla_uf, n),
+    fill = ifelse(sigla_uf == "MA", "um", "dois")) %>%
 ggplot(aes(x = sigla_uf, y = n,
            fill = fill, 
            size = .5))+
   geom_bar(stat="identity") +
   coord_flip() +
-  labs(x = "UF", y = "Número de vínculos", 
-       title = "Empregados na Operação de Terminais Portuários por estado", 
-       subtitle = "São 35.357 vínculos de trabalho em todo o país",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2000. ") +
+  labs(x = "UF", y = "Número de vínculos",
+         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2000") +
+  ggtitle(
+    "Empregados na Operação de Terminais Portuários por estado", 
+    subtitle = str_c(
+      "São",
+      rais %>% filter(cnae_2_subclasse == "5231102") %>% select(n) %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),
+      "vínculos de trabalho em todo o país",
+      sep = " ")) +
 theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
         plot.caption = element_text(size = 10L,face = "bold", hjust = 0), 
@@ -68,36 +84,26 @@ theme_classic() +
 
 
 # Administração da Infraestrutura Portuária
-```{r include=FALSE}
-#### Dados da RAIS para operacoes portuarias 
-query <- c("SELECT sigla_uf, COUNT(vinculo_ativo_3112) AS n
-FROM `basedosdados.br_me_rais.microdados_vinculos`
-WHERE vinculo_ativo_3112 = 1 AND ano = 2020 AND cnae_2_subclasse = '5231101'
-GROUP BY sigla_uf
-ORDER BY n DESC")
-
-rais <- read_sql(query)
-
-
-# cumsum(uf$n) # total de vinculos acumulados 
-
-rais <- rais %>% mutate(sigla_uf = fct_reorder(sigla_uf, n),
-                        n = as.numeric(n))
-
-```
 
 ```{r, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 rais %>%
-  mutate(fill = ifelse(sigla_uf == "MA", "um", "dois")) %>%
+  filter(cnae_2_subclasse == "5231101") %>% 
+  mutate(sigla_uf = fct_reorder(sigla_uf, n),
+    fill = ifelse(sigla_uf == "MA", "um", "dois")) %>%
 ggplot(aes(x = sigla_uf, y = n,
            fill = fill, 
            size = .5))+
   geom_bar(stat="identity") +
   coord_flip() +
-  labs(x = "UF", y = "Número de vínculos", 
-       title = "Quantidade de trabalhadores da/nAdministração da Infraestrura Portuária/npor estado", 
-       subtitle = "São 35.357 vínculos de trabalho em todo o país",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2000. ") +
+  labs(x = "UF", y = "Número de vínculos",
+         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2000") +
+  ggtitle(
+    "Empregados na Operação de Terminais Portuários por estado", 
+    subtitle = str_c(
+      "São",
+      rais %>% filter(cnae_2_subclasse == "5231101") %>% select(n) %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),
+      "vínculos de trabalho em todo o país",
+      sep = " ")) +
 theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
         plot.caption = element_text(size = 10L,face = "bold", hjust = 0), 
@@ -109,7 +115,7 @@ theme_classic() +
             size =2.5,  
             hjust=-.01, vjust=0.5, colour="black") +
   scale_fill_manual(values = c("lightblue", "#4682B4")) +
-  scale_y_continuous(breaks = seq(0,12000, 3000), limits = c(0, 12000),
+  scale_y_continuous(breaks = seq(0,1200, 300), limits = c(0, 1200),
                      labels = number_format(big.mark = ".", decimal.mark = ","))
   
 ```
