@@ -18,7 +18,6 @@ library(tidyverse)
 library(dbplyr)
 library(scales)
 library(ggrepel)
-library(ggtext)
 
 # aqui você define o seu projeto billing_id
 basedosdados::set_billing_id("porto-ma")
