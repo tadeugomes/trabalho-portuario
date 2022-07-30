@@ -8,8 +8,7 @@ output:
     fig_align: "center"
 ---
 
-
-```{r, results='hide', include=FALSE}
+```{r pacotes, include=FALSE, results='hide'}
 # install.packages(c("basedosdados", "tidyverse", "dbplyr",
 # "scales", "ggrepel"))
 
@@ -24,7 +23,6 @@ library(ggtext)
 basedosdados::set_billing_id("porto-ma")
 ```
 
-# Trabalhadores de Operações Portuárias
 ```{r, eval=FALSE, include=FALSE}
 #### Dados da RAIS para operacoes portuarias 
 query <- c("
@@ -41,41 +39,86 @@ rais <- read_sql(query)
 write_csv(rais, file = "rais.csv")
 ```
 
-
 ```{r import-data, include=FALSE}
-rais <- read.csv(file = "rais.csv")
+rais <- read_csv(file = "dados/rais.csv",
+                 col_type = list(.default = "f",
+                                 valor_remuneracao_media = "d"))
+dic <- read_csv(file = "dados/dicionario.csv",
+                 col_type = list(.default = "f"))
+
+cbo <- read_delim(file = 'dados/cbo2002.csv', delim = ";",
+                col_type = list(.default = "f"),
+                locale = locale(encoding = "latin1"))
+
+cbo <- 
+cbo %>% mutate(
+  CODIGO = as.character(CODIGO),
+  CODIGO = if_else(CODIGO == "517235", "517335", CODIGO),
+  CODIGO = as.factor(CODIGO))
 
 ```
 
 ```{r, include=FALSE}
 
 #alterando levels das variáveis
-rais <- rais %>% 
-  mutate( 
-    sigla_uf = fct_reorder(sigla_uf, desc(sigla_uf)), 
-    sexo = ifelse(sexo == 1, "Homem", "Mulher"), 
+
+#da variáveil sexo
+rais <- 
+  left_join(rais, #primeira tabela
+          dic %>% #segunda tabela
+            filter(nome_coluna == "sexo") %>% 
+            select(c("chave", "valor")),
+          by = c("sexo" = "chave")) %>% 
+  mutate(sexo = valor) %>% #substituindo sexo
+  select(!valor)
+          
+# #da variável grau_instrucao_apos_2005
+# rais <- 
+#   left_join(rais, #primeira tabela
+#           dic %>% #segunda tabela
+#             filter(nome_coluna == "grau_instrucao_apos_2005") %>% 
+#             select(c("chave", "valor")),
+#           by = c("grau_instrucao_apos_2005" = "chave")) %>% 
+#   mutate(grau_instrucao_apos_2005 = valor) %>% #substituindo sexo
+#   select(!valor)
+
+# da variável grau_instrucao_apos_2005  
+rais <- 
+rais %>% 
+  mutate(
     grau_instrucao_apos_2005 = factor( 
-      case_when( 
-        grau_instrucao_apos_2005 %in% 1:4 ~ "Fundamental incompleto", 
-        grau_instrucao_apos_2005 == 5 ~ "Fundamental completo", 
-        grau_instrucao_apos_2005 == 6 ~ "Médio incompleto", 
-        grau_instrucao_apos_2005 == 7 ~ "Médio completo",
-        grau_instrucao_apos_2005 == 8 ~ "Superior incompleto", 
-        grau_instrucao_apos_2005 == 9 ~ "Superior completo", 
-        grau_instrucao_apos_2005 == 10 ~ "Pós-graduação", 
-        grau_instrucao_apos_2005 == -1 ~ "Não informado"
-      ), 
-      levels = c( 
-        "Fundamental incompleto", "Fundamental completo", 
-        "Médio incompleto", "Médio completo", "Superior incompleto",
-        "Superior completo", "Pós-graduação", "Não informado"
-      ) 
-    ))
+        case_when( 
+          grau_instrucao_apos_2005 %in% 1:4 ~ "Fundamental incompleto", 
+          grau_instrucao_apos_2005 == 5 ~ "Fundamental completo", 
+          grau_instrucao_apos_2005 == 6 ~ "Médio incompleto", 
+          grau_instrucao_apos_2005 == 7 ~ "Médio completo",
+          grau_instrucao_apos_2005 == 8 ~ "Superior incompleto", 
+          grau_instrucao_apos_2005 == 9 ~ "Superior completo", 
+          grau_instrucao_apos_2005 == 10 ~ "Pós-graduação", 
+          grau_instrucao_apos_2005 == -1 ~ "Não informado"
+        ), 
+        levels = c( 
+          "Fundamental incompleto", "Fundamental completo", 
+          "Médio incompleto", "Médio completo", "Superior incompleto",
+          "Superior completo", "Pós-graduação", "Não informado"
+        ) 
+      )
+    )
+
+#da variáveil cbo_2002
+rais <- 
+  left_join(rais, #primeira tabela
+          cbo, #segunda tabela
+          by = c("cbo_2002" = "CODIGO")) %>% 
+  mutate(cbo_2002 = TITULO) %>% #substituindo sexo
+  select(!TITULO)
+          
 
 ```
 
+# Trabalhadores de Operações Portuárias
 
-```{r, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+```{r  echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 rais %>%
   filter(cnae_2_subclasse == "5231102") %>% 
   group_by(sigla_uf) %>% 
@@ -88,7 +131,7 @@ ggplot(aes(x = sigla_uf, y = n,
   geom_bar(position = "dodge", stat = "identity") +
   coord_flip() +
   labs(x = "UF", y = "Número de vínculos",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2000") +
+         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
   ggtitle(
     "Empregados na Operação de Terminais Portuários por estado", 
     subtitle = str_c(
@@ -105,7 +148,7 @@ theme_classic() +
         panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
         legend.position = "none")+
   geom_text(aes(label= prettyNum(n, big.mark = ".", decimal.mark = ",")), 
-            size =2.5,  
+            size =4,  
             hjust=-.01, vjust=0.5, colour="black") +
   scale_fill_manual(values = c("lightblue", "#4682B4")) +
   scale_y_continuous(breaks = seq(0,12000, 3000), limits = c(0, 12000),
@@ -113,6 +156,115 @@ theme_classic() +
   
 ```
 
+```{r, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+ordem_esc <- c("Fundamental incompleto", "Fundamental completo", 
+        "Médio incompleto", "Médio completo", "Superior incompleto",
+        "Superior completo", "Pós-graduação", "Não informado")
+
+rais %>%
+  filter(!is.na(grau_instrucao_apos_2005) & cnae_2_subclasse == "5231102") %>%
+  group_by(grau_instrucao_apos_2005, sexo, .groups = 'drop') %>% 
+  summarise(n = n()) %>% 
+  mutate(grau_instrucao_apos_2005 = factor(grau_instrucao_apos_2005, levels = ordem_esc)) %>%
+  ggplot(aes(x = grau_instrucao_apos_2005, y = n, fill = sexo)) +
+  geom_bar(stat = "identity", 
+          position=position_dodge(), 
+           show.legend = T, color = "black") +
+  labs(title = "Escolaridade dos profissionais que atuam na Operação\nde Terminais Portuários no Brasil por sexo",
+       x = "Grau de instrução", y = "Número de vínculos",
+       caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2000") +
+  coord_flip() +
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 10L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 10L, face = "bold"), 
+        axis.title.x = element_text(size = 10L, face = "bold"),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
+        legend.position="top",
+        legend.title = element_text(face = "bold")
+        )+
+  geom_text(aes(x = grau_instrucao_apos_2005, y = n, label= prettyNum(n, big.mark = ".", decimal.mark = ",")),
+            position = position_dodge(width = 1),
+            size =4, vjust=.25, hjust = -.25,
+           colour="black") +
+  scale_y_continuous(breaks = seq(0,20000, 5000), limits = c(0, 20000),
+                     labels = number_format(big.mark = ".", decimal.mark = ",")) +
+  scale_fill_manual(values = alpha(c("#32cdc2", "#FFBF47"), 1), name = "Sexo")
+
+```
+
+```{r, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+
+rais %>%
+  filter(!is.na(grau_instrucao_apos_2005) & valor_remuneracao_media != 0.00  & cnae_2_subclasse == "5231102") %>%
+  group_by(grau_instrucao_apos_2005, sexo, .groups = 'drop') %>% 
+  summarise(n = n(),
+            media = mean(valor_remuneracao_media)) %>% 
+  mutate(grau_instrucao_apos_2005 = factor(grau_instrucao_apos_2005, levels = ordem_esc)) %>%
+  ggplot(aes(x = grau_instrucao_apos_2005, y = media, fill = sexo)) +
+  geom_bar(stat = "identity", 
+          position=position_dodge(), 
+           show.legend = T, color = "black") +
+  labs(title = "Escolaridade dos profissionais que atuam na Operação\nde Terminais Portuários no Brasil por sexo",
+       x = "Grau de instrução", y = "Número de vínculos",
+       caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2000") +
+  coord_flip() +
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 10L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 10L, face = "bold"), 
+        axis.title.x = element_text(size = 10L, face = "bold"),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
+        legend.position="top",
+        legend.title = element_text(face = "bold")
+        )+
+  geom_text(aes(x = grau_instrucao_apos_2005, y = media, label= prettyNum(media, big.mark = ".", decimal.mark = ",", digits = 1)),
+            position = position_dodge(width = 1),
+            size =4, vjust=.25, hjust = -.25,
+           colour="black") +
+  scale_y_continuous(
+    breaks = seq(0,20000, 5000), limits = c(0, 20000),
+    labels = label_number(big.mark = ".", decimal.mark = ",",
+                                            prefix = "R$ ")) +
+  scale_fill_manual(values = alpha(c("#32cdc2", "#FFBF47"), 1), name = "Sexo")
+
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+rais %>%
+  filter(cnae_2_subclasse == "5231102") %>% 
+  group_by(cbo_2002) %>% 
+  summarise(n = n()) %>% 
+  mutate(cbo_2002 = fct_reorder(cbo_2002, n)) %>% 
+  arrange(desc(n)) %>% 
+  top_n(10, n) %>% 
+  ggplot(aes(x = cbo_2002, y = n))+
+  geom_bar(fill = "lightblue", color = "black", position = "dodge", stat = "identity") +
+  coord_flip() +
+  labs(x = "UF", y = "Número de vínculos",
+         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
+  ggtitle(
+    "Empregados na Operação de Terminais Portuários por estado", 
+    subtitle = str_c(
+      "São",
+      rais %>% filter(cnae_2_subclasse == "5231102") %>% group_by(cbo_2002) %>% 
+    summarise(n = n()) %>% select(n) %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),
+      "vínculos de trabalho em todo o país",
+      sep = " ")) +
+theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 10L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 10L, face = "bold"), 
+        axis.title.x = element_text(size = 10L, face = "bold"),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
+        legend.position = "none")+
+  geom_text(aes(label= prettyNum(n, big.mark = ".", decimal.mark = ",")), 
+            size =4,  
+            hjust=1, vjust=0.5, colour="black") 
+  scale_y_continuous(breaks = seq(0,2500, 500), limits = c(0, 2500),
+                     labels = number_format(big.mark = ".", decimal.mark = ","))
+  
+```
 
 # Administração da Infraestrutura Portuária
 
@@ -146,7 +298,7 @@ theme_classic() +
         panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
         legend.position = "none")+
   geom_text(aes(label= prettyNum(n, big.mark = ".", decimal.mark = ",")), 
-            size =2.5,  
+            size =4,  
             hjust=-.01, vjust=0.5, colour="black") +
   scale_fill_manual(values = c("lightblue", "#4682B4")) +
   scale_y_continuous(breaks = seq(0,1200, 300), limits = c(0, 1200),
@@ -154,21 +306,18 @@ theme_classic() +
   
 ```
 
-```{r, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
-ordem <- c("Fundamental incompleto", "Fundamental completo", 
-        "Médio incompleto", "Médio completo", "Superior incompleto",
-        "Superior completo", "Pós-graduação", "Não informado")
+```{r results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
 rais %>%
   filter(!is.na(grau_instrucao_apos_2005) & cnae_2_subclasse == "5231101") %>%
-  group_by(grau_instrucao_apos_2005, sexo) %>% 
+  group_by(grau_instrucao_apos_2005, sexo, .groups = 'drop') %>% 
   summarise(n = n()) %>% 
-  mutate(grau_instrucao_apos_2005 = factor(grau_instrucao_apos_2005, levels = ordem)) %>%
+  mutate(grau_instrucao_apos_2005 = factor(grau_instrucao_apos_2005, levels = ordem_esc)) %>%
   ggplot(aes(x = grau_instrucao_apos_2005, y = n, fill = sexo)) +
   geom_bar(stat = "identity", 
           position=position_dodge(), 
            show.legend = T, color = "black") +
-  labs(title = " Escolaridade dos profissionais que atuam na Operação\nde Terminais Portuários no Brasil por sexo",
+  labs(title = "Escolaridade dos profissionais que atuam na\nAdministração da Infraestrutura Portuária no Brasil por sexo",
        x = "Grau de instrução", y = "Número de vínculos",
        caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2000") +
   coord_flip() +
@@ -181,13 +330,86 @@ rais %>%
         legend.position="top",
         legend.title = element_text(face = "bold")
         )+
-  geom_text_repel(aes(x = grau_instrucao_apos_2005, y = n, label= prettyNum(n, big.mark = ".", decimal.mark = ",")),
+  geom_text(aes(x = grau_instrucao_apos_2005, y = n, label= prettyNum(n, big.mark = ".", decimal.mark = ",")),
             position = position_dodge(width = 1),
-            size =2.5, vjust=1.5,
+            size =4, vjust=.25, hjust = -.25,
            colour="black") +
-  scale_y_continuous(breaks = seq(0,1400, 700), limits = c(0, 1400),
+  scale_y_continuous(breaks = seq(0,1200, 400), limits = c(0, 1200),
                      labels = number_format(big.mark = ".", decimal.mark = ",")) +
-  scale_fill_manual(values = alpha(c("#7777DD", "#CC6666"), .7), name = "Sexo")
+  scale_fill_manual(values = alpha(c("#32cdc2", "#FFBF47"), 1), name = "Sexo")
 
 ```
 
+```{r, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+
+rais %>%
+  filter(!is.na(grau_instrucao_apos_2005) & valor_remuneracao_media != 0.00 & cnae_2_subclasse == "5231101") %>%
+  group_by(grau_instrucao_apos_2005, sexo, .groups = 'drop') %>% 
+  summarise(n = n(),
+            media = mean(valor_remuneracao_media)) %>% 
+  mutate(grau_instrucao_apos_2005 = factor(grau_instrucao_apos_2005, levels = ordem_esc)) %>%
+  ggplot(aes(x = grau_instrucao_apos_2005, y = media, fill = sexo)) +
+  geom_bar(stat = "identity", 
+          position=position_dodge(), 
+           show.legend = T, color = "black") +
+  labs(title = "Escolaridade dos profissionais que atuam na Operação\nde Terminais Portuários no Brasil por sexo",
+       x = "Grau de instrução", y = "Número de vínculos",
+       caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2000") +
+  coord_flip() +
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 10L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 10L, face = "bold"), 
+        axis.title.x = element_text(size = 10L, face = "bold"),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
+        legend.position="top",
+        legend.title = element_text(face = "bold")
+        )+
+  geom_text(aes(x = grau_instrucao_apos_2005, y = media, label= prettyNum(media, big.mark = ".", decimal.mark = ",", digits = 1)),
+            position = position_dodge(width = 1),
+            size =4, vjust=.25, hjust = -.25,
+           colour="black") +
+  scale_y_continuous(
+    breaks = seq(0,20000, 5000), limits = c(0, 20000),
+    labels = label_number(big.mark = ".", decimal.mark = ",",
+                                            prefix = "R$ ")) +
+  scale_fill_manual(values = alpha(c("#32cdc2", "#FFBF47"), 1), name = "Sexo")
+
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+rais %>%
+  filter(cnae_2_subclasse == "5231101") %>% 
+  group_by(cbo_2002) %>% 
+  summarise(n = n()) %>% 
+  mutate(cbo_2002 = fct_reorder(cbo_2002, n)) %>% 
+  arrange(desc(n)) %>% 
+  top_n(10, n) %>% 
+  ggplot(aes(x = cbo_2002, y = n))+
+  geom_bar(fill = "lightblue", color = "#4682B4", position = "dodge", stat = "identity") +
+  coord_flip() +
+  labs(x = "UF", y = "Número de vínculos",
+         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
+  ggtitle(
+    "Empregados na Operação de Terminais Portuários por estado", 
+    subtitle = str_c(
+      "São",
+      rais %>% filter(cnae_2_subclasse == "5231101") %>% group_by(cbo_2002) %>% 
+    summarise(n = n()) %>% select(n) %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),
+      "vínculos de trabalho em todo o país",
+      sep = " ")) +
+theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 10L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 10L, face = "bold"), 
+        axis.title.x = element_text(size = 10L, face = "bold"),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
+        legend.position = "none")+
+  geom_text(aes(label= prettyNum(n, big.mark = ".", decimal.mark = ",")), 
+            size =4,  
+            hjust=1, vjust=0.5, colour="black") 
+  scale_y_continuous(breaks = seq(0,650, 50), limits = c(0, 650),
+                     labels = number_format(big.mark = ".", decimal.mark = ","))
+  
+```
