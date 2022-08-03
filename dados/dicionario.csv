@@ -4,7 +4,7 @@ microdados_vinculos,tipo_vinculo,2,1985(1)1993,ESTATUTÁRIO
 microdados_vinculos,tipo_vinculo,3,1985(1)1993,TRABALHADOR AVULSO
 microdados_vinculos,tipo_vinculo,4,1985(1)1993,TRABALHADOR TEMP
 microdados_vinculos,tipo_vinculo,5,1985(1)1993,OUTROS
-microdados_vinculos,tipo_vinculo,,1985(1)1993,NÃO CLASSIFICADO
+microdados_vinculos,tipo_vinculo,NA,1985(1)1993,NÃO CLASSIFICADO
 microdados_vinculos,tipo_vinculo,10,1994(1),CLT U/PJ IND
 microdados_vinculos,tipo_vinculo,15,1994(1),CLT U/PF IND
 microdados_vinculos,tipo_vinculo,20,1994(1),CLT R/PJ IND
@@ -28,7 +28,7 @@ microdados_vinculos,tipo_vinculo,97,1994(1),CONT LEI MUN
 microdados_vinculos,tipo_vinculo,-1,1994(1),IGNORADO
 microdados_vinculos,vinculo_ativo_3112,0,(1),Não
 microdados_vinculos,vinculo_ativo_3112,1,(1),Sim
-microdados_vinculos,tipo_admissao,0,1997(1),NAO ADM ANO
+microdados_vinculos,tipo_admissao,0,1997(1),"NAO ADM ANO"
 microdados_vinculos,tipo_admissao,1,1997(1),PRIM EMPREGO
 microdados_vinculos,tipo_admissao,2,1997(1),REEMPREGO
 microdados_vinculos,tipo_admissao,3,1997(1),TRANS C/ONUS
@@ -40,7 +40,7 @@ microdados_vinculos,tipo_admissao,8,1997(1),REVERSAO
 microdados_vinculos,tipo_admissao,9,1997(1),EXERC PROVIS
 microdados_vinculos,tipo_admissao,10,1997(1),REQUISICAO
 microdados_vinculos,tipo_admissao,-1,1997(1),IGNORADO
-microdados_vinculos,motivo_desligamento,0,(1),NAO DESL ANO
+microdados_vinculos,motivo_desligamento,0,(1),"NAO DESL ANO"
 microdados_vinculos,motivo_desligamento,10,(1),DEM COM JC
 microdados_vinculos,motivo_desligamento,11,(1),DEM SEM JC
 microdados_vinculos,motivo_desligamento,12,(1),TERM CONTR
@@ -286,7 +286,7 @@ microdados_estabelecimentos,tamanho,-1,1985(1)2018,IGNORADO
 microdados_estabelecimentos,tipo,1,(1),CNPJ
 microdados_estabelecimentos,tipo,2,2018(1),CAEPF
 microdados_estabelecimentos,tipo,3,(1),CEI
-microdados_estabelecimentos,tipo,9,(1),NAO IDENTIF
+microdados_estabelecimentos,tipo,9,(1),"NAO IDENTIF"
 microdados_estabelecimentos,tipo,-1,(1),IGNORADO
 microdados_estabelecimentos,subsetor_ibge,1,2013(1)2018,Extrativa mineral
 microdados_estabelecimentos,subsetor_ibge,EXTR MINERAL,1985(1)2012,Extrativa mineral

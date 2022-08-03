@@ -19,12 +19,10 @@ output:
 ---
 
 ```{r setup, include=FALSE, results='hide'}
-# install.packages(c("basedosdados", "tidyverse", "dbplyr","scales"))
 
-library(basedosdados)
-library(tidyverse)
-library(dbplyr)
-library(scales)
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load("basedosdados", "tidyverse", 
+               "dbplyr", "scales")
 
 
 # aqui você define o seu projeto billing_id
@@ -34,30 +32,73 @@ basedosdados::set_billing_id("porto-ma")
 ```{r query, eval=FALSE, include=FALSE}
 #### Dados da RAIS para operacoes portuarias 
 query <- c("
-  SELECT sigla_uf, cnae_2_subclasse, tipo_vinculo, valor_remuneracao_media, sexo,  raca_cor, grau_instrucao_apos_2005, cbo_2002, id_municipio
-  FROM `basedosdados.br_me_rais.microdados_vinculos`
-  WHERE (vinculo_ativo_3112 = 1) 
-      AND (ano = 2020) 
-      AND (cnae_2_subclasse = '5231101' OR cnae_2_subclasse = '5231102')")
+  SELECT --selecionando as seguintes colunas
+    sigla_uf, --Sigla da Unidade da Federação
+    ano, --Ano
+    subsetor_ibge, --Subsetor - IBGE
+    nacionalidade, --Nacionalidade
+  	tipo_vinculo, --Tipo do Vínculo
+  	cnae_2_subclasse, --Classificação Nacional de Atividades Econômicas (CNAE) 2.0 Subclasse
+  	valor_remuneracao_media, --Valor da Remuneração Média
+  	sexo, --Sexo
+  	raca_cor, --Raça ou cor
+  	grau_instrucao_apos_2005, 
+  	cbo_2002, --Classificação Brasileira de Ocupações (CBO) 2002
+  	id_municipio --ID Município - IBGE 7 Dígitos
+  FROM `basedosdados.br_me_rais.microdados_vinculos` --da tabela
+  WHERE --onde
+      (vinculo_ativo_3112 = 1)
+      AND (ano BETWEEN 2010 AND 2020) 
+      AND cnae_2_subclasse  IN (
+      --esssas duas subclasses são da divisão 50 TRANSPORTE AQUAVIÁRIO
+      '5231101', --Administração da infraestrutura portuária
+      '5231102', --Atividades do operador portuário
+      --esssas outras são novas
+      '5011401', --Transporte marítimo de cabotagem - carga
+      '5011402', --Transporte marítimo de cabotagem - passageiros
+      '5021101', --Transporte por navegação interior de carga, municipal, exceto travessia
+      '5021102', --Transporte por navegação interior de carga, intermunicipal, interestadual e internacional, exceto travessia
+      '5022001', --Transporte por navegação interior de passageiros em linhas regulares, municipal, exceto travessia
+      '5022002', --Transporte por navegação interior de passageiros em linhas regulares, intermunicipal, interestadual e internacional, exceto travessia
+      '5030101', --Navegação de apoio marítimo
+      '5030102', --Navegação de apoio portuário
+      '5030103', --Serviço de rebocadores e empurradores
+      '5091201', --Transporte por navegação de travessia, municipal
+      '5091202', --Transporte por navegação de travessia intermunicipal, interestadual e internacional
+      '5099801', --Transporte aquaviário para passeios turísticos
+      '5099899' --Outros transportes aquaviários não especificados anteriormente
+  )")
 
-# lendo a query do chuck anterior
+#Baixando o dicionário
+query1 <- c("SELECT * --seleciona todas as colunas
+            FROM `basedosdados.br_me_rais.dicionario` --basedosdados.<NOME DO CONJUNTO DE DADOS>.<NOME DA TABELA>.")
+# lendo os dados da rais da base dos dados
 rais <- read_sql(query)
 
-# criando o arquivo csv
+# lendo o dicionário dos dados da rais da base dos dados
+dic <- read_sql(query1)
+
+# criando os arquivos csv
 write_csv(rais, file = "dados/rais.csv")
+write_csv(dic, file = "dados/dicionario.csv")
 ```
 
 ```{r import-data, include=FALSE}
+#lendo os dados da rais
 rais <- read_csv(file = "dados/rais.csv",
                  col_type = list(.default = "f",
                                  valor_remuneracao_media = "d"))
+
+#lendo o dicionário dos dados da rais
 dic <- read_csv(file = "dados/dicionario.csv",
                  col_type = list(.default = "f"))
 
+#lendo arquivo da cbo 2002
 cbo <- read_delim(file = 'dados/cbo2002.csv', delim = ";",
                 col_type = list(.default = "f"),
                 locale = locale(encoding = "latin1"))
 
+#lendo dados dos municípios 
 municipios <- readxl::read_xls(
   'dados/municipios_ibge.xls',
   col_names = c("cod_uf", "nome_uf", 
@@ -67,6 +108,30 @@ municipios <- readxl::read_xls(
                 "cod_microrregiao", "nome_microrregiao",
                 "cod_municipio", "cod_municipio_completo", "nome_municipio"),
   skip = 1)
+
+#lendo dados das subclasses da cnae
+subclasses <- readxl::read_xls(
+  "dados/cnae_subclasse.xls",
+  col_names = c("secao", "divisao", "grupo", 
+                "classe", "subclasse", "denominacao"),
+  skip = 5
+)
+
+# selecionando apenas as colunas subclasse e denominacao
+# filtrando os todos os valores diferentes de NA da coluna subclasse
+subclasses <- 
+subclasses %>% 
+  select(subclasse, denominacao) %>% 
+  filter(!is.na(subclasse))
+
+# substituindo todas as pontuações por nada
+subclasses <- 
+subclasses %>% 
+  mutate(subclasse = str_replace_all(subclasse, "[:punct:]", ""))
+
+#alteradno o tipo de todas as colunas para fator
+subclasses <- subclasses %>% mutate(across(everything(), as.factor))
+
 
 municipios <- municipios %>% mutate(across(everything(), as.factor))
 
@@ -78,7 +143,7 @@ cbo %>% mutate(
 
 ```
 
-```{r niveis, include=FALSE}
+```{r joins_niveis, include=FALSE}
 
 #alterando levels das variáveis
 
@@ -138,9 +203,27 @@ rais <-
           by = c("raca_cor" = "chave")) %>% 
   mutate(raca_cor = valor) %>% #substituindo raca_Cor
   select(!valor)
+
+#da variável cnae_2_subclasse
+rais <- 
+  left_join(
+    rais, #primeira tabela
+    subclasses, #segunda tabela
+    by = c("cnae_2_subclasse" = "subclasse")) 
+
 ```
 
 # Trabalhadores de Operações Portuárias
+
+```{r denominacao, include=FALSE, results='hide'}
+dn <-
+rais %>%
+  group_by(denominacao) %>% 
+  summarise(n = n()) %>% 
+  mutate(denominacao = fct_reorder(denominacao, n)) %>% 
+  arrange(desc(n)) %>% 
+  top_n(10)
+```
 
 ```{r dados_uf, include=FALSE, results='hide'}
 uf <-
@@ -151,6 +234,40 @@ rais %>%
   mutate(sigla_uf = fct_reorder(sigla_uf, n),
          fill = ifelse(sigla_uf == "MA", "um", "dois")) %>% 
   arrange(desc(n))
+```
+
+```{r g_denominacao,  echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+dn %>%
+ggplot(aes(x = denominacao, y = n))+
+  geom_bar(position = "dodge", stat = "identity") +
+  #coord_flip() +
+  labs(x = "Ocupação", y = "Número de vínculos",
+         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
+  ggtitle(
+    "Empregados na Operação de Terminais Portuários por estado", 
+    subtitle = str_c(
+      "São",
+      rais %>% filter(cnae_2_subclasse == "5231102") %>% group_by(sigla_uf) %>% 
+    summarise(n = n()) %>% select(n) %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),
+      "vínculos de trabalho em todo o país",
+      sep = " ")) +
+theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 8L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
+        legend.position = "none")+
+  geom_text(aes(label= prettyNum(n, big.mark = ".", decimal.mark = ",")), 
+            size =4,  
+            hjust=-.5, vjust=.5, colour="black") +
+  scale_fill_manual(values = c("lightblue", "#4682B4"))  +
+  scale_x_discrete(labels = function(denominacao) str_wrap(denominacao, width = 15, indent = 1))
+  # scale_y_continuous(breaks = seq(0,12000, 3000), limits = c(0, 12000),
+  #                    labels = number_format(big.mark = ".", decimal.mark = ","))
+  
 ```
 
 
@@ -189,7 +306,7 @@ theme_classic() +
   scale_fill_manual(values = c("lightblue", "#4682B4")) +
   scale_y_continuous(breaks = seq(0,12000, 3000), limits = c(0, 12000),
                      labels = number_format(big.mark = ".", decimal.mark = ","))
-  
+       
 ```
 
 ## Escolaridade
