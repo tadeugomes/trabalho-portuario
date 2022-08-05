@@ -18,278 +18,96 @@ output:
     highlight: kate
 ---
 
-```{r setup, include=FALSE, results='hide'}
 
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load("basedosdados", "tidyverse", 
-               "dbplyr", "scales")
-
-
-# aqui você define o seu projeto billing_id
-basedosdados::set_billing_id("porto-ma")
+```{r child = "Setup.Rmd"}
+#lendo arquivo Setup.Rmd
+#optei por esta estratégia para plotar apenas os gráficos neste arquivo
+#e pequenas operações
 ```
 
-```{r query, eval=FALSE, include=FALSE}
-#### Dados da RAIS para operacoes portuarias 
-query <- c("
-  SELECT --selecionando as seguintes colunas
-    sigla_uf, --Sigla da Unidade da Federação
-    ano, --Ano
-    subsetor_ibge, --Subsetor - IBGE
-    nacionalidade, --Nacionalidade
-  	tipo_vinculo, --Tipo do Vínculo
-  	cnae_2_subclasse, --Classificação Nacional de Atividades Econômicas (CNAE) 2.0 Subclasse
-  	valor_remuneracao_media, --Valor da Remuneração Média
-  	sexo, --Sexo
-  	raca_cor, --Raça ou cor
-  	grau_instrucao_apos_2005, 
-  	cbo_2002, --Classificação Brasileira de Ocupações (CBO) 2002
-  	id_municipio --ID Município - IBGE 7 Dígitos
-  FROM `basedosdados.br_me_rais.microdados_vinculos` --da tabela
-  WHERE --onde
-      (vinculo_ativo_3112 = 1)
-      AND (ano BETWEEN 2010 AND 2020) 
-      AND cnae_2_subclasse  IN (
-      --esssas duas subclasses são da divisão 50 TRANSPORTE AQUAVIÁRIO
-      '5231101', --Administração da infraestrutura portuária
-      '5231102', --Atividades do operador portuário
-      --esssas outras são novas
-      '5011401', --Transporte marítimo de cabotagem - carga
-      '5011402', --Transporte marítimo de cabotagem - passageiros
-      '5021101', --Transporte por navegação interior de carga, municipal, exceto travessia
-      '5021102', --Transporte por navegação interior de carga, intermunicipal, interestadual e internacional, exceto travessia
-      '5022001', --Transporte por navegação interior de passageiros em linhas regulares, municipal, exceto travessia
-      '5022002', --Transporte por navegação interior de passageiros em linhas regulares, intermunicipal, interestadual e internacional, exceto travessia
-      '5030101', --Navegação de apoio marítimo
-      '5030102', --Navegação de apoio portuário
-      '5030103', --Serviço de rebocadores e empurradores
-      '5091201', --Transporte por navegação de travessia, municipal
-      '5091202', --Transporte por navegação de travessia intermunicipal, interestadual e internacional
-      '5099801', --Transporte aquaviário para passeios turísticos
-      '5099899' --Outros transportes aquaviários não especificados anteriormente
-  )")
-
-#Baixando o dicionário
-query1 <- c("SELECT * --seleciona todas as colunas
-            FROM `basedosdados.br_me_rais.dicionario` --basedosdados.<NOME DO CONJUNTO DE DADOS>.<NOME DA TABELA>.")
-# lendo os dados da rais da base dos dados
-rais <- read_sql(query)
-
-# lendo o dicionário dos dados da rais da base dos dados
-dic <- read_sql(query1)
-
-# criando os arquivos csv
-write_csv(rais, file = "dados/rais.csv")
-write_csv(dic, file = "dados/dicionario.csv")
-```
-
-```{r import-data, include=FALSE}
-#lendo os dados da rais
-rais <- read_csv(file = "dados/rais.csv",
-                 col_type = list(.default = "f",
-                                 valor_remuneracao_media = "d"))
-
-#lendo o dicionário dos dados da rais
-dic <- read_csv(file = "dados/dicionario.csv",
-                 col_type = list(.default = "f"))
-
-#lendo arquivo da cbo 2002
-cbo <- read_delim(file = 'dados/cbo2002.csv', delim = ";",
-                col_type = list(.default = "f"),
-                locale = locale(encoding = "latin1"))
-
-#lendo dados dos municípios 
-municipios <- readxl::read_xls(
-  'dados/municipios_ibge.xls',
-  col_names = c("cod_uf", "nome_uf", 
-                "cod_rg_intermedia", "nome_rg_intermediaria",
-                "cod_rg_imediata", "nome_rg_imediata", 
-                "cod_mesorregiao", "nome_mesorregiao", 
-                "cod_microrregiao", "nome_microrregiao",
-                "cod_municipio", "cod_municipio_completo", "nome_municipio"),
-  skip = 1)
-
-#lendo dados das subclasses da cnae
-subclasses <- readxl::read_xls(
-  "dados/cnae_subclasse.xls",
-  col_names = c("secao", "divisao", "grupo", 
-                "classe", "subclasse", "denominacao"),
-  skip = 5
-)
-
-# selecionando apenas as colunas subclasse e denominacao
-# filtrando os todos os valores diferentes de NA da coluna subclasse
-subclasses <- 
-subclasses %>% 
-  select(subclasse, denominacao) %>% 
-  filter(!is.na(subclasse))
-
-# substituindo todas as pontuações por nada
-subclasses <- 
-subclasses %>% 
-  mutate(subclasse = str_replace_all(subclasse, "[:punct:]", ""))
-
-#alteradno o tipo de todas as colunas para fator
-subclasses <- subclasses %>% mutate(across(everything(), as.factor))
-
-
-municipios <- municipios %>% mutate(across(everything(), as.factor))
-
-cbo <- 
-cbo %>% mutate(
-  CODIGO = as.character(CODIGO),
-  CODIGO = if_else(CODIGO == "517235", "517335", CODIGO),
-  CODIGO = as.factor(CODIGO))
-
-```
-
-```{r joins_niveis, include=FALSE}
-
-#alterando levels das variáveis
-
-#juntando as tabelas rais e municipios
-rais <- 
-  left_join(rais, #primeira tabela
-          municipios, #segunda tabela
-          by = c("id_municipio" = "cod_municipio_completo")) %>% 
-  select(!id_municipio & !starts_with("cod_"))
-
-#da variáveil sexo
-rais <- 
-  left_join(rais, #primeira tabela
-          dic %>% #segunda tabela
-            filter(nome_coluna == "sexo") %>% 
-            select(c("chave", "valor")),
-          by = c("sexo" = "chave")) %>% 
-  mutate(sexo = valor) %>% #substituindo sexo
-  select(!valor)
-          
-rais <- 
-rais %>% 
-  mutate(
-    grau_instrucao_apos_2005 = factor( 
-        case_when( 
-          grau_instrucao_apos_2005 %in% 1:4 ~ "Fundamental incompleto", 
-          grau_instrucao_apos_2005 == 5 ~ "Fundamental completo", 
-          grau_instrucao_apos_2005 == 6 ~ "Médio incompleto", 
-          grau_instrucao_apos_2005 == 7 ~ "Médio completo",
-          grau_instrucao_apos_2005 == 8 ~ "Superior incompleto", 
-          grau_instrucao_apos_2005 == 9 ~ "Superior completo", 
-          grau_instrucao_apos_2005 == 10 ~ "Pós-graduação", 
-          grau_instrucao_apos_2005 == -1 ~ "Não informado"
-        ), 
-        levels = c( 
-          "Fundamental incompleto", "Fundamental completo", 
-          "Médio incompleto", "Médio completo", "Superior incompleto",
-          "Superior completo", "Pós-graduação", "Não informado"
-        ) 
-      )
-    )
-
-#da variáveil cbo_2002
-rais <- 
-  left_join(rais, #primeira tabela
-          cbo, #segunda tabela
-          by = c("cbo_2002" = "CODIGO")) %>% 
-  mutate(cbo_2002 = TITULO) %>% #substituindo 
-  select(!TITULO)
-          
-#da variáveil raca_cor
-rais <- 
-  left_join(rais, #primeira tabela
-          dic %>% #segunda tabela
-            filter(nome_coluna == "raca_cor") %>% 
-            select(c("chave", "valor")),
-          by = c("raca_cor" = "chave")) %>% 
-  mutate(raca_cor = valor) %>% #substituindo raca_Cor
-  select(!valor)
-
-#da variável cnae_2_subclasse
-rais <- 
-  left_join(
-    rais, #primeira tabela
-    subclasses, #segunda tabela
-    by = c("cnae_2_subclasse" = "subclasse")) 
-
-```
 
 # Trabalhadores de Operações Portuárias
 
-```{r denominacao, include=FALSE, results='hide'}
+```{r n_grupo_cnae, include=FALSE, results='hide'}
 dn <-
 rais %>%
-  group_by(denominacao) %>% 
+  group_by(n_grupo, ano) %>% 
   summarise(n = n()) %>% 
-  mutate(denominacao = fct_reorder(denominacao, n)) %>% 
+  mutate(n_grupo = fct_reorder(n_grupo, n)) %>% 
   arrange(desc(n)) %>% 
   top_n(10)
 ```
 
-```{r dados_uf, include=FALSE, results='hide'}
-uf <-
-rais %>%
-  filter(cnae_2_subclasse == "5231102") %>% 
-  group_by(sigla_uf) %>% 
-  summarise(n = n()) %>% 
-  mutate(sigla_uf = fct_reorder(sigla_uf, n),
-         fill = ifelse(sigla_uf == "MA", "um", "dois")) %>% 
-  arrange(desc(n))
-```
 
 ```{r g_denominacao,  echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 dn %>%
-ggplot(aes(x = denominacao, y = n))+
-  geom_bar(position = "dodge", stat = "identity") +
-  #coord_flip() +
+  filter(!is.na(n_grupo)) %>% 
+ggplot(aes(x = ano, y = n, group = n_grupo)) +
+  geom_line(aes(color = n_grupo), size = 2) +
+  geom_point(aes(color = n_grupo), size = 4) +
   labs(x = "Ocupação", y = "Número de vínculos",
          caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
-  ggtitle(
-    "Empregados na Operação de Terminais Portuários por estado", 
-    subtitle = str_c(
-      "São",
-      rais %>% filter(cnae_2_subclasse == "5231102") %>% group_by(sigla_uf) %>% 
-    summarise(n = n()) %>% select(n) %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),
-      "vínculos de trabalho em todo o país",
-      sep = " ")) +
-theme_classic() +
+  theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
         plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
         axis.title.y = element_text(size = 14L, face = "bold"), 
         axis.title.x = element_text(size = 14L, face = "bold"),
-        axis.text.x = element_text(size = 8L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
         axis.text.y = element_text(size = 12L, face = "bold"),
-        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
-        legend.position = "none")+
-  geom_text(aes(label= prettyNum(n, big.mark = ".", decimal.mark = ",")), 
-            size =4,  
-            hjust=-.5, vjust=.5, colour="black") +
-  scale_fill_manual(values = c("lightblue", "#4682B4"))  +
-  scale_x_discrete(labels = function(denominacao) str_wrap(denominacao, width = 15, indent = 1))
-  # scale_y_continuous(breaks = seq(0,12000, 3000), limits = c(0, 12000),
-  #                    labels = number_format(big.mark = ".", decimal.mark = ","))
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+        legend.position = "top",
+        legend.justification = c("left", "top"),
+        legend.title = element_text(size = 16L, face = "bold")) +
+  scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18))
   
 ```
 
 
-O Brasil apresentou `r rais %>% filter(cnae_2_subclasse == "5231102") %>% group_by(sigla_uf) %>% 
+```{r dados_uf_teste, include=FALSE, results='hide'}
+
+
+
+uf <-
+rais %>%
+  filter(subclasse == "5231102") %>%
+  group_by(sigla_uf, ano) %>%
+  summarise(n = n()) %>%
+  mutate(sigla_uf = fct_reorder(sigla_uf, n),
+         fill = ifelse(sigla_uf == "MA", "um", "dois")) %>% 
+  arrange(n)
+
+ord_uf <- 
+  uf %>% 
+  filter(ano == 2010) %>% 
+  select(sigla_uf) %>% 
+  pull()
+
+   uf <- uf %>% mutate(sigla_uf = factor(sigla_uf, levels = ord_uf))
+
+
+```
+
+
+O Brasil apresentou `r rais %>% filter(subclasse == "5231102") %>% group_by(sigla_uf) %>% 
     summarise(n = n()) %>% select(n) %>% sum() %>% comma(big.mark = ".", decimal.mark = ",")` vínculos de trabalho para a subclasse **Operações de Terminais**. São Paulo foi o estado com a maior quantidade de vínculos, ao todo foram `r uf %>% filter(n == max(n)) %>% select(n) %>% pull() %>% comma(big.mark = ".", decimal.mark = ",")` vínculos no estado. Rio de Janeiro, segundo estado com a maior quantidade de vículos, possuía cerca de `r uf %>% filter(n == nth(n, 2)) %>% select(n) %>% pull() %>% comma(big.mark = ".", decimal.mark = ",")`. O estado do Maranhão possuía `r uf %>% filter(sigla_uf == "MA") %>% select(n) %>% pull()  %>% comma(big.mark = ".", decimal.mark = ",")` vínculos.
 
-```{r g_operacao_uf,  echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+```{r g_operacao_uf,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.width=8, fig.height=14}
 uf %>%
-ggplot(aes(x = sigla_uf, y = n,
+  filter(!is.na(sigla_uf)) %>% 
+ggplot(aes(x = sigla_uf, y = n/10^3,
            fill = fill, 
            size = .5))+
   geom_bar(position = "dodge", stat = "identity") +
   coord_flip() +
-  labs(x = "Ocupação", y = "Número de vínculos",
+  labs(x = "Ocupação", y = "Número de vínculos (em mil)",
          caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
   ggtitle(
     "Empregados na Operação de Terminais Portuários por estado", 
     subtitle = str_c(
       "São",
-      rais %>% filter(cnae_2_subclasse == "5231102") %>% group_by(sigla_uf) %>% 
-    summarise(n = n()) %>% select(n) %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),
-      "vínculos de trabalho em todo o país",
+      uf %>% filter(ano == 2010) %>%  select(n) %>% pull() %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),
+      "vínculos de trabalho em todo o país em 2010 e", uf %>% filter(ano == 2020) %>%  select(n) %>% pull() %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),  "vínculos em 2020",
       sep = " ")) +
 theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
@@ -300,12 +118,13 @@ theme_classic() +
         axis.text.y = element_text(size = 12L, face = "bold"),
         panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
         legend.position = "none")+
-  geom_text(aes(label= prettyNum(n, big.mark = ".", decimal.mark = ",")), 
-            size =4,  
-            hjust=-.5, vjust=.5, colour="black") +
+  # geom_text(aes(label= prettyNum(n, big.mark = ".", decimal.mark = ",")), 
+  #           size =4,  
+  #           hjust=-.5, vjust=.5, colour="black") +
   scale_fill_manual(values = c("lightblue", "#4682B4")) +
-  scale_y_continuous(breaks = seq(0,12000, 3000), limits = c(0, 12000),
-                     labels = number_format(big.mark = ".", decimal.mark = ","))
+  scale_y_continuous(breaks = seq(0,12, 3), limits = c(0, 12),
+                     labels = number_format(big.mark = ".", decimal.mark = ",")) +
+  facet_wrap(~ano, ncol = 3)
        
 ```
 
@@ -317,7 +136,7 @@ ordem_esc <- c("Fundamental incompleto", "Fundamental completo",
         "Superior completo", "Pós-graduação", "Não informado")
 
 rais %>%
-  filter(!is.na(grau_instrucao_apos_2005) & cnae_2_subclasse == "5231102") %>%
+  filter(!is.na(grau_instrucao_apos_2005) & subclasse == "5231102") %>%
   group_by(grau_instrucao_apos_2005, sexo, .groups = 'drop') %>% 
   summarise(n = n()) %>% 
   mutate(grau_instrucao_apos_2005 = factor(grau_instrucao_apos_2005, levels = ordem_esc)) %>%
@@ -353,7 +172,7 @@ rais %>%
 ```{r g_operacao_remuneracao_escol_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
 rais %>%
-  filter(!is.na(grau_instrucao_apos_2005) & valor_remuneracao_media != 0.00  & cnae_2_subclasse == "5231102") %>%
+  filter(!is.na(grau_instrucao_apos_2005) & valor_remuneracao_media != 0.00  & subclasse == "5231102") %>%
   group_by(grau_instrucao_apos_2005, sexo, .groups = 'drop') %>% 
   summarise(n = n(),
             media = mean(valor_remuneracao_media)) %>% 
@@ -395,7 +214,7 @@ rais %>%
 ```{r g_operacao_raca_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
 rais %>%
-  filter(cnae_2_subclasse == "5231102") %>%
+  filter(subclasse == "5231102") %>%
   group_by(raca_cor, sexo, .groups = 'drop') %>% 
   summarise(n = n()) %>% 
   ggplot(aes(x = raca_cor, y = n, fill = sexo)) +
@@ -431,7 +250,7 @@ rais %>%
 ```{r g_operacao_remuneracao_raca_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
 rais %>%
-  filter(valor_remuneracao_media != 0.00  & cnae_2_subclasse == "5231102") %>%
+  filter(valor_remuneracao_media != 0.00  & subclasse == "5231102") %>%
   group_by(raca_cor, sexo, .groups = 'drop') %>% 
   summarise(n = n(),
             media = mean(valor_remuneracao_media)) %>% 
@@ -470,7 +289,7 @@ rais %>%
 
 ```{r g_operacao_ocupacao, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 rais %>%
-  filter(cnae_2_subclasse == "5231102") %>% 
+  filter(subclasse == "5231102") %>% 
   group_by(cbo_2002) %>% 
   summarise(n = n()) %>% 
   mutate(cbo_2002 = fct_reorder(cbo_2002, n)) %>% 
@@ -485,7 +304,7 @@ rais %>%
     "As 10 ocpupações  com a maior quantidade de vínculos na Operação de\n Terminais Portuários", 
     subtitle = str_c(
       "São",
-      rais %>% filter(cnae_2_subclasse == "5231102") %>% group_by(cbo_2002) %>% 
+      rais %>% filter(subclasse == "5231102") %>% group_by(cbo_2002) %>% 
     summarise(n = n()) %>% select(n) %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),
       "vínculos de trabalho em todo o país",
       sep = " ")) +
@@ -510,7 +329,7 @@ theme_classic() +
 
 ```{r g_operacao_municipio, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 rais %>%
-  filter(cnae_2_subclasse == "5231102") %>% 
+  filter(subclasse == "5231102") %>% 
   group_by(nome_municipio) %>% 
   summarise(n = n()) %>% 
   mutate(nome_municipio = fct_reorder(nome_municipio, n)) %>% 
@@ -525,7 +344,7 @@ rais %>%
     "Os 20 municípios  com a maior quantidade de vínculos na Operação de\n Terminais Portuários", 
     subtitle = str_c(
       "São",
-      rais %>% filter(cnae_2_subclasse == "5231102") %>% group_by(cbo_2002) %>% 
+      rais %>% filter(subclasse == "5231102") %>% group_by(cbo_2002) %>% 
     summarise(n = n()) %>% select(n) %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),
       "vínculos de trabalho em todo o país",
       sep = " ")) +
@@ -550,7 +369,7 @@ theme_classic() +
 
 ```{r g_adm_uf, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 rais %>%
-  filter(cnae_2_subclasse == "5231101") %>% 
+  filter(subclasse == "5231101") %>% 
   group_by(sigla_uf) %>% 
   summarise(n = n()) %>% 
   mutate(sigla_uf = fct_reorder(sigla_uf, n),
@@ -566,7 +385,7 @@ ggplot(aes(x = sigla_uf, y = n,
     "Empregados na Administração da Infraestrura Portuária por estado", 
     subtitle = str_c(
       "São",
-      rais %>% filter(cnae_2_subclasse == "5231101") %>% group_by(sigla_uf) %>% 
+      rais %>% filter(subclasse == "5231101") %>% group_by(sigla_uf) %>% 
     summarise(n = n()) %>% select(n) %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),
       "vínculos de trabalho em todo o país",
       sep = " ")) +
@@ -593,7 +412,7 @@ theme_classic() +
 ```{r g_adm_escol_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
 rais %>%
-  filter(!is.na(grau_instrucao_apos_2005) & cnae_2_subclasse == "5231101") %>%
+  filter(!is.na(grau_instrucao_apos_2005) & subclasse == "5231101") %>%
   group_by(grau_instrucao_apos_2005, sexo, .groups = 'drop') %>% 
   summarise(n = n()) %>% 
   mutate(grau_instrucao_apos_2005 = factor(grau_instrucao_apos_2005, levels = ordem_esc)) %>%
@@ -629,7 +448,7 @@ rais %>%
 ```{r g_adm_remuneracao_escol_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
 rais %>%
-  filter(!is.na(grau_instrucao_apos_2005) & valor_remuneracao_media != 0.00 & cnae_2_subclasse == "5231101") %>%
+  filter(!is.na(grau_instrucao_apos_2005) & valor_remuneracao_media != 0.00 & subclasse == "5231101") %>%
   group_by(grau_instrucao_apos_2005, sexo, .groups = 'drop') %>% 
   summarise(n = n(),
             media = mean(valor_remuneracao_media)) %>% 
@@ -670,7 +489,7 @@ rais %>%
 ```{r g_adm_raca_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
 rais %>%
-  filter(cnae_2_subclasse == "5231101") %>%
+  filter(subclasse == "5231101") %>%
   group_by(raca_cor, sexo, .groups = 'drop') %>% 
   summarise(n = n()) %>% 
   ggplot(aes(x = raca_cor, y = n, fill = sexo)) +
@@ -706,7 +525,7 @@ rais %>%
 ```{r g_adm_remuneracao_raca_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
 rais %>%
-  filter(valor_remuneracao_media != 0.00  & cnae_2_subclasse == "5231101") %>%
+  filter(valor_remuneracao_media != 0.00  & subclasse == "5231101") %>%
   group_by(raca_cor, sexo, .groups = 'drop') %>% 
   summarise(n = n(),
             media = mean(valor_remuneracao_media)) %>% 
@@ -746,7 +565,7 @@ rais %>%
 
 ```{r g_adm_ocupacao, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 rais %>%
-  filter(cnae_2_subclasse == "5231101") %>% 
+  filter(subclasse == "5231101") %>% 
   group_by(cbo_2002) %>% 
   summarise(n = n()) %>% 
   mutate(cbo_2002 = fct_reorder(cbo_2002, n)) %>% 
@@ -761,7 +580,7 @@ rais %>%
     "As 10 ocupações que com a maior quantidade de vínculos da Administração da\n Infraestrura Portuária  ", 
     subtitle = str_c(
       "São",
-      rais %>% filter(cnae_2_subclasse == "5231101") %>% group_by(cbo_2002) %>% 
+      rais %>% filter(subclasse == "5231101") %>% group_by(cbo_2002) %>% 
     summarise(n = n()) %>% select(n) %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),
       "vínculos de trabalho em todo o país",
       sep = " ")) +
@@ -787,7 +606,7 @@ theme_classic() +
 
 ```{r g_adm_municipio, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 rais %>%
-  filter(cnae_2_subclasse == "5231101") %>% 
+  filter(subclasse == "5231101") %>% 
   group_by(nome_municipio) %>% 
   summarise(n = n()) %>% 
   mutate(nome_municipio = fct_reorder(nome_municipio, n)) %>% 
@@ -802,7 +621,7 @@ rais %>%
     "Os 20 municípios  com a maior quantidade de vínculos na Operação de\n Terminais Portuários", 
     subtitle = str_c(
       "São",
-      rais %>% filter(cnae_2_subclasse == "5231102") %>% group_by(cbo_2002) %>% 
+      rais %>% filter(subclasse == "5231102") %>% group_by(cbo_2002) %>% 
     summarise(n = n()) %>% select(n) %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),
       "vínculos de trabalho em todo o país",
       sep = " ")) +
