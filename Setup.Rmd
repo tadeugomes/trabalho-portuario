@@ -1,0 +1,286 @@
+---
+title: "Setup"
+output: html_document
+date: "2022-08-05"
+---
+```{r setup, include=FALSE, results='hide'}
+
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load("basedosdados", "tidyverse", 
+               "dbplyr", "scales")
+
+
+# aqui você define o seu projeto billing_id
+basedosdados::set_billing_id("porto-ma")
+```
+
+```{r query, eval=FALSE, include=FALSE}
+#### Dados da RAIS para operacoes portuarias 
+query <- c("
+  SELECT --selecionando as seguintes colunas
+    sigla_uf, --Sigla da Unidade da Federação
+    ano, --Ano
+    subsetor_ibge, --Subsetor - IBGE
+    nacionalidade, --Nacionalidade
+  	tipo_vinculo, --Tipo do Vínculo
+  	cnae_2_subclasse, --Classificação Nacional de Atividades Econômicas (CNAE) 2.0 Subclasse
+  	valor_remuneracao_media, --Valor da Remuneração Média
+  	sexo, --Sexo
+  	raca_cor, --Raça ou cor
+  	grau_instrucao_apos_2005, 
+  	cbo_2002, --Classificação Brasileira de Ocupações (CBO) 2002
+  	id_municipio --ID Município - IBGE 7 Dígitos
+  FROM `basedosdados.br_me_rais.microdados_vinculos` --da tabela
+  WHERE --onde
+      (vinculo_ativo_3112 = 1)
+      AND (ano BETWEEN 2010 AND 2020) 
+      AND cnae_2_subclasse  IN (
+      --esssas duas subclasses são da divisão 50 TRANSPORTE AQUAVIÁRIO
+      '5231101', --Administração da infraestrutura portuária
+      '5231102', --Atividades do operador portuário
+      --esssas outras são novas
+      '5011401', --Transporte marítimo de cabotagem - carga
+      '5011402', --Transporte marítimo de cabotagem - passageiros
+      '5021101', --Transporte por navegação interior de carga, municipal, exceto travessia
+      '5021102', --Transporte por navegação interior de carga, intermunicipal, interestadual e internacional, exceto travessia
+      '5022001', --Transporte por navegação interior de passageiros em linhas regulares, municipal, exceto travessia
+      '5022002', --Transporte por navegação interior de passageiros em linhas regulares, intermunicipal, interestadual e internacional, exceto travessia
+      '5030101', --Navegação de apoio marítimo
+      '5030102', --Navegação de apoio portuário
+      '5030103', --Serviço de rebocadores e empurradores
+      '5091201', --Transporte por navegação de travessia, municipal
+      '5091202', --Transporte por navegação de travessia intermunicipal, interestadual e internacional
+      '5099801', --Transporte aquaviário para passeios turísticos
+      '5099899' --Outros transportes aquaviários não especificados anteriormente
+  )")
+
+#Baixando o dicionário
+query1 <- c("SELECT * --seleciona todas as colunas
+            FROM `basedosdados.br_me_rais.dicionario` --basedosdados.<NOME DO CONJUNTO DE DADOS>.<NOME DA TABELA>.")
+# lendo os dados da rais da base dos dados
+rais <- read_sql(query)
+
+# lendo o dicionário dos dados da rais da base dos dados
+dic <- read_sql(query1)
+
+# criando os arquivos csv
+write_csv(rais, file = "dados/rais.csv")
+write_csv(dic, file = "dados/dicionario.csv")
+```
+
+```{r importando_arquivos, context="data", include=FALSE}
+#lendo os dados da rais
+rais <- read_csv(file = "dados/rais.csv",
+                 col_type = list(.default = "f",
+                                 valor_remuneracao_media = "d"))
+
+#lendo o dicionário dos dados da rais
+dic <- read_csv(file = "dados/dicionario.csv",
+                 col_type = list(.default = "f"))
+
+#lendo arquivo da cbo 2002
+cbo <- read_delim(file = 'dados/cbo2002.csv', delim = ";",
+                col_type = list(.default = "f"),
+                locale = locale(encoding = "latin1"))
+
+#lendo dados dos municípios 
+municipios <- readxl::read_xls(
+  'dados/municipios_ibge.xls',
+  col_names = c("cod_uf", "nome_uf", 
+                "cod_rg_intermedia", "nome_rg_intermediaria",
+                "cod_rg_imediata", "nome_rg_imediata", 
+                "cod_mesorregiao", "nome_mesorregiao", 
+                "cod_microrregiao", "nome_microrregiao",
+                "cod_municipio", "cod_municipio_completo", "nome_municipio"),
+  skip = 1)
+
+#lendo dados das subclasses da cnae
+subclasses <- readxl::read_xls(
+  "dados/cnae_subclasse.xls",
+  col_names = c("secao", "divisao", "grupo", 
+                "classe", "subclasse", "denominacao"),
+  skip = 5
+)
+
+```
+
+
+```{r limpando_subclasse, context="data", include=FALSE}
+
+#definindo vetor de letras maiúsculas
+letras <- LETTERS[seq(1, 26)]
+
+# filtrando a coluna secao pelas letras que identificão as seções
+# e por linhas que possuam valores NA
+#isso buscar retirar os cabeçalhos do arquivos cnae_subclasse.xls
+subclasses <- 
+subclasses %>% 
+  filter(secao %in% letras | is.na(secao))
+
+# selecionando APENAS as seções da cnae
+secao <- 
+  subclasses %>% 
+  filter(!is.na(secao)) %>% 
+  select(secao, denominacao) %>% 
+  rename(n_secao = denominacao)
+
+# selecionando APENAS as divisões da cnae
+divisao <- 
+  subclasses %>% 
+  filter(!is.na(divisao)) %>% 
+  select(divisao, denominacao) %>% 
+  rename(n_divisao = denominacao)
+
+# selecionando APENAS as grupos da cnae
+grupo <- 
+  subclasses %>% 
+  filter(!is.na(grupo)) %>% 
+  select(grupo, denominacao) %>% 
+  rename(n_grupo = denominacao)
+
+# selecionando APENAS as classes da cnae
+classe <- 
+  subclasses %>% 
+  filter(!is.na(classe)) %>% 
+  select(classe, denominacao) %>% 
+  rename(n_classe = denominacao)
+
+
+# autocompletando as colunas para baixo
+subclasses <- 
+subclasses %>% 
+  fill(secao:classe, .direction = "down")
+
+# filtrando tudo aquilo que não é NA coluna subclasse
+#tabela limpa
+subclasses <- 
+subclasses %>% 
+  filter(!is.na(subclasse))
+
+#renomeando a coluna denominacao
+subclasses <- 
+subclasses %>% 
+  rename(n_subclasse = denominacao)
+
+################## Fazendo o join #################
+#da tabela secao com a tabela subclasses
+subclasses  <- 
+  left_join(subclasses, #primeira tabela
+          secao, #segunda tabela
+          by = "secao")
+
+#da tabela divisao com a tabela subclasses
+subclasses  <- 
+  left_join(subclasses, #primeira tabela
+          divisao, #segunda tabela
+          by = "divisao")
+
+#da tabela grupo com a tabela subclasses
+subclasses  <- 
+  left_join(subclasses, #primeira tabela
+          grupo, #segunda tabela
+          by = "grupo")
+
+#da tabela classe com a tabela subclasses
+subclasses  <- 
+  left_join(subclasses, #primeira tabela
+          classe, #segunda tabela
+          by = "classe")
+
+# substituindo todas as pontuações por nada das colunas
+#grupo, classe, subclasse
+subclasses <-
+subclasses %>% 
+  mutate_at(.vars = vars("grupo", "classe", "subclasse"), .funs = ~str_replace_all(., "[:punct:]", ""))
+
+#alteradno o tipo de todas as colunas para fator
+subclasses <- subclasses %>% mutate(across(everything(), as.factor))
+```
+
+
+```{r limpando, context="data", include=FALSE}
+#alterando o tipo de todas as colunas da tabela municipio para fator
+municipios <- municipios %>% mutate(across(everything(), as.factor))
+
+# substituindo o valor 517235 por 517335 da coluna CODIGO da tabela cbo
+cbo <- 
+cbo %>% mutate(
+  CODIGO = as.character(CODIGO),
+  CODIGO = if_else(CODIGO == "517235", "517335", CODIGO),
+  CODIGO = as.factor(CODIGO))
+
+```
+
+```{r joins_niveis, include=FALSE}
+
+#alterando levels das variáveis
+
+#juntando as tabelas rais e municipios
+rais <- 
+  left_join(rais, #primeira tabela
+          municipios, #segunda tabela
+          by = c("id_municipio" = "cod_municipio_completo")) %>% 
+  select(!id_municipio & !starts_with("cod_"))
+
+#da variáveil sexo
+rais <- 
+  left_join(rais, #primeira tabela
+          dic %>% #segunda tabela
+            filter(nome_coluna == "sexo") %>% 
+            select(c("chave", "valor")),
+          by = c("sexo" = "chave")) %>% 
+  mutate(sexo = valor) %>% #substituindo sexo
+  select(!valor)
+          
+rais <- 
+rais %>% 
+  mutate(
+    grau_instrucao_apos_2005 = factor( 
+        case_when( 
+          grau_instrucao_apos_2005 %in% 1:4 ~ "Fundamental incompleto", 
+          grau_instrucao_apos_2005 == 5 ~ "Fundamental completo", 
+          grau_instrucao_apos_2005 == 6 ~ "Médio incompleto", 
+          grau_instrucao_apos_2005 == 7 ~ "Médio completo",
+          grau_instrucao_apos_2005 == 8 ~ "Superior incompleto", 
+          grau_instrucao_apos_2005 == 9 ~ "Superior completo", 
+          grau_instrucao_apos_2005 == 10 ~ "Pós-graduação", 
+          grau_instrucao_apos_2005 == -1 ~ "Não informado"
+        ), 
+        levels = c( 
+          "Fundamental incompleto", "Fundamental completo", 
+          "Médio incompleto", "Médio completo", "Superior incompleto",
+          "Superior completo", "Pós-graduação", "Não informado"
+        ) 
+      )
+    )
+
+#da variáveil cbo_2002
+rais <- 
+  left_join(rais, #primeira tabela
+          cbo, #segunda tabela
+          by = c("cbo_2002" = "CODIGO")) %>% 
+  mutate(cbo_2002 = TITULO) %>% #substituindo 
+  select(!TITULO)
+          
+#da variáveil raca_cor
+rais <- 
+  left_join(rais, #primeira tabela
+          dic %>% #segunda tabela
+            filter(nome_coluna == "raca_cor") %>% 
+            select(c("chave", "valor")),
+          by = c("raca_cor" = "chave")) %>% 
+  mutate(raca_cor = valor) %>% #substituindo raca_Cor
+  select(!valor)
+
+#da variável tabela rais com a tabela subclasses
+# e excluindo a coluna cnae_2_subclasse
+rais <- 
+  left_join(
+    rais, #primeira tabela
+    subclasses, #segunda tabela
+    by = c("cnae_2_subclasse" = "subclasse"),
+    keep = T) %>% 
+  select(!cnae_2_subclasse)
+
+```
+
