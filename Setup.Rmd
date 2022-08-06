@@ -7,7 +7,7 @@ date: "2022-08-05"
 
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load("basedosdados", "tidyverse", 
-               "dbplyr", "scales")
+               "dbplyr", "scales", "wesanderson")
 
 
 # aqui você define o seu projeto billing_id
@@ -281,6 +281,8 @@ rais <-
     by = c("cnae_2_subclasse" = "subclasse"),
     keep = T) %>% 
   select(!cnae_2_subclasse)
+
+
 
 ```
 
