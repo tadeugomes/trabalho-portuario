@@ -135,19 +135,20 @@ ordem_esc <- c("Fundamental incompleto", "Fundamental completo",
         "Médio incompleto", "Médio completo", "Superior incompleto",
         "Superior completo", "Pós-graduação", "Não informado")
 
+cores <- c('#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628')
+
+lvls_ano <- c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
+
 rais %>%
   filter(!is.na(grau_instrucao_apos_2005) & subclasse == "5231102") %>%
-  group_by(grau_instrucao_apos_2005, sexo, .groups = 'drop') %>% 
+  group_by(ano, grau_instrucao_apos_2005, sexo) %>% 
   summarise(n = n()) %>% 
-  mutate(grau_instrucao_apos_2005 = factor(grau_instrucao_apos_2005, levels = ordem_esc)) %>%
-  ggplot(aes(x = grau_instrucao_apos_2005, y = n, fill = sexo)) +
-  geom_bar(stat = "identity", 
-          position=position_dodge2(reverse = TRUE), 
-           show.legend = T, color = "black") +
-  labs(title = "Escolaridade dos profissionais que atuam na Operação de Terminais Portuários no Brasil\npor sexo",
-       x = "Grau de instrução", y = "Número de vínculos",
-       caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
-  coord_flip() +
+  mutate(ano = factor(ano, lvls_ano)) %>% 
+  ggplot(aes(x = ano, y = n, group = grau_instrucao_apos_2005, color = grau_instrucao_apos_2005)) +
+   geom_line(size = 1.25) +
+  scale_color_manual(values = cores) +
+  scale_y_log10(labels = label_number(scale_cut = cut_short_scale())) +
+  facet_wrap(~sexo, scales = 'free_x', ncol = 2) +
   theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
         plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
@@ -155,36 +156,37 @@ rais %>%
         axis.title.x = element_text(size = 14L, face = "bold"),
         axis.text.x = element_text(size = 12L, face = "bold"),
         axis.text.y = element_text(size = 12L, face = "bold"),
-        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
-        legend.position="top",
-        legend.title = element_text(face = "bold")
-        )+
-  geom_text(aes(x = grau_instrucao_apos_2005, y = n, label= prettyNum(n, big.mark = ".", decimal.mark = ",")),
-            position = position_dodge2(width = 1, reverse = TRUE),
-            size =4, vjust=.25, hjust = -.1,
-           colour="black") +
-  scale_y_continuous(breaks = seq(0,20000, 5000), limits = c(0, 20000),
-                     labels = number_format(big.mark = ".", decimal.mark = ",")) +
-  scale_fill_manual(values = alpha(c("#32cdc2", "#FFBF47"), 1), name = "Sexo")
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+        legend.position = "top",
+        legend.justification = c("left", "top"),
+        legend.title = element_text(size = 16L, face = "bold")) +
+  labs(x = "Ocupação", y = "Número de vínculos (K = mil)", fill = "Grau de\nInstrução",
+         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") 
+
+
+  
 
 ```
+
+
 
 ```{r g_operacao_remuneracao_escol_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
 rais %>%
   filter(!is.na(grau_instrucao_apos_2005) & valor_remuneracao_media != 0.00  & subclasse == "5231102") %>%
-  group_by(grau_instrucao_apos_2005, sexo, .groups = 'drop') %>% 
+  group_by(ano, grau_instrucao_apos_2005, sexo, .groups = 'drop') %>% 
   summarise(n = n(),
             media = mean(valor_remuneracao_media)) %>% 
-  mutate(grau_instrucao_apos_2005 = factor(grau_instrucao_apos_2005, levels = ordem_esc)) %>%
-  ggplot(aes(x = grau_instrucao_apos_2005, y = media, fill = sexo)) +
-  geom_bar(stat = "identity", 
-          position=position_dodge2(reverse = T), 
-           show.legend = T, color = "black") +
-  labs(title = "Remuneração média dos profissionais que atuam na Operaçãode Terminais Portuários\nno Brasil por grau de escolaridade e sexo",
-       x = "Grau de instrução", y = "Remuneração media",
-       caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
-  coord_flip() +
+   mutate(ano = factor(ano, lvls_ano)) %>% 
+  ggplot(aes(x = ano, y = media, group = grau_instrucao_apos_2005, color = grau_instrucao_apos_2005)) +
+   geom_line(size = 1.25) +
+  scale_color_manual(values = cores) +
+  #scale_y_log10(labels = label_number(scale_cut = cut_short_scale())) +
+  scale_y_continuous(
+    labels = label_number(big.mark = ".", decimal.mark = ",",
+                                            prefix = "R$ ")) +
+  facet_wrap(~sexo, scales = 'free_x', ncol = 2) +
   theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
         plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
@@ -192,19 +194,14 @@ rais %>%
         axis.title.x = element_text(size = 14L, face = "bold"),
         axis.text.x = element_text(size = 12L, face = "bold"),
         axis.text.y = element_text(size = 12L, face = "bold"),
-        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
-        legend.position="top",
-        legend.title = element_text(face = "bold")
-        )+
-  geom_text(aes(x = grau_instrucao_apos_2005, y = media, label= prettyNum(media, big.mark = ".", decimal.mark = ",", digits = 1)),
-            position = position_dodge2(width = 1, reverse = T),
-            size =4, vjust=.25, hjust = -.25,
-           colour="black") +
-  scale_y_continuous(
-    breaks = seq(0,15000, 5000), limits = c(0, 15000),
-    labels = label_number(big.mark = ".", decimal.mark = ",",
-                                            prefix = "R$ ")) +
-  scale_fill_manual(values = alpha(c("#32cdc2", "#FFBF47"), 1), name = "Sexo")
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+        legend.position = "top",
+        legend.justification = c("left", "top"),
+        legend.title = element_text(size = 16L, face = "bold")) +
+  labs(x = "Ano", y = "Remuneração média", fill = "Grau de\nInstrução",
+         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") 
+
 
 ```
 
@@ -215,16 +212,18 @@ rais %>%
 
 rais %>%
   filter(subclasse == "5231102") %>%
-  group_by(raca_cor, sexo, .groups = 'drop') %>% 
+  group_by(ano, raca_cor, sexo,) %>% 
   summarise(n = n()) %>% 
-  ggplot(aes(x = raca_cor, y = n, fill = sexo)) +
-  geom_bar(stat = "identity", 
-          position=position_dodge2(reverse = TRUE), 
-           show.legend = T, color = "black") +
-  labs(title = "Quantidade dos profissionais que atuam na Operação de Terminais Portuários no Brasil\npor raça ou cor e sexo",
-       x = "Raça ou cor", y = "Número de vínculos",
-       caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
-  coord_flip() +
+  mutate(ano = factor(ano, lvls_ano)) %>%
+  ggplot(aes(x =ano, y = n, group = raca_cor, color = raca_cor)) +
+   geom_line(size = 1.25) +
+  scale_color_manual(values = cores) +
+  #scale_y_log10(labels = label_number(scale_cut = cut_short_scale())) +
+  scale_y_continuous(
+    labels = label_number(big.mark = ".", decimal.mark = ",")) +
+    labs(x = "Ano", y = "Número de Vínculos", color = "Raça ou cor",
+         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
+  facet_wrap(~sexo, scales = 'free_x', ncol = 2) +
   theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
         plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
@@ -232,17 +231,11 @@ rais %>%
         axis.title.x = element_text(size = 14L, face = "bold"),
         axis.text.x = element_text(size = 12L, face = "bold"),
         axis.text.y = element_text(size = 12L, face = "bold"),
-        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
-        legend.position="top",
-        legend.title = element_text(face = "bold")
-        )+
-  geom_text(aes(x = raca_cor, y = n, label= prettyNum(n, big.mark = ".", decimal.mark = ",")),
-            position = position_dodge2(width = 1, reverse = TRUE),
-            size =4, vjust=.25, hjust = -.1,
-           colour="black") +
-  scale_y_continuous(breaks = seq(0,20000, 5000), limits = c(0, 20000),
-                     labels = number_format(big.mark = ".", decimal.mark = ",")) +
-  scale_fill_manual(values = alpha(c("#32cdc2", "#FFBF47"), 1), name = "Sexo")
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+        legend.position = "top",
+        legend.justification = c("left", "top"),
+        legend.title = element_text(size = 16L, face = "bold")) 
 
 ```
 
@@ -251,17 +244,18 @@ rais %>%
 
 rais %>%
   filter(valor_remuneracao_media != 0.00  & subclasse == "5231102") %>%
-  group_by(raca_cor, sexo, .groups = 'drop') %>% 
+  group_by(ano, raca_cor, sexo, .groups = 'drop') %>% 
   summarise(n = n(),
-            media = mean(valor_remuneracao_media)) %>% 
-  ggplot(aes(x = raca_cor, y = media, fill = sexo)) +
-  geom_bar(stat = "identity", 
-          position=position_dodge2(reverse = T), 
-           show.legend = T, color = "black") +
-  labs(title = "Remuneração média dos profissionais que atuam na Operação de Terminais Portuários no Brasil\npor grau de escolaridade e raça ou cor",
-       x = "Raça ou cor", y = "Remuneração média",
-       caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
-  coord_flip() +
+            media = mean(valor_remuneracao_media)) %>%
+  mutate(ano = factor(ano, lvls_ano)) %>%
+  ggplot(aes(x = ano, y = media, group = raca_cor, color = raca_cor)) +
+   geom_line(size = 1.25) +
+  scale_color_manual(values = cores) +
+  #scale_y_log10(labels = label_number(scale_cut = cut_short_scale())) +
+  scale_y_continuous(
+    labels = label_number(big.mark = ".", decimal.mark = ",",
+                                            prefix = "R$ ")) +
+  facet_wrap(~sexo, scales = 'free_x', ncol = 2) +
   theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
         plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
@@ -269,19 +263,13 @@ rais %>%
         axis.title.x = element_text(size = 14L, face = "bold"),
         axis.text.x = element_text(size = 12L, face = "bold"),
         axis.text.y = element_text(size = 12L, face = "bold"),
-        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
-        legend.position="top",
-        legend.title = element_text(face = "bold")
-        )+
-  geom_text(aes(x = raca_cor, y = media, label= prettyNum(media, big.mark = ".", decimal.mark = ",", digits = 1)),
-            position = position_dodge2(width = 1, reverse = T),
-            size =4, vjust=.25, hjust = -.25,
-           colour="black") +
-  scale_y_continuous(
-    breaks = seq(0,20000, 5000), limits = c(0, 20000),
-    labels = label_number(big.mark = ".", decimal.mark = ",",
-                                            prefix = "R$ ")) +
-  scale_fill_manual(values = alpha(c("#32cdc2", "#FFBF47"), 1), name = "Raça ou cor")
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+        legend.position = "top",
+        legend.justification = c("left", "top"),
+        legend.title = element_text(size = 16L, face = "bold")) +
+  labs(x = "Ano", y = "Remuneração média", fill = "Grau de\nInstrução",
+         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") 
 
 ```
 
@@ -410,6 +398,13 @@ theme_classic() +
 ## Escolaridade
 
 ```{r g_adm_escol_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+ordem_esc <- c("Fundamental incompleto", "Fundamental completo", 
+        "Médio incompleto", "Médio completo", "Superior incompleto",
+        "Superior completo", "Pós-graduação", "Não informado")
+
+cores <- c('#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628')
+
+lvls_ano <- c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
 
 rais %>%
   filter(!is.na(grau_instrucao_apos_2005) & subclasse == "5231101") %>%
