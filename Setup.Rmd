@@ -7,7 +7,7 @@ date: "2022-08-05"
 
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load("basedosdados", "tidyverse", 
-               "dbplyr", "scales", "kableExtra")
+               "dbplyr", "scales", "kableExtra", "ggrepel")
 
 library(kableExtra)
 # aqui você define o seu projeto billing_id
