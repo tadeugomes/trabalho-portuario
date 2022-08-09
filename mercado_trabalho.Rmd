@@ -56,17 +56,32 @@ rais %>%
 # Seção
 ```{r g_secao,  echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 lvls_ano <- c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
-
-rais %>%
+lb<-
+  rais %>%
   filter(!is.na(secao)) %>% 
   group_by(ano, secao) %>% 
   summarise(n = n()) %>% 
-  mutate(ano = factor(ano, lvls_ano)) %>% 
+  mutate(ano = factor(ano, lvls_ano)) %>%
+  filter(ano == 2020)
+
+g1<-
+  rais %>%
+  filter(!is.na(secao)) %>% 
+  group_by(ano, secao) %>% 
+  summarise(n = n()) %>% 
+  mutate(ano = factor(ano, lvls_ano))
+
+g1 %>% 
 ggplot(aes(x = ano, y = n, group = secao)) +
   geom_line(aes(color = secao), size = 2) +
-  geom_point(aes(color = secao), size = 4) +
+  geom_point(color = "black", size = 4) +
+  ggrepel::geom_text_repel(aes(x = ano, y = n, label = scales::number(n, decimal.mark = ",", big.mark = ".")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
+  ggrepel::geom_text_repel(data = subset(g1, ano == 2020),
+    aes(xend = ano, yend = n, label = secao, color = secao), nudge_x = .25, direction = "y", hjust = "left", size = 8) +
   labs(x = "Ocupação", y = "Número de vínculos",
+       title = "Número de Vínculos do Setor Portuário no País (2010 - 2020)", subtitle = "Seção da CNAE H",
          caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
+  guides(color = "none") +
   theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
         plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
@@ -74,12 +89,11 @@ ggplot(aes(x = ano, y = n, group = secao)) +
         axis.title.x = element_text(size = 14L, face = "bold"),
         axis.text.x = element_text(size = 12L, face = "bold"),
         axis.text.y = element_text(size = 12L, face = "bold"),
-        legend.text = element_text(size = 14L),
-        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
-        legend.position = "top",
-        legend.justification = c("left", "top"),
-        legend.title = element_text(size = 16L, face = "bold")) +
-  scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18))
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1)) 
+        # legend.position = "top",
+        # legend.justification = c("left", "top"),
+        # legend.title = element_text(size = 16L, face = "bold")) +
+  # scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18))
   
 ```
 
@@ -87,15 +101,20 @@ ggplot(aes(x = ano, y = n, group = secao)) +
 # Divisão
 ```{r g_divisao,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.height=14, fig.width=12}
 lvls_ano <- c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
-
+g2 <- 
 rais %>%
   filter(!is.na(n_divisao)) %>% 
   group_by(ano, n_divisao) %>% 
   summarise(n = n()) %>% 
-  mutate(ano = factor(ano, lvls_ano)) %>% 
+  mutate(ano = factor(ano, lvls_ano)) 
+
+g2 %>% 
 ggplot(aes(x = ano, y = n, group = n_divisao)) +
   geom_line(aes(color = n_divisao), size = 2) +
-  geom_point(aes(color = n_divisao), size = 4) +
+  geom_point(color = "black", size = 4) +
+  ggrepel::geom_text_repel(aes(x = ano, y = n, label = scales::number(n, decimal.mark = ",", big.mark = ".")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4, force = 1) +
+  ggrepel::geom_text_repel(data = subset(g2, ano == 2020),
+    aes(xend = ano, yend = n, label = str_wrap(n_divisao, 20), color = n_divisao), nudge_x = 2, nudge_y = -2, direction = "y", hjust = "left", size = 4, segment.curvature = -0.1, segment.ncp = 3, segment.angle = 2, segment.size = 2) +
   labs(x = "Ocupação", y = "Número de vínculos",
          caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
   theme_classic() +
