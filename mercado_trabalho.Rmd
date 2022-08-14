@@ -1,6 +1,6 @@
 ---
-title: "Mercado de Trabalho no Setor Portuário - Maranhão"
-author: "Observatório Portuário do Maranhão"
+title: "Mercado de Trabalho no Setor Portuário brasileiro e maranhense"
+author: "Observatório Portuário"
 output:
   html_document:
     toc: true
@@ -25,6 +25,32 @@ output:
 ```
 
 
+# Introdução 
+
+O setor portuário brasileiro impacta direta e indiretamente os destinos e a economia do país. 
+
+O Observatório Portuário apresenta neste relatório uma síntese da evolução do Trabalho Portuário e Aguaviário no Brasil e no Maranhão. 
+
+Trata-se de um setor abrangente e com atividades diversas como instalações portuárias, embarcações mercantes, de passageiros, pesca, atividades em plataformas marítimas e de repação naval. 
+
+Como se trata de uma ampla gama de atividades, o relatório estará organizado em duas seções com focos direcionados: a primeira com um panorama abarcado pelo Trabalho Portuário e Aguaviário e a segunda com um recorte específico sobre a operação e gestão portuária. 
+
+## Metodologia 
+
+Os dados apresentados neste relatório são originários da Relação Anual de Informações Sociais (RAIS). 
+
+A RAIS é um registro administrativo que as organizações públicas e privadas são obrigadas a enviar ao Ministério da Economia anualmente. Seus dados, assim, abarcam estabelecimentos formais e permitem identificar o estoque de vínculos formais de emprego (estatutários e celetistas). 
+
+Este relatório apresenta os dados em uma perspectiva longitudinal: apresenta os dados de 2010 a 2020. 
+
+O recorte dos dados sobre o trabalho portuário e aguaviário foi realizado a partir da Classificação Nacional de Atividades Econômicas (CNAE). 
+
+A CNAE é a classificação oficialmente adotada pelo Sistema Estatístico Nacional e pelos órgãos federais gestores de registros administrativos e está organizada em ordem decrescente de agregação das informações: Seções, Divisões, Grupos, Classes e Subclasses. 
+
+A partir dessa divisão é possível mapear as atividades com trabalho portuário e aguaviário e, especificamente, de operações e gestão portuária. 
+
+Na tabela estão detalhadas as informações da CNAE utilizadas: 
+
 
 
 ```{r tabela1, echo=FALSE, message=FALSE, warning=FALSE,}
@@ -46,14 +72,15 @@ rais %>%
   kable_paper(full_width = F) %>%
   column_spec(1, bold = T) %>%
   collapse_rows(columns = 1:4, valign = "top") %>% 
-  footnote(general = "Observatório Portuário do Maranhão \nDados: IBGE - CNAE",
+  footnote(general = "Observatório Portuário \nDados: IBGE - CNAE",
            alphabet_title = "Fonte: ",
             footnote_as_chunk = T) %>% 
   scroll_box(width = "100%", height = "400px")
 
 ```
 
-# Seção
+# Panorama do trabalho no setor portuário e aguaviário no Brasil
+
 ```{r g_secao,  echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 lvls_ano <- c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
 lb<-
@@ -76,11 +103,9 @@ ggplot(aes(x = ano, y = n, group = secao)) +
   geom_line(aes(color = secao), size = 2) +
   geom_point(color = "black", size = 4) +
   ggrepel::geom_text_repel(aes(x = ano, y = n, label = scales::number(n, scale = 1/1000, decimal.mark = ",", big.mark = ".", accuracy = 0.01, suffix = " mil")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
-  ggrepel::geom_text_repel(data = . %>% filter(ano == 2020),
-    aes(xend = ano, yend = n, label = secao, color = secao), nudge_x = .25, direction = "y", hjust = "left", size = 8) +
   labs(x = "Ocupação", y = "Número de vínculos (em mil)",
-       title = "Número de Vínculos do Setor Portuário no País (2010 - 2020)", subtitle = "Seção da CNAE H",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
+       title = "Número de Vínculos do Setor Portuário e Aguaviário no País (2010 - 2020)", subtitle = "Seção da CNAE H",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
   guides(color = "none") +
   theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
@@ -115,7 +140,7 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
   ggrepel::geom_text_repel(data = subset(g2, ano == 2020),
     aes(xend = ano, yend = n, label = str_wrap(n_divisao, 20), color = n_divisao), nudge_x = 2, nudge_y = -2, direction = "y", hjust = "left", size = 4, segment.curvature = -0.1, segment.ncp = 3, segment.angle = 2, segment.size = 2) +
   labs(x = "Ocupação", y = "Número de vínculos (em mil)",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
   theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
         plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
@@ -159,13 +184,13 @@ ggplot(aes(x = ano, y = n, group = n_grupo)) +
   ggrepel::geom_text_repel(
     data = . %>% group_by(n_grupo) %>% filter(n == max(n)), aes(x = ano, y = n, label = scales::number(n, decimal.mark = ",", big.mark = ".")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4, force = 1) +
   labs(x = "Ocupação", y = "Número de vínculos",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
   theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
         plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
         axis.title.y = element_text(size = 14L, face = "bold"), 
         axis.title.x = element_text(size = 14L, face = "bold"),
-        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.x = element_text(size = 10L, face = "bold"),
         axis.text.y = element_text(size = 12L, face = "bold"),
         legend.text = element_text(size = 14L),
         panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
@@ -203,17 +228,17 @@ ggplot(aes(x = ano, y = n, group = n_classe)) +
   ggrepel::geom_text_repel(
     data = . %>% group_by(n_grupo) %>% filter(n == max(n)), aes(x = ano, y = n, label = scales::number(n, decimal.mark = ",", big.mark = ".")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4, force = 1) +
   labs(x = "Ocupação", y = "Número de vínculos",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
   theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
         plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
         axis.title.y = element_text(size = 14L, face = "bold"), 
         axis.title.x = element_text(size = 14L, face = "bold"),
-        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.x = element_text(size = 10L, face = "bold"),
         axis.text.y = element_text(size = 12L, face = "bold"),
         legend.text = element_text(size = 14L),
         panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
-        legend.position = "top",
+        legend.position = "none",
         legend.justification = c("left", "top"),
         legend.title = element_text(size = 16L, face = "bold")) +
   scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18)) +
@@ -238,17 +263,17 @@ ggplot(aes(x = ano, y = n, group = n_subclasse)) +
   geom_line(aes(color = n_subclasse), size = 2) +
   geom_point(aes(color = n_subclasse), size = 4) +
   labs(x = "Ocupação", y = "Número de vínculos",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
   theme_classic() +
-  theme(plot.title = element_text(size = 16L, face = "bold"),
+  theme(plot.title = element_text(size = 18L, face = "bold"),
         plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
         axis.title.y = element_text(size = 14L, face = "bold"), 
-        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.title.x = element_text(size = 12L, face = "bold"),
         axis.text.x = element_text(size = 12L, face = "bold"),
         axis.text.y = element_text(size = 12L, face = "bold"),
         legend.text = element_text(size = 14L),
         panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
-        legend.position = "top",
+        legend.position = "none",
         legend.justification = c("left", "top"),
         legend.title = element_text(size = 16L, face = "bold")) +
   scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18)) +
@@ -293,7 +318,7 @@ ggplot(aes(x = sigla_uf, y = n/10^3,
   geom_bar(position = "dodge", stat = "identity") +
   coord_flip() +
   labs(x = "Ocupação", y = "Número de vínculos (em mil)",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
 geom_text(
     data = . %>% 
       filter(sigla_uf %in% c("MA", "SP", "RJ") & (!is.na(n) | n != 0)), 
@@ -307,10 +332,10 @@ geom_text(
       "vínculos de trabalho em todo o país em 2010 e", uf %>% filter(ano == 2020) %>%  select(n) %>% pull() %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),  "vínculos em 2020",
       sep = " ")) +
 theme_classic() +
-  theme(plot.title = element_text(size = 16L, face = "bold"),
+  theme(plot.title = element_text(size = 14L, face = "bold"),
         plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
-        axis.title.y = element_text(size = 14L, face = "bold"), 
-        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.title.y = element_text(size = 12L, face = "bold"), 
+        axis.title.x = element_text(size = 12L, face = "bold"),
         axis.text.x = element_text(size = 12L, face = "bold"),
         axis.text.y = element_text(size = 12L, face = "bold"),
         panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
@@ -358,7 +383,7 @@ rais %>%
         legend.justification = c("left", "top"),
         legend.title = element_text(size = 16L, face = "bold")) +
   labs(x = "Ocupação", y = "Número de vínculos (K = mil)", fill = "Grau de\nInstrução",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") 
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") 
 
 
   
@@ -395,7 +420,7 @@ rais %>%
         legend.justification = c("left", "top"),
         legend.title = element_text(size = 16L, face = "bold")) +
   labs(x = "Ano", y = "Remuneração média", fill = "Grau de\nInstrução",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") 
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") 
 
 
 ```
@@ -415,7 +440,7 @@ rais %>%
   scale_y_continuous(
     labels = label_number(big.mark = ".", decimal.mark = ",")) +
     labs(x = "Ano", y = "Número de Vínculos", color = "Raça ou cor",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
   facet_wrap(~sexo, scales = 'free_x', ncol = 2) +
   theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
@@ -461,7 +486,7 @@ rais %>%
         legend.justification = c("left", "top"),
         legend.title = element_text(size = 16L, face = "bold")) +
   labs(x = "Ano", y = "Remuneração média", fill = "Grau de\nInstrução",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") 
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") 
 
 ```
 
@@ -494,7 +519,7 @@ rais %>%
         legend.justification = c("left", "top"),
         legend.title = element_text(size = 16L, face = "bold")) +
   labs(x = "Ano", y = "Remuneração média", fill = "Grau de\nInstrução",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
     scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18))
 
  
@@ -529,7 +554,7 @@ rais %>%
         legend.justification = c("left", "top"),
         legend.title = element_text(size = 16L, face = "bold")) +
   labs(x = "Ano", y = "Remuneração média", fill = "Grau de\nInstrução",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
     scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18))
 
   
@@ -563,7 +588,7 @@ rais %>%
         legend.justification = c("left", "top"),
         legend.title = element_text(size = 16L, face = "bold")) +
   labs(x = "Ano", y = "Remuneração média", fill = "Grau de\nInstrução",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
     scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18))
 
   
