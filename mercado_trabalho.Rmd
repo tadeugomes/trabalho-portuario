@@ -24,6 +24,7 @@ output:
 #e pequenas operações
 ```
 
+
 # Introdução 
 
 O setor portuário brasileiro impacta direta e indiretamente os destinos e a economia do país. 
@@ -178,7 +179,6 @@ grafico(
   titulo_legenda = "Grupos CNAE"
   )
 print(a)
-
 ```
 
 
@@ -206,6 +206,7 @@ grafico(
   )
 
 print(a)
+
 ```
 
 
@@ -386,11 +387,9 @@ rais %>%
         legend.position = "top",
         legend.justification = c("left", "top"),
         legend.title = element_text(size = 16L, face = "bold")) +
-  labs(x = "Ocupação", y = "Número de vínculos (em mil)", fill = "Grau de\nInstrução",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") 
-  labs(x = "Ocupação", y = "Número de vínculos (K = mil)", fill = "Grau de\nInstrução",
-         caption = "Fonte: Observatório Portuário - Dados da RAIS") 
-
+  labs(x = "Ano", y = "Número de vínculos (em mil)", fill = "Grau de\nInstrução",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS 2020") 
+  
 
 ```
 
@@ -431,11 +430,8 @@ rais %>%
         legend.position = "top",
         legend.justification = c("left", "top"),
         legend.title = element_text(size = 16L, face = "bold")) +
-  labs(x = "Ano", y = "Remuneração média (em mil reais)", fill = "Grau de\nInstrução",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") 
   labs(x = "Ano", y = "Remuneração média", fill = "Grau de\nInstrução",
-         caption = "Fonte: Observatório Portuário - Dados da RAIS") 
-
+         caption = "Fonte: Observatório Portuário - Dados da RAIS 2020") 
 
 ```
 
@@ -461,8 +457,6 @@ rais %>%
   #scale_y_log10(labels = label_number(scale_cut = cut_short_scale())) +
   scale_y_continuous(
     labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
-    labs(x = "Ano", y = "Número de Vínculos (em mil)", color = "Raça ou cor",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
     labs(x = "Ano", y = "Número de Vínculos", color = "Raça ou cor",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
   facet_wrap(~sexo, scales = 'free_x', ncol = 2) +
@@ -641,9 +635,9 @@ rais %>%
         legend.justification = c("left", "top"),
         legend.title = element_text(size = 16L, face = "bold")) +
   labs(x = "Ano", y = "Remuneração média", fill = "Grau de\nInstrução",
-         caption = "Fonte: Observatório Portuário - Dados da RAIS 2020") +
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
     scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18)) +
-  scale_y_continuous(labels = label_number(scale = 1/1000))
+  scale_y_continuous(labels = label_number(scale = 1/1000)) +
     scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18))
 
 ```
