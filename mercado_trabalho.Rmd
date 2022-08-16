@@ -81,6 +81,12 @@ rais %>%
 
 # Panorama do trabalho no setor portuário e aguaviário no Brasil
 
+76.350 vínculos foram registrados no setor portuário e aguaviário no Brasil em 2020, de acordo com os dados da RAIS. 
+
+O número apresenta um decréscimo em relação aos anos anteriores, sobretudo em relação ano de 2018, quando quase 80 mil vínculos foram registrados. 
+
+
+
 ```{r g_secao,  echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 lvls_ano <- c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
 lb<-
@@ -116,9 +122,12 @@ ggplot(aes(x = ano, y = n, group = secao)) +
         axis.text.y = element_text(size = 12L, face = "bold"),
         panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1)) + scale_y_continuous(labels = label_number(scale = 1/1000))
 ```
+Ao analisar os dados por setor, verifica-se redução do número de vínculos no grupo de atividades (divisão, conforme nomenclatura da CNAE) de **Transporte Aguaviário**, conforme se verifica no gráfico, com uma redução de 44,42 mil vínculos em 2013 para 37,91 mil em 2020, com uma redução de 6510 vínculos. 
+
+Por outro lado, nota-se que o grupo de atividades agrupadas como **Armazenamento e Atividades Auxiliares dos Transportes** apresentou um comportamento crescente no período, superando em 2020 o número de vínculos no **Transporte Aguaviário**. 
 
 
-# Divisão
+
 ```{r g_divisao,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.height=14, fig.width=12}
 lvls_ano <- c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
 g2 <- 
@@ -157,7 +166,10 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
 
 
 
-# Grupo
+#### Grupo - fazer um filtro para o MA em cada gráfico, aí a descrição fica encadeada no geral e no local.
+
+Ao analisar os grupos de atividades com maiores vínculos, verifica-se o destaque das atividades de **Armazenamento e Atividades Auxiliares dos Transportes**, bem como o destaque para o número de vínculos em **Navegação de Apoio**, como fica claro nos gráficos a seguir. 
+
 
 ```{r g_grupo, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 g3 <- 
@@ -205,8 +217,6 @@ ggplot(aes(x = ano, y = n, group = n_grupo)) +
 
 
 
-# Classe
-
 ```{r g_classe, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 rais %>%
   group_by(n_grupo, n_classe , ano) %>% 
@@ -249,7 +259,7 @@ ggplot(aes(x = ano, y = n, group = n_classe)) +
 
 
 
-# Subclasse
+##### Subclasse
 
 ```{r g_subclasse, echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.height=16, fig.width=12}
 rais %>%
@@ -282,9 +292,10 @@ ggplot(aes(x = ano, y = n, group = n_subclasse)) +
   
 ```
 
+## Perfil do Trabalhador Portuário e Aguaviário. 
 
 
-# Geral
+
 
 ```{r dados_uf_teste, include=FALSE, results='hide'}
 
@@ -307,7 +318,8 @@ ord_uf <-
 
 ```
 
-O Brasil apresentou `r rais %>% group_by(sigla_uf) %>%      summarise(n = n()) %>% select(n) %>% sum() %>% comma(big.mark = ".", decimal.mark = ",")` vínculos de trabalho para a subclasse **Operações de Terminais**. São Paulo foi o estado com a maior quantidade de vínculos, ao todo foram `r uf %>% filter(n == max(n)) %>% select(n) %>% pull() %>% comma(big.mark = ".", decimal.mark = ",")` vínculos no estado. Rio de Janeiro, segundo estado com a maior quantidade de vículos, possuía cerca de `r uf %>% filter(n == nth(n, 2)) %>% select(n) %>% pull() %>% comma(big.mark = ".", decimal.mark = ",")`. O estado do Maranhão possuía `r uf %>% filter(sigla_uf == "MA") %>% select(n) %>% pull()  %>% comma(big.mark = ".", decimal.mark = ",")` vínculos.
+O Brasil apresentou `r rais %>% group_by(sigla_uf) %>%      summarise(n = n()) %>% select(n) %>% sum() %>% comma(big.mark = ".", decimal.mark = ",")` vínculos de trabalho para a subclasse **Operações de Terminais**. São Paulo foi o estado com a maior quantidade de vínculos, ao todo foram `r uf %>% filter(n == max(n)) %>% select(n) %>% pull() %>% comma(big.mark = ".", decimal.mark = ",")` vínculos no estado. Rio de Janeiro, segundo estado com a maior quantidade de vículos, possuía cerca de `r uf %>% filter(n == nth(n, 2)) %>% select(n) %>% pull() %>% comma(big.mark = ".", decimal.mark = ",")`.
+O estado do Maranhão possuía `r uf %>% filter(sigla_uf == "MA") %>% select(n) %>% pull()  %>% comma(big.mark = ".", decimal.mark = ",")` vínculos.
 
 ```{r g_operacao_uf,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.width=8, fig.height=16}
 uf %>%
@@ -350,7 +362,7 @@ theme_classic() +
        
 ```
 
-## Escolaridade
+## Escolaridade do Trabalhador Portuário e Aguaviário
 
 ```{r g_operacao_escol_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 ordem_esc <- c("Fundamental incompleto", "Fundamental completo", 
@@ -425,7 +437,7 @@ rais %>%
 
 ```
 
-## Raça ou cor
+## Raça ou cor do Trabalhador Portuário e Aguaviário
 
 ```{r g_operacao_raca_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -490,7 +502,7 @@ rais %>%
 
 ```
 
-## Ocupações
+## Ocupações dos Trabalhadores Portuários e Aguaviários
 
 ```{r g_operacao_ocupacao, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 rais %>%
@@ -526,7 +538,7 @@ rais %>%
   
 ```
 
-## Estados
+## Remuneração Média dos Trabalhadores nos Estados
 
 ```{r g_operacao_estado, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 rais %>% 
@@ -560,7 +572,7 @@ rais %>%
   
 ```
 
-## Municípios
+## Remuneração Média dos Trabalhadores nos municípios 
 
 ```{r g_operacao_municipio, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 rais %>% 
