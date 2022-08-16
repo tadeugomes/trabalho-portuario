@@ -318,7 +318,8 @@ ggplot(
     ) +
   geom_point(
       data = dataset %>% filter(ano %in% c(2010, 2020)),
-      color = "black", size = 3
+      color = "black", 
+      size = 5
     ) +
   geom_text_repel(
       data = dataset %>% filter(ano %in% c(2010, 2020)),
@@ -344,7 +345,8 @@ ggplot(
             decimal.mark = ",",
             big.mark = "."
             )
-          )
+          ),
+        size = 6
       ) +
     geom_point(
       data = dataset %>% group_by({{nivel2}}) %>%  filter(n == max(n)),
@@ -357,7 +359,7 @@ ggplot(
   ggtitle(label = {{titulo}}, subtitle = "De 2010 a 2020") +
   scale_colour_discrete(name = str_wrap(paste0({{titulo_legenda}}), 10), labels = label_wrap_gen(width = 18))+
   scale_y_continuous(labels = label_number(scale = 1/1000)) +
-  facet_wrap({{nivel1}}) +
+  facet_wrap(vars({{nivel1}}), ncol = 2, scales = "free_y") +
   theme_classic() +
   theme(
       plot.title = element_text(size = 16L, face = "bold"),

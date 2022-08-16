@@ -178,6 +178,8 @@ grafico(
   titulo = "Quantidade de Vínculos por divisões e grupos da CNAE", 
   titulo_legenda = "Grupos CNAE"
   )
+
+
 print(a)
 ```
 
@@ -233,39 +235,6 @@ grafico(
 print(a)
 
 ```
-
-
-```{r g_subclasse, echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.height=16, fig.width=12}
-rais %>%
-  group_by(n_classe, n_subclasse , ano) %>% 
-  summarise(n = n()) %>% 
-  mutate(n_subclasse = fct_reorder(n_subclasse, n)) %>% 
-  arrange(desc(n)) %>% 
-  filter(!is.na(n_subclasse)) %>% 
-  mutate(ano = factor(ano, lvls_ano)) %>% 
-ggplot(aes(x = ano, y = n, group = n_subclasse)) +
-  geom_line(aes(color = n_subclasse), size = 2) +
-  geom_point(aes(color = n_subclasse), size = 4) +
-  labs(x = "Ocupação", y = "Número de vínculos",
-         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
-  theme_classic() +
-  theme(plot.title = element_text(size = 18L, face = "bold"),
-        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
-        axis.title.y = element_text(size = 14L, face = "bold"), 
-        axis.title.x = element_text(size = 12L, face = "bold"),
-        axis.text.x = element_text(size = 12L, face = "bold"),
-        axis.text.y = element_text(size = 12L, face = "bold"),
-        legend.text = element_text(size = 14L),
-        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
-        legend.position = "none",
-        legend.justification = c("left", "top"),
-        legend.title = element_text(size = 16L, face = "bold")) +
-  scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18)) +
-  facet_wrap(~n_classe) +
-  scale_y_continuous(labels = label_number(scale = 1/1000))
-  
-```
-
 
 
 # Geral
@@ -344,52 +313,66 @@ ordem_esc <- c("Fundamental incompleto", "Fundamental completo",
         "Médio incompleto", "Médio completo", "Superior incompleto",
         "Superior completo", "Pós-graduação", "Não informado")
 
-cores <- c('#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628')
+escolaridade <- 
+manipulacao(
+    dataset = rais, 
+    nivel1 = sexo, 
+    nivel2 = grau_instrucao_apos_2005)
 
+#grafico
+a <- 
+escolaridade %>% 
+grafico(
+  nivel1 = sexo, 
+  nivel2 = grau_instrucao_apos_2005, 
+  titulo = "Quantidade de Vínculos por grau de escolaridade e sexo (em mil)", 
+  titulo_legenda = "Classes da CNAE"
+  )
 
-rais %>%
-  filter(!is.na(grau_instrucao_apos_2005)) %>%
-  group_by(ano, grau_instrucao_apos_2005, sexo) %>% 
-  summarise(n = n()) %>% 
-  mutate(ano = factor(ano, lvls_ano)) %>% 
-  ggplot(aes(x = ano, y = n, group = grau_instrucao_apos_2005, color = grau_instrucao_apos_2005)) +
-   geom_line(size = 1.25) +
-  geom_point(
-    data = . %>% filter(ano %in% c(2010, 2020)),
-      color = "black", size = 3) +
-  geom_point(
-    data = . %>%  
-      group_by(grau_instrucao_apos_2005, sexo) %>% 
-      filter(n == max(n)),
-      color = "red", size = 2) +
-  geom_text_repel(
-  data = . %>% group_by(grau_instrucao_apos_2005) %>% filter(n == max()),
-    aes(label = scales::number(n, scale = 1/1000,  decimal.mark = ",", big.mark = ".", accuracy = .01, suffix = " mil")), 
-  min.segment.length = unit(0.2, "lines"),size = 3, color = "black") +
-  geom_text_repel(
-  data = . %>% 
-    group_by(grau_instrucao_apos_2005) %>% 
-    filter(ano %in% c(2010, 2020)),
-  aes(label = scales::number(n, scale = 1/1000,  decimal.mark = ",", big.mark = ".", accuracy = .01, suffix = " mil")), 
-  min.segment.length = unit(0.2, "lines"), size = 3, color = "black") +
-  scale_color_manual(values = cores) +
-  scale_y_log10(labels = label_number(scale = 1/1000)) +
-  facet_wrap(~sexo, scales = 'free_x', ncol = 2) +
-  theme_classic() +
-  theme(plot.title = element_text(size = 16L, face = "bold"),
-        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
-        axis.title.y = element_text(size = 14L, face = "bold"), 
-        axis.title.x = element_text(size = 14L, face = "bold"),
-        axis.text.x = element_text(size = 12L, face = "bold"),
-        axis.text.y = element_text(size = 12L, face = "bold"),
-        legend.text = element_text(size = 14L),
-        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
-        legend.position = "top",
-        legend.justification = c("left", "top"),
-        legend.title = element_text(size = 16L, face = "bold")) +
-  labs(x = "Ano", y = "Número de vínculos (em mil)", fill = "Grau de\nInstrução",
-         caption = "Fonte: Observatório Portuário - Dados da RAIS 2020") 
-  
+print(a)
+
+  # filter(!is.na(grau_instrucao_apos_2005)) %>%
+  # group_by(ano, grau_instrucao_apos_2005, sexo) %>% 
+  # summarise(n = n()) %>% 
+  # mutate(ano = factor(ano, lvls_ano)) %>% 
+  # ggplot(aes(x = ano, y = n, group = grau_instrucao_apos_2005, color = grau_instrucao_apos_2005)) +
+  #  geom_line(size = 1.25) +
+  # geom_point(
+  #   data = . %>% filter(ano %in% c(2010, 2020)),
+  #     color = "black", size = 3) +
+  # geom_point(
+  #   data = . %>%  
+  #     group_by(grau_instrucao_apos_2005, sexo) %>% 
+  #     filter(n == max(n)),
+  #     color = "red", size = 2) +
+  # geom_text_repel(
+  # data = . %>% group_by(grau_instrucao_apos_2005) %>% filter(n == max()),
+  #   aes(label = scales::number(n, scale = 1/1000,  decimal.mark = ",", big.mark = ".", accuracy = .01, suffix = " mil")), 
+  # min.segment.length = unit(0.2, "lines"),size = 3, color = "black") +
+  # geom_text_repel(
+  # data = . %>% 
+  #   group_by(grau_instrucao_apos_2005) %>% 
+  #   filter(ano %in% c(2010, 2020)),
+  # aes(label = scales::number(n, scale = 1/1000,  decimal.mark = ",", big.mark = ".", accuracy = .01, suffix = " mil")), 
+  # min.segment.length = unit(0.2, "lines"), size = 3, color = "black") +
+  # scale_color_manual(values = cores) +
+  # scale_y_log10(labels = label_number(scale = 1/1000)) +
+  # facet_wrap(~sexo, scales = 'free_x', ncol = 2) +
+  # theme_classic() +
+  # theme(plot.title = element_text(size = 16L, face = "bold"),
+  #       plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+  #       axis.title.y = element_text(size = 14L, face = "bold"), 
+  #       axis.title.x = element_text(size = 14L, face = "bold"),
+  #       axis.text.x = element_text(size = 12L, face = "bold"),
+  #       axis.text.y = element_text(size = 12L, face = "bold"),
+  #       legend.text = element_text(size = 14L),
+  #       panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+  #       legend.position = "top",
+  #       legend.justification = c("left", "top"),
+  #       legend.title = element_text(size = 16L, face = "bold")) +
+  # labs(x = "Ano", y = "Número de vínculos (em mil)", fill = "Grau de\nInstrução",
+  #        caption = "Fonte: Observatório Portuário - Dados da RAIS 2020") 
+  # 
 
 ```
 
@@ -412,7 +395,7 @@ rais %>%
     data = . %>%  group_by(grau_instrucao_apos_2005) %>% filter(n == max(n)),
       aes(x = ano, y = n), 
       color = "red", size = 2) +
-  scale_color_manual(values = cores) +
+#  scale_color_manual(values = cores) +
   #scale_y_log10(labels = label_number(scale_cut = cut_short_scale())) +
   scale_y_continuous(
     labels = label_number(scale = 1/1000, 
@@ -453,7 +436,7 @@ rais %>%
     data = . %>%  group_by(raca_cor) %>% filter(n == max(n)),
       aes(x = ano, y = n), 
       color = "red", size = 2) +
-  scale_color_manual(values = cores) +
+  #scale_color_manual(values = cores) +
   #scale_y_log10(labels = label_number(scale_cut = cut_short_scale())) +
   scale_y_continuous(
     labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
@@ -493,7 +476,7 @@ rais %>%
     data = . %>%  group_by(raca_cor) %>% filter(n == max(n)),
       aes(x = ano, y = n), 
       color = "red", size = 2) +
-  scale_color_manual(values = cores) +
+  #scale_color_manual(values = cores) +
   #scale_y_log10(labels = label_number(scale_cut = cut_short_scale())) +
   scale_y_continuous(
     labels = label_number(scale = 1/1000, big.mark = ".", 
