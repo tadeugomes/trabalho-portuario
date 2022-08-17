@@ -331,7 +331,7 @@ ggplot(
           decimal.mark = ",",
           big.mark = ".")
         ),
-      size = 6
+      size = 4
     ) +
   geom_text_repel(
         data = dataset %>% group_by({{nivel2}}) %>% filter(n == max(n)),
@@ -345,7 +345,7 @@ ggplot(
             big.mark = "."
             )
           ),
-        size = 6
+        size = 4
       ) +
     geom_point(
       data = dataset %>% group_by({{nivel2}}) %>%  filter(n == max(n)),

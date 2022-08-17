@@ -16,9 +16,10 @@ output:
     fig_align: center
     theme: cerulean
     highlight: kate
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
-
-
 
 ```{r lendo, child = "Setup.Rmd"}
 #lendo arquivo Setup.Rmd
@@ -26,34 +27,53 @@ output:
 #e pequenas operações
 ```
 
+# Introdução
 
-# Introdução 
+O setor portuário brasileiro impacta direta e indiretamente os destinos
+e a economia do país.
 
-O setor portuário brasileiro impacta direta e indiretamente os destinos e a economia do país. 
+O Observatório Portuário apresenta neste relatório uma síntese da
+evolução do Trabalho Portuário e Aguaviário no Brasil e no Maranhão.
 
-O Observatório Portuário apresenta neste relatório uma síntese da evolução do Trabalho Portuário e Aguaviário no Brasil e no Maranhão. 
+Trata-se de um setor abrangente e com atividades diversas como
+instalações portuárias, embarcações mercantes, de passageiros, pesca,
+atividades em plataformas marítimas e de repação naval.
 
-Trata-se de um setor abrangente e com atividades diversas como instalações portuárias, embarcações mercantes, de passageiros, pesca, atividades em plataformas marítimas e de repação naval. 
+Como se trata de uma ampla gama de atividades, o relatório estará
+organizado em duas seções com focos direcionados: a primeira com um
+panorama abarcado pelo Trabalho Portuário e Aguaviário e a segunda com
+um recorte específico sobre a operação e gestão portuária.
 
-Como se trata de uma ampla gama de atividades, o relatório estará organizado em duas seções com focos direcionados: a primeira com um panorama abarcado pelo Trabalho Portuário e Aguaviário e a segunda com um recorte específico sobre a operação e gestão portuária. 
+## Metodologia
 
-## Metodologia 
+Os dados apresentados neste relatório são originários da Relação Anual
+de Informações Sociais (RAIS).
 
-Os dados apresentados neste relatório são originários da Relação Anual de Informações Sociais (RAIS). 
+A RAIS é um registro administrativo que as organizações públicas e
+privadas são obrigadas a enviar ao Ministério da Economia anualmente.
+Seus dados, assim, abarcam estabelecimentos formais e permitem
+identificar o estoque de vínculos formais de emprego (estatutários e
+celetistas).
 
-A RAIS é um registro administrativo que as organizações públicas e privadas são obrigadas a enviar ao Ministério da Economia anualmente. Seus dados, assim, abarcam estabelecimentos formais e permitem identificar o estoque de vínculos formais de emprego (estatutários e celetistas). 
+Este relatório apresenta os dados em uma perspectiva longitudinal:
+apresenta os dados de 2010 a 2020.
 
-Este relatório apresenta os dados em uma perspectiva longitudinal: apresenta os dados de 2010 a 2020. 
+O recorte dos dados sobre o trabalho portuário e aguaviário foi
+realizado a partir da Classificação Nacional de Atividades Econômicas
+(CNAE).
 
-O recorte dos dados sobre o trabalho portuário e aguaviário foi realizado a partir da Classificação Nacional de Atividades Econômicas (CNAE). 
+A CNAE é a classificação oficialmente adotada pelo Sistema Estatístico
+Nacional e pelos órgãos federais gestores de registros administrativos e
+está organizada em ordem decrescente de agregação das informações:
+Seções, Divisões, Grupos, Classes e Subclasses.
 
-A CNAE é a classificação oficialmente adotada pelo Sistema Estatístico Nacional e pelos órgãos federais gestores de registros administrativos e está organizada em ordem decrescente de agregação das informações: Seções, Divisões, Grupos, Classes e Subclasses. 
+A partir dessa divisão é possível mapear as atividades com trabalho
+portuário e aguaviário e, especificamente, de operações e gestão
+portuária.
 
-A partir dessa divisão é possível mapear as atividades com trabalho portuário e aguaviário e, especificamente, de operações e gestão portuária. 
+Na tabela estão detalhadas as informações da CNAE utilizadas:
 
-Na tabela estão detalhadas as informações da CNAE utilizadas: 
-
-```{r tabela1, echo=FALSE, message=FALSE, warning=FALSE,}
+```{r tabela1, echo=FALSE, message=FALSE, warning=FALSE}
 library(kableExtra)
 options(knitr.table.format = "html")
 
@@ -81,10 +101,18 @@ rais %>%
 
 # Panorama do trabalho no setor portuário e aguaviário no Brasil
 
-76.350 vínculos foram registrados no setor portuário e aguaviário no Brasil em 2020, de acordo com os dados da RAIS. 
+Foram 76.350 vínculos registrados no setor portuário e aguaviário no
+Brasil em 2020, de acordo com os dados da Relação Anual de Informações
+Sociais (RAIS).
 
-O número apresenta um decréscimo em relação aos anos anteriores, sobretudo em relação ano de 2018, quando quase 80 mil vínculos foram registrados. 
+O número apresenta um decréscimo em relação aos anos anteriores,
+sobretudo em relação ano de 2018, quando quase 80 mil vínculos foram
+registrados. Considerando a tendência de queda do número de vínculos
+identificada a partir de 2014, reitera-se a associação entre desempenho
+das atividades econômicas do país e sua influência no estoque de
+empregos do setor.
 
+<br>
 
 ```{r g_secao,  echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 lvls_ano <- c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
@@ -122,10 +150,20 @@ ggplot(aes(x = ano, y = n, group = secao)) +
         panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1)) + scale_y_continuous(labels = label_number(scale = 1/1000))
 ```
 
-Ao analisar os dados por setor, verifica-se redução do número de vínculos no grupo de atividades (divisão, conforme nomenclatura da CNAE) de **Transporte Aguaviário**, conforme se verifica no gráfico, com uma redução de 44,42 mil vínculos em 2013 para 37,91 mil em 2020, com uma redução de 6510 vínculos. 
+<br>
 
-Por outro lado, nota-se que o grupo de atividades agrupadas como **Armazenamento e Atividades Auxiliares dos Transportes** apresentou um comportamento crescente no período, superando em 2020 o número de vínculos no **Transporte Aguaviário**. 
+Ao analisar os dados por setor de atividade, verifica-se redução do
+número de vínculos no grupo de profissionais atuantes nos (Divisão,
+conforme nomenclatura da CNAE) **Transportes Aguaviários**, conforme se
+verifica no gráfico, com uma redução de 44.420 mil vínculos em 2013 para
+37.910 mil em 2020, com uma redução de 6.510 vínculos.
 
+Por outro lado, nota-se que o grupo de atividades agrupadas como
+**Armazenamento e Atividades Auxiliares dos Transportes** apresentou um
+comportamento crescente no período, superando em 2020 o número de
+vínculos no **Transporte Aguaviário**.
+
+<br>
 
 ```{r g_divisao,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.height=14, fig.width=12}
 
@@ -165,12 +203,42 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
   
 ```
 
+<br>
 
+Ao analisar os grupos de atividades com maiores vínculos, verifica-se o
+destaque das atividades de **Armazenamento e Atividades Auxiliares dos
+Transportes**, que compreende, de acordo com a CNAE, atividades
+relacionadas
 
-#### Grupo - fazer um filtro para o MA em cada gráfico, aí a descrição fica encadeada no geral e no local.
+> [...] com a movimentação e o armazenamento de cargas, antes ou depois
+> de seu transporte, ou entre segmentos de transporte de distintas
+> modalidades, as atividades auxiliares das diversas modalidades de
+> transporte envolvendo a operação da infraestrutura de suporte nas
+> rodovias, ferrovias, aeroportos, portos, pontes túneis, etc. e as
+> atividades de agenciamento de transporte. Esta divisão compreende
+> também as atividades relacionadas à organização do transporte de
+> carga.
 
-Ao analisar os grupos de atividades com maiores vínculos, verifica-se o destaque das atividades de **Armazenamento e Atividades Auxiliares dos Transportes**, bem como o destaque para o número de vínculos em **Navegação de Apoio**, como fica claro nos gráficos a seguir. 
+Destaque também deve ser dado para o número de vínculos em **Navegação
+de Apoio**, que abarca atividades como:
 
+-   o transporte de mercadorias e pessoas para suprimento e apoio a
+    navios e a plataformas de pesquisas e exploração de minerais e
+    hidrocarbonetos;
+
+-   a navegação realizada para apoio logístico a navios e a plataformas
+    de exploração de minerais e hidrocarbonetos transporte;
+
+-   a navegação realizada nos portos e terminais aquaviários, para
+    atendimento a embarcações e instalações portuárias;
+
+-   os serviços de reboque realizado por empresas de apoio marítimo;
+
+-   os serviços de socorro e salvamento realizado por empresas de apoio
+    portuário.
+
+\
+<br>
 
 ```{r g_grupo, echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -196,9 +264,25 @@ grafico(
 print(a)
 ```
 
+<br>
 
+Observa-se que o grupo de **Transporte por Navegação Interior**
+compreende atividades como *o transporte de carga municipal, por rios,
+canais, lagos, lagoas, baias e outras vias de navegação interior, exceto
+travessia* e *o fretamento de embarcações com tripulação*, mas não
+inclui *a operação e gestão de terminais de carga*.
 
-```{r  g_classe, echo=FALSE, message=FALSE, warning=FALSE}
+<br>
+
+Além disso, a queda do número de vínculos em **Transporte Marítimo de
+Cabotagem e Longo Curso** foi bastante acentuada, saindo de quase 9 mil
+vínculos em 2010 para menos de 4 mil em 2020.
+
+<br>
+
+<br>
+
+```{r  g_classe, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
 # manipulação dos dados
 classe <- 
   manipulacao(
@@ -214,17 +298,28 @@ classe %>%
 grafico(
   nivel1 = n_grupo, 
   nivel2 = n_classe, 
-  titulo = "Quantidade de Vínculos por divisões e classes da CNAE", 
+  titulo = "Vínculos profissionais por setor de atuação", 
   titulo_legenda = "Classes da CNAE"
   )
 
 print(a)
 
+
 ```
 
+<br>
 
+Ao detalhar as informações, verifica-se que houve acentuado aumento de
+vínculos no Brasil nas **Operações Portuárias**, saltando de 14.760
+vínculos para XXX, enquanto houve uma redução na **Administração da
+Infra-Estrutura Portuária**, que em 2010 apresentava pouco mais de 5 mil
+vínculos e apresentava apenas 3 mil em 2020.
 
-##### Subclasse
+**Continuar a descrição e melhorar a leitura do gráfico**
+
+<br>
+
+##### 
 
 ```{r funcao2, echo=FALSE, message=FALSE, warning=FALSE, fig.height=14, fig.width=14}
 subclasse <- 
@@ -244,82 +339,19 @@ grafico(
   titulo_legenda = "Classes da CNAE"
   )
 
+
 print(a)
 
 ```
 
-
-## Perfil do Trabalhador Portuário e Aquaviário. 
-
-```{r dados_uf_teste, include=FALSE, results='hide'}
-
-uf <-
-rais %>%
-  group_by(ano, sigla_uf) %>%
-  summarise(n = n()) %>%
-  mutate(sigla_uf = fct_reorder(sigla_uf, n),
-         fill = ifelse(sigla_uf == "MA", "um", "dois")) %>% 
-  arrange(n)
-
-ord_uf <- 
-  uf %>% 
-  filter(ano == 2010) %>% 
-  select(sigla_uf) %>% 
-  pull()
-
-   uf <- uf %>% mutate(sigla_uf = factor(sigla_uf, levels = ord_uf))
-
-
-```
-
-O Brasil apresentou `r rais %>% group_by(sigla_uf) %>%      summarise(n = n()) %>% select(n) %>% sum() %>% comma(big.mark = ".", decimal.mark = ",")` vínculos de trabalho para a subclasse **Operações de Terminais**. São Paulo foi o estado com a maior quantidade de vínculos, ao todo foram `r uf %>% filter(n == max(n)) %>% select(n) %>% pull() %>% comma(big.mark = ".", decimal.mark = ",")` vínculos no estado. Rio de Janeiro, segundo estado com a maior quantidade de vículos, possuía cerca de `r uf %>% filter(n == nth(n, 2)) %>% select(n) %>% pull() %>% comma(big.mark = ".", decimal.mark = ",")`. O estado do Maranhão possuía `r uf %>% filter(sigla_uf == "MA") %>% select(n) %>% pull()  %>% comma(big.mark = ".", decimal.mark = ",")` vínculos.
-
-```{r g_operacao_uf,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.width=8, fig.height=16}
-uf %>%
-  filter(!is.na(sigla_uf)) %>% 
-ggplot(aes(x = sigla_uf, y = n,
-           fill = fill, 
-           size = .05))+
-  geom_bar(position = "dodge", stat = "identity") +
-  coord_flip() +
-  labs(x = "Ocupação", y = "Número de vínculos (em mil)",
-         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
-geom_text(
-  data = . %>% group_by(ano) %>% slice_max(order_by = n, n = 3), 
-    aes(label = scales::number(n, scale = 1/1000,  decimal.mark = ",", big.mark = ".", accuracy = .01, suffix = " mil")), hjust =  -.1, size = 2.5) +
-  geom_text(
-  data = . %>% filter(sigla_uf == "MA"), 
-    aes(label = scales::number(n, scale = 1/1000,  decimal.mark = ",", big.mark = ".", accuracy = .01, suffix = " mil")), hjust =  -.1, size = 2.5) +
-  ggtitle(
-    "Empregados na Operação de Terminais Portuários por estado", 
-    subtitle = str_c(
-      "São",
-      uf %>% filter(ano == 2010) %>%  select(n) %>% pull() %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),
-      "vínculos de trabalho em todo o país em 2010 e", uf %>% filter(ano == 2020) %>%  select(n) %>% pull() %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),  "vínculos em 2020",
-      sep = " ")) +
-theme_classic() +
-  theme(plot.title = element_text(size = 14L, face = "bold"),
-        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
-        axis.title.y = element_text(size = 12L, face = "bold"), 
-        axis.title.x = element_text(size = 12L, face = "bold"),
-        axis.text.x = element_text(size = 12L, face = "bold"),
-        axis.text.y = element_text(size = 12L, face = "bold"),
-        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
-        legend.position = "none")+
-  # geom_text(aes(label= prettyNum(n, big.mark = ".", decimal.mark = ",")), 
-  #           size =4,  
-  #           hjust=-.5, vjust=.5, colour="black") +
-  scale_fill_manual(values = c("lightblue", "#4682B4")) +
-  scale_y_continuous(
-    breaks = seq(0,3*10^4, 10^4), limits = c(0, 3.5*10^4),
-     labels = number_format(scale = 1/1000,
-                                            big.mark = ".", decimal.mark = ",")) +
-  facet_wrap(~ano, ncol = 3) 
-       
-```
-
+# Perfil do Trabalhador Portuário e Aquaviário
 
 ## Escolaridade do Trabalhador Portuário e Aguaviário
+
+Ao analisar o perfil dos trabalhadores por sexo, observa-se que a
+participação masculina é acentuada.
+
+Por outro lado, as mulheres
 
 ```{r g_operacao_escol_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 # ordem_esc <- c("Fundamental incompleto", "Fundamental completo", 
@@ -534,7 +566,7 @@ rais %>%
   
 ```
 
-## Remuneração Média dos Trabalhadores nos municípios 
+## Remuneração Média dos Trabalhadores nos municípios
 
 ```{r g_operacao_municipio, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 rais %>% 
@@ -575,5 +607,92 @@ rais %>%
 
 ```
 
+# Trabalhadores da Gestão e Operação Portuária
+
+```{r dados_uf_teste, include=FALSE, results='hide'}
+
+uf <-
+rais %>%
+  group_by(ano, sigla_uf) %>%
+  summarise(n = n()) %>%
+  mutate(sigla_uf = fct_reorder(sigla_uf, n),
+         fill = ifelse(sigla_uf == "MA", "um", "dois")) %>% 
+  arrange(n)
+
+ord_uf <- 
+  uf %>% 
+  filter(ano == 2010) %>% 
+  select(sigla_uf) %>% 
+  pull()
+
+   uf <- uf %>% mutate(sigla_uf = factor(sigla_uf, levels = ord_uf))
+
+
+```
+
+O Brasil apresentou
+`r rais %>% group_by(sigla_uf) %>%      summarise(n = n()) %>% select(n) %>% sum() %>% comma(big.mark = ".", decimal.mark = ",")`
+vínculos de trabalho para a subclasse **Operações de Terminais**. São
+Paulo foi o estado com a maior quantidade de vínculos, ao todo foram
+`r uf %>% filter(n == max(n)) %>% select(n) %>% pull() %>% comma(big.mark = ".", decimal.mark = ",")`
+vínculos no estado. Rio de Janeiro, segundo estado com a maior
+quantidade de vículos, possuía cerca de
+`r uf %>% filter(n == nth(n, 2)) %>% select(n) %>% pull() %>% comma(big.mark = ".", decimal.mark = ",")`.
+O estado do Maranhão possuía
+`r uf %>% filter(sigla_uf == "MA") %>% select(n) %>% pull()  %>% comma(big.mark = ".", decimal.mark = ",")`
+vínculos.
+
+```{r g_operacao_uf,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.width=8, fig.height=16}
+uf %>%
+  filter(!is.na(sigla_uf)) %>% 
+ggplot(aes(x = sigla_uf, y = n,
+           fill = fill, 
+           size = .05))+
+  geom_bar(position = "dodge", stat = "identity") +
+  coord_flip() +
+  labs(x = "Ocupação", y = "Número de vínculos (em mil)",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+geom_text(
+  data = . %>% group_by(ano) %>% slice_max(order_by = n, n = 3), 
+    aes(label = scales::number(n, scale = 1/1000,  decimal.mark = ",", big.mark = ".", accuracy = .01, suffix = " mil")), hjust =  -.1, size = 2.5) +
+  geom_text(
+  data = . %>% filter(sigla_uf == "MA"), 
+    aes(label = scales::number(n, scale = 1/1000,  decimal.mark = ",", big.mark = ".", accuracy = .01, suffix = " mil")), hjust =  -.1, size = 2.5) +
+  ggtitle(
+    "Empregados na Operação de Terminais Portuários por estado", 
+    subtitle = str_c(
+      "São",
+      uf %>% filter(ano == 2010) %>%  select(n) %>% pull() %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),
+      "vínculos de trabalho em todo o país em 2010 e", uf %>% filter(ano == 2020) %>%  select(n) %>% pull() %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),  "vínculos em 2020",
+      sep = " ")) +
+theme_classic() +
+  theme(plot.title = element_text(size = 14L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 12L, face = "bold"), 
+        axis.title.x = element_text(size = 12L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
+        legend.position = "none")+
+  # geom_text(aes(label= prettyNum(n, big.mark = ".", decimal.mark = ",")), 
+  #           size =4,  
+  #           hjust=-.5, vjust=.5, colour="black") +
+  scale_fill_manual(values = c("lightblue", "#4682B4")) +
+  scale_y_continuous(
+    breaks = seq(0,3*10^4, 10^4), limits = c(0, 3.5*10^4),
+     labels = number_format(scale = 1/1000,
+                                            big.mark = ".", decimal.mark = ",")) +
+  facet_wrap(~ano, ncol = 3) 
+       
+```
+
+```{css}
+body {
+
+  text-align: justify;
+
+}
+
+```
 
 knit2html("mercado_trabalho.Rmd")
