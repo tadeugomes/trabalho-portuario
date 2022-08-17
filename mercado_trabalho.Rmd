@@ -77,7 +77,10 @@ rais %>%
 
 ```
 
-# Panorama do trabalho no setor portuário e aguaviário no Brasil
+
+Ao analisar os dados por setor, verifica-se redução do número de vínculos no grupo de atividades (divisão, conforme nomenclatura da CNAE) de **Transporte Aguaviário**, conforme se verifica no gráfico, com uma redução de 44,42 mil vínculos em 2013 para 37,91 mil em 2020, com uma redução de 6510 vínculos. 
+
+Por outro lado, nota-se que o grupo de atividades agrupadas como **Armazenamento e Atividades Auxiliares dos Transportes** apresentou um comportamento crescente no período, superando em 2020 o número de vínculos no **Transporte Aguaviário**. 
 
 ```{r g_secao,  echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 lvls_ano <- c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
@@ -116,7 +119,12 @@ ggplot(aes(x = ano, y = n, group = secao)) +
 ```
 
 
-## Divisão
+# Panorama do trabalho no setor portuário e aguaviário no Brasil
+
+76.350 vínculos foram registrados no setor portuário e aguaviário no Brasil em 2020, de acordo com os dados da RAIS. 
+
+O número apresenta um decréscimo em relação aos anos anteriores, sobretudo em relação ano de 2018, quando quase 80 mil vínculos foram registrados. 
+
 ```{r g_divisao,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.height=14, fig.width=12}
 
 g2 <- 
@@ -157,7 +165,10 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
 
 
 
-# Grupo
+#### Grupo - fazer um filtro para o MA em cada gráfico, aí a descrição fica encadeada no geral e no local.
+
+Ao analisar os grupos de atividades com maiores vínculos, verifica-se o destaque das atividades de **Armazenamento e Atividades Auxiliares dos Transportes**, bem como o destaque para o número de vínculos em **Navegação de Apoio**, como fica claro nos gráficos a seguir. 
+
 
 ```{r g_grupo, echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -185,8 +196,6 @@ print(a)
 
 
 
-# Classe
-
 ```{r  g_classe, echo=FALSE, message=FALSE, warning=FALSE}
 # manipulação dos dados
 classe <- 
@@ -212,7 +221,8 @@ print(a)
 ```
 
 
-# Subclasse
+
+##### Subclasse
 
 ```{r funcao2, echo=FALSE, message=FALSE, warning=FALSE, fig.height=14, fig.width=14}
 subclasse <- 
@@ -237,7 +247,7 @@ print(a)
 ```
 
 
-# Geral
+## Perfil do Trabalhador Portuário e Aguaviário. 
 
 ```{r dados_uf_teste, include=FALSE, results='hide'}
 
@@ -306,7 +316,8 @@ theme_classic() +
        
 ```
 
-## Escolaridade
+
+## Escolaridade do Trabalhador Portuário e Aguaviário
 
 ```{r g_operacao_escol_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 ordem_esc <- c("Fundamental incompleto", "Fundamental completo", 
@@ -499,7 +510,7 @@ rais %>%
 
 ```
 
-## Ocupações
+## Ocupações dos Trabalhadores Portuários e Aquaviários
 
 ```{r g_operacao_ocupacao, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 rais %>%
@@ -543,7 +554,7 @@ rais %>%
   
 ```
 
-## Estados
+## Remuneração Média dos Trabalhadores nos Estados
 
 ```{r g_operacao_estado, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 rais %>% 
@@ -584,7 +595,7 @@ rais %>%
   
 ```
 
-## Municípios
+## Remuneração Média dos Trabalhadores nos municípios 
 
 ```{r g_operacao_municipio, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 rais %>% 
@@ -624,3 +635,5 @@ rais %>%
     scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18))
 
 ```
+
+
