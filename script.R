@@ -165,3 +165,4 @@ saveRDS(rais_completa, file = "rais_completa.rds")
 readRDS(file = "rais_completa.rds")
 
 View(rais_completa)
+
