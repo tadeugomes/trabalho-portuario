@@ -18,7 +18,9 @@ output:
     highlight: kate
 ---
 
-```{r child = "Setup.Rmd"}
+
+
+```{r lendo, child = "Setup.Rmd"}
 #lendo arquivo Setup.Rmd
 #optei por esta estratégia para plotar apenas os gráficos neste arquivo
 #e pequenas operações
@@ -320,9 +322,9 @@ theme_classic() +
 ## Escolaridade do Trabalhador Portuário e Aguaviário
 
 ```{r g_operacao_escol_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
-ordem_esc <- c("Fundamental incompleto", "Fundamental completo", 
-        "Médio incompleto", "Médio completo", "Superior incompleto",
-        "Superior completo", "Pós-graduação", "Não informado")
+# ordem_esc <- c("Fundamental incompleto", "Fundamental completo", 
+#         "Médio incompleto", "Médio completo", "Superior incompleto",
+#         "Superior completo", "Pós-graduação", "Não informado")
 
 escolaridade <- 
 manipulacao(
@@ -342,90 +344,26 @@ grafico(
 
 print(a)
 
-  # filter(!is.na(grau_instrucao_apos_2005)) %>%
-  # group_by(ano, grau_instrucao_apos_2005, sexo) %>% 
-  # summarise(n = n()) %>% 
-  # mutate(ano = factor(ano, lvls_ano)) %>% 
-  # ggplot(aes(x = ano, y = n, group = grau_instrucao_apos_2005, color = grau_instrucao_apos_2005)) +
-  #  geom_line(size = 1.25) +
-  # geom_point(
-  #   data = . %>% filter(ano %in% c(2010, 2020)),
-  #     color = "black", size = 3) +
-  # geom_point(
-  #   data = . %>%  
-  #     group_by(grau_instrucao_apos_2005, sexo) %>% 
-  #     filter(n == max(n)),
-  #     color = "red", size = 2) +
-  # geom_text_repel(
-  # data = . %>% group_by(grau_instrucao_apos_2005) %>% filter(n == max()),
-  #   aes(label = scales::number(n, scale = 1/1000,  decimal.mark = ",", big.mark = ".", accuracy = .01, suffix = " mil")), 
-  # min.segment.length = unit(0.2, "lines"),size = 3, color = "black") +
-  # geom_text_repel(
-  # data = . %>% 
-  #   group_by(grau_instrucao_apos_2005) %>% 
-  #   filter(ano %in% c(2010, 2020)),
-  # aes(label = scales::number(n, scale = 1/1000,  decimal.mark = ",", big.mark = ".", accuracy = .01, suffix = " mil")), 
-  # min.segment.length = unit(0.2, "lines"), size = 3, color = "black") +
-  # scale_color_manual(values = cores) +
-  # scale_y_log10(labels = label_number(scale = 1/1000)) +
-  # facet_wrap(~sexo, scales = 'free_x', ncol = 2) +
-  # theme_classic() +
-  # theme(plot.title = element_text(size = 16L, face = "bold"),
-  #       plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
-  #       axis.title.y = element_text(size = 14L, face = "bold"), 
-  #       axis.title.x = element_text(size = 14L, face = "bold"),
-  #       axis.text.x = element_text(size = 12L, face = "bold"),
-  #       axis.text.y = element_text(size = 12L, face = "bold"),
-  #       legend.text = element_text(size = 14L),
-  #       panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
-  #       legend.position = "top",
-  #       legend.justification = c("left", "top"),
-  #       legend.title = element_text(size = 16L, face = "bold")) +
-  # labs(x = "Ano", y = "Número de vínculos (em mil)", fill = "Grau de\nInstrução",
-  #        caption = "Fonte: Observatório Portuário - Dados da RAIS 2020") 
-  # 
 
 ```
 
-```{r g_operacao_remuneracao_escol_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+```{r g_remun_escol_sexo, ,cache=FALSE, results='hide', echo=FALSE, message=FALSE, warning=FALSE, error=TRUE}
 
-gg <- 
-rais %>%
-  filter(!is.na(grau_instrucao_apos_2005) & valor_remuneracao_media != 0.00) %>%
-  group_by(ano, grau_instrucao_apos_2005, sexo, .groups = 'drop') %>% 
-  summarise(n = n(),
-            media = mean(valor_remuneracao_media)) %>% 
-   mutate(ano = factor(ano, lvls_ano)) %>% 
-  ggplot(aes(x = ano, y = media, group = grau_instrucao_apos_2005, color = grau_instrucao_apos_2005)) +
-   geom_line(size = 1.25) +
-  geom_point(
-    data = . %>% filter(ano %in% c(2010, 2020)),
-      aes(x = ano, y = n), 
-      color = "black", size = 3) +
-  geom_point(
-    data = . %>%  group_by(grau_instrucao_apos_2005) %>% filter(n == max(n)),
-      aes(x = ano, y = n), 
-      color = "red", size = 2) +
-#  scale_color_manual(values = cores) +
-  #scale_y_log10(labels = label_number(scale_cut = cut_short_scale())) +
-  scale_y_continuous(
-    labels = label_number(scale = 1/1000, 
-                          big.mark = ".", decimal.mark = ",")) +
-  facet_wrap(~sexo, scales = 'free_x', ncol = 2) +
-  theme_classic() +
-  theme(plot.title = element_text(size = 16L, face = "bold"),
-        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
-        axis.title.y = element_text(size = 14L, face = "bold"), 
-        axis.title.x = element_text(size = 14L, face = "bold"),
-        axis.text.x = element_text(size = 12L, face = "bold"),
-        axis.text.y = element_text(size = 12L, face = "bold"),
-        legend.text = element_text(size = 14L),
-        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
-        legend.position = "top",
-        legend.justification = c("left", "top"),
-        legend.title = element_text(size = 16L, face = "bold")) +
-  labs(x = "Ano", y = "Remuneração média", fill = "Grau de\nInstrução",
-         caption = "Fonte: Observatório Portuário - Dados da RAIS 2020") 
+rem_esc_sexo <- 
+  remuneracao_m(
+    dataset = rais,
+    nivel1 = sexo,
+    nivel2 = grau_instrucao_apos_2005)
+
+a <-
+   grafico_remuneracao_m(
+     dataset = rem_esc_sexo,
+     nivel1 = sexo,
+     nivel2 = grau_instrucao_apos_2005,
+     titulo = "Quantidade de Vínculos por grau de escolaridade e sexo (em mil)",
+     titulo_legenda = "Classes da CNAE"
+   )
+
 
 ```
 
@@ -467,6 +405,7 @@ rais %>%
         legend.justification = c("left", "top"),
         legend.title = element_text(size = 16L, face = "bold")) 
 
+print(a)
 ```
 
 ```{r g_operacao_remuneracao_raca_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
@@ -479,7 +418,7 @@ rais %>%
   mutate(ano = factor(ano, lvls_ano)) %>%
   ggplot(aes(x = ano, y = media, group = raca_cor, color = raca_cor)) +
    geom_line(size = 1.25) +
-  geom_point(
+   geom_point(
     data = . %>% filter(ano %in% c(2010, 2020)),
       aes(x = ano, y = n), 
       color = "black", size = 3) +
@@ -637,3 +576,4 @@ rais %>%
 ```
 
 
+knit2html("mercado_trabalho.Rmd")
