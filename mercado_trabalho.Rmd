@@ -609,6 +609,7 @@ rais %>%
 
 # Trabalhadores da Gestão e Operação Portuária
 
+
 ```{r dados_uf_teste, include=FALSE, results='hide'}
 
 uf <-
@@ -695,4 +696,3 @@ body {
 
 ```
 
-knit2html("mercado_trabalho.Rmd")
