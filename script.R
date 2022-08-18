@@ -166,3 +166,27 @@ readRDS(file = "rais_completa.rds")
 
 View(rais_completa)
 
+
+
+
+
+
+rais %>% 
+  count(sexo)
+
+
+rais %>%
+  filter(!is.na(sexo)) %>% 
+  count(sexo)
+  
+rais %>% 
+filter(!is.na(grau_instrucao_apos_2005)) %>% 
+filter(ano==2020) %>% 
+  count(sexo)
+
+
+10582 * 100 / 76317
+
+4710 * 100/ 10582
+
+11630 * 100 / 65735 
