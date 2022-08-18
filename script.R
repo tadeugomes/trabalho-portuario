@@ -190,3 +190,114 @@ filter(ano==2020) %>%
 4710 * 100/ 10582
 
 11630 * 100 / 65735 
+
+
+
+library(tidyverse)
+library(bbplot)
+
+lvls_ano <- c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
+
+
+
+
+rais %>%
+  group_by(ano, raca_cor, sexo,) %>% 
+  summarise(n = n()) %>% 
+  mutate(raca_cor = forcats::fct_reorder(raca_cor, n)) %>% 
+  mutate(ano = factor(ano, lvls_ano)) %>%
+  ggplot(aes(x =ano, y = n, group = raca_cor, color = raca_cor)) +
+  geom_line(size = 2) +
+  geom_point(
+    data = . %>% filter(ano %in% c(2010, 2020)),
+    aes(x = ano, y = n), 
+    color = "black", size = 5,
+    show.legend = F) +
+  geom_point(
+    data = . %>%  group_by(raca_cor, sexo) %>% filter(n == max(n)),
+    aes(x = ano, y = n), 
+    color = "red", size = 5,
+    show.legend = F) +
+  geom_text_repel(
+    data = . %>% filter(ano %in% c(2010, 2020)),
+    aes(
+      label = scales::number(
+        n,
+        scale = 1/10^3,
+        accuracy = 0.01,
+        suffix = " mil",
+        decimal.mark = ",",
+        big.mark = "."),
+    ),
+    size = 5,
+    min.segment.length  =  0.5,
+    box.padding  =  1,
+    force = 8,
+  ) +
+  geom_text_repel(
+    data = . %>% group_by(raca_cor) %>% filter(n == max(n)),
+    aes(x =ano, y = n,
+        label = scales::number(
+          n,
+          scale = 1/10^3,
+          suffix = " mil",
+          accuracy = 0.01,
+          decimal.mark = ",",
+          big.mark = "."
+        )
+    ),
+    size = 5,
+    min.segment.length  =  .5,
+    box.padding  =  1,
+    force =8,
+  ) +
+  scale_y_log10(labels = label_number(scale = 1/10^3,
+                                      suffix = " mil",
+                                      accuracy = 0.1,
+                                      decimal.mark = ",",
+                                      big.mark = ".")) +
+  # scale_y_continuous(
+  #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
+  labs(x = "Ano", y = "Número de Vínculos", color = "Raça ou cor",
+       caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+  facet_wrap(~sexo, scales = 'free_x', ncol = 2) +
+  bbc_style()
+  
+  
+  
+  
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        #tema legenda
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+        legend.position = "top",
+        legend.justification = c("top"),
+        legend.title = element_text(size = 16L, face = "bold"),
+        #legend.background = element_rect(fill = "white", colour = "black"),
+        legend.key.width = unit(1.5, "cm"),
+        legend.key.height = unit(1.5, "cm"),
+        #
+  ) +
+  guides(
+    col = guide_legend(nrow = 1)) +
+  ggthemes::scale_color_gdocs()
+
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+  plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+  axis.title.y = element_text(size = 14L, face = "bold"), 
+  axis.title.x = element_text(size = 14L, face = "bold"),
+  axis.text.x = element_text(size = 12L, face = "bold"),
+  axis.text.y = element_text(size = 12L, face = "bold"),
+  panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1)) + scale_y_continuous(labels = label_number(scale = 1/1000)) +
+  ggthemes::scale_color_gdocs()
+
+
+
+
