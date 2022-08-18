@@ -349,10 +349,10 @@ print(a)
 
 ## Escolaridade do Trabalhador Portuário e Aguaviário
 
-Ao analisar o perfil dos trabalhadores por sexo, observa-se que a
-participação masculina é acentuada.
+Ao analisar o perfil dos trabalhadores por sexo, observa-se que a participação masculina é destacada. Em 2020, do total de 76.317 vínculos, 65.735 eram homens, sendo apenas 10.582 mulheres (13,87%). 
 
-Por outro lado, as mulheres
+Apesar da baixa participação feminina no setor, observa-se que apresentam maior escolaridade: 44,5% têm curso superior, contra 17,7% dos homens com a mesma escolaridade. 
+De forma agregada, observa-se o aumento da escolarização entre 2010 e 2020, apesar do número de profissionais com pós-graduação ainda ser baixo.
 
 ```{r g_operacao_escol_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 # ordem_esc <- c("Fundamental incompleto", "Fundamental completo", 
@@ -402,9 +402,12 @@ a <-
 
 ## Raça ou cor do Trabalhador Portuário e Aguaviário
 
+<<<<<<< HEAD
 Como há uma discrepância da quantidade de vínculos das categorias de **raça ou cor** quando comparadas por **sexo**, optou-se pela **escala logarítmica**  no lugar da escala aritimética (escala habitual nos gráficos) para representar os dados quantidade de vínculos (**eixo y**) , pois a logarítmica permite, no caso do gráfico abaixo, uma visualização das tendências das quantidades de vínculos por cada raça ou cor ao longo dos anos analisados.
 
-```{r g_operacao_raca_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+
+```{r g_operacao_raca_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+
 
 rais %>%
   group_by(ano, raca_cor, sexo,) %>% 
