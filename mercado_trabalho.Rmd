@@ -139,7 +139,7 @@ ggplot(aes(x = ano, y = n, group = secao)) +
        title = "Vínculos do Setor Portuário e Aguaviário no País (2010 - 2020)", subtitle = "",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
   guides(color = "none") +
-  bbc_style()+
+  bbc_style() +
    theme(plot.title = element_text(size = 15L, face = "bold"))
       
 
@@ -408,7 +408,6 @@ a <-
 
 ### Raça ou cor do Trabalhador Portuário e Aguaviário
 
-<<<<<<< HEAD
 Como há uma discrepância da quantidade de vínculos das categorias de **raça ou cor** quando comparadas por **sexo**, optou-se pela **escala logarítmica**  no lugar da escala aritimética (escala habitual nos gráficos) para representar os dados quantidade de vínculos (**eixo y**) , pois a logarítmica permite, no caso do gráfico abaixo, uma visualização das tendências das quantidades de vínculos por cada raça ou cor ao longo dos anos analisados.
 
 
