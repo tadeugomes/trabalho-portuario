@@ -318,16 +318,11 @@ print(a)
 
 <br>
 
-Nota-se ainda, ao analisar o gráfico acima, a queda do número de
-vínculos em **Transporte Marítimo de Cabotagem e Longo Curso**, que foi
-bastante acentuada, saindo de quase 9 mil vínculos em 2010 para menos de
-4 mil em 2020.
-
 Esses dados podem detalhados um pouco mais a partir da análise das
 seções da CNAE, o que permite identificar quais áreas impactaram
 diretamente o estoque de empregos na área portuária e aguaviária.
 
-Pelo gráfico a seguir, alguns sumários do setor podem ser obtidos por
+Pelo gráfico a seguir, alguns destaques do setor podem ser obtidos por
 grupo de atividade:
 
 -   Ao considerar a **Gestão de Portos e Terminais**, o destaque foi
@@ -402,9 +397,10 @@ print(a)
 
 ### Escolaridade do Trabalhador Portuário e aquaviário
 
-Ao analisar o perfil dos trabalhadores por sexo, observa-se que a
-participação masculina é destacada. Em 2020, do total de 76.317
-vínculos, 65.735 eram homens, sendo apenas 10.582 mulheres (13,87%).
+Ao analisar o perfil dos trabalhadores portuários e aguaviários por
+sexo, observa-se que a participação masculina é predominante. Em 2020,
+do total de 76.317 vínculos, 65.735 eram homens, sendo apenas 10.582
+mulheres (13,87%).
 
 Apesar da baixa participação feminina no setor, observa-se que
 apresentam maior escolaridade: 44,5% têm curso superior, contra 17,7%
@@ -423,6 +419,8 @@ manipulacao(
     nivel1 = sexo, 
     nivel2 = grau_instrucao_apos_2005)
 
+
+
 #grafico
 a <- 
 escolaridade %>% 
@@ -437,6 +435,8 @@ print(a)
 
 
 ```
+
+## INSERIR GRAFICO DE REMUNERAÇÃO E ESCOLARIDADE DESDE 2010
 
 ```{r g_remun_escol_sexo, ,cache=FALSE, results='hide', echo=FALSE, message=FALSE, warning=FALSE, error=TRUE}
 
@@ -459,13 +459,23 @@ a <-
 
 ### Raça ou cor do Trabalhador Portuário e aquaviário
 
-Como há uma discrepância da quantidade de vínculos das categorias de
-**raça ou cor** quando comparadas por **sexo**, optou-se pela **escala
-logarítmica** no lugar da escala aritimética (escala habitual nos
-gráficos) para representar os dados quantidade de vínculos (**eixo y**)
-, pois a logarítmica permite, no caso do gráfico abaixo, uma
-visualização das tendências das quantidades de vínculos por cada raça ou
-cor ao longo dos anos analisados.
+O perfil racial dos profissionais pode ser observado no gráfico a
+seguir[^1]. Nota-se o predomínio de pardos e brancos, tanto entre os
+homens como entre as mulheres.
+
+[^1]: Como há uma discrepância da quantidade de vínculos das categorias
+    de **raça ou cor** quando comparadas por **sexo**, optou-se pela
+    **escala logarítmica** no lugar da escala aritimética (escala
+    habitual nos gráficos) para representar os dados quantidade de
+    vínculos (**eixo y**) , pois a logarítmica permite, no caso do
+    gráfico abaixo, uma visualização das tendências das quantidades de
+    vínculos por cada raça ou cor ao longo dos anos analisados.
+
+Destaca-se ainda o alto registro da ausência de identificação racial nos
+dados, o que é pauta para as ações de sensibilização dos profissionais
+de gestão com pessoas e alinhado às ações de Governança Social. O
+correto preenchimento dos dados pode auxiliar políticas de inclusão,
+qualificação e diversidade mais assertivas.
 
 ```{r g_operacao_raca_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -554,6 +564,13 @@ rais %>%
   #bbc_style()
  
 ```
+
+Apesar da destacada participação de pardos, a remuneração média desses
+profissionais em 2020 era inferior a dos brancos. Nota-se que homens e
+mulheres brancos tiveram a renda constante e crescente na série,
+mantendo a assimetria em relação aos pretos e pardos.
+
+<br>
 
 ```{r g_operacao_remuneracao_raca_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
 
@@ -729,6 +746,17 @@ rais %>%
 
 ## Ocupações dos Trabalhadores Portuários e Aquaviários
 
+As ocupações com maior participação no setor estão no gráfico a seguir,
+bem como a remuneração média respectiva.
+
+Verifica-se que os profissionais *Marinheiros de Convés (martítimo e
+fluvial)* representam o maior contingente de profisisionais ao longo do
+período analisado, embora com tendência decrescente e em número inferior
+ao registrado em 2010.
+
+Por usa vez, os Assistentes Administrativos mantiveram uma estabilidade
+no número de vínculos, registrando cerca de 3.500 profissionais em 2020.
+
 ```{r g_operacao_ocupacao, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 rais %>%
   group_by(ano, cbo_2002) %>% 
@@ -750,7 +778,7 @@ rais %>%
   #scale_y_log10(labels = label_number(scale_cut = cut_short_scale())) +
   scale_y_continuous(
     labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",",
-                                            prefix = "R$ ")) +
+                                            prefix = "")) +
   theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
         plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
@@ -763,7 +791,7 @@ rais %>%
         legend.position = "top",
         legend.justification = c("left", "top"),
         legend.title = element_text(size = 16L, face = "bold")) +
-  labs(x = "Ano", y = "Remuneração média", color = "Ocupações",
+  labs(x = "Ano", y = "Número de vínculos", color = " ",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
     scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18)) +
   ggthemes::scale_color_gdocs()
