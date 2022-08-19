@@ -2,7 +2,8 @@
 title: "Mercado de Trabalho no Setor Portuário brasileiro e maranhense"
 author: "Observatório Portuário"
 output:
-  html_document:
+  html_document:  
+    css: custom.css
     toc: yes
     number_sections: yes
     toc_float: yes
@@ -24,11 +25,13 @@ editor_options:
     wrap: 72
 ---
 
+```{=html}
 <style>
 body {
-text-align: justify}
+text-align: justify; 
+font-size: 12px}
 </style>
-
+```
 ```{r lendo, child = "Setup.Rmd"}
 #lendo arquivo Setup.Rmd
 #optei por esta estratégia para plotar apenas os gráficos neste arquivo
@@ -203,7 +206,7 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
     ) + #labels apresentados
   bbc_style() +
    labs(title = "Vínculos do Setor Portuário e Aquaviário (2010 - 2020) ",
-        subtitle = "por grupo da CNAE",
+        subtitle = "Grupos com maior participação",
          caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
 
   scale_y_continuous(labels = label_number(scale = 1/1000)) +
@@ -221,10 +224,14 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
 
 <br>
 
-Ao analisar os grupos de atividades com maiores vínculos, verifica-se o
-destaque das atividades de **Armazenamento e Atividades Auxiliares dos
-Transportes**, que compreende, de acordo com a CNAE, atividades
-relacionadas
+Ao analisar os grupos de atividades com maior participação no número de
+vínculos empregatícios, verifica-se o destaque das atividades de
+**Armazenamento e Atividades Auxiliares dos Transportes** e também do
+**Transporte Aguaviário**.
+
+O **Armazenamento e Atividades Auxiliares dos Transportes** compreende,
+de acordo com a Classificação Nacional de Atividades Econômicas-CNAE,
+atividades relacionadas
 
 > [...] com a movimentação e o armazenamento de cargas, antes ou depois
 > de seu transporte, ou entre segmentos de transporte de distintas
@@ -235,8 +242,18 @@ relacionadas
 > também as atividades relacionadas à organização do transporte de
 > carga.
 
-Destaque também deve ser dado para o número de vínculos em **Navegação
-de Apoio**, que abarca atividades como:
+Destaque também deve ser dado para o número de vínculos "Transporte
+Aguaviário\*\*, cujas atividades são as relacionadas aos transporte de
+pessoas e mercadorias, além das embarcações turísticas e o fretamento de
+embarcações com tripulação. Nela também estão as operações e embarcações
+para apoio marítimo e portuário.
+
+No gráfico a seguir estão detalhados os vínculos e atividades
+contemplados no Transporte Aguaviário.
+
+Com o recorte, verifica-se que as atividades de **Navegação de Apoio**
+apresentam o maior número de vínculo, registrando o maior número de
+vínculos em 2014 (quase 19.600). A categoria abarca atividades como:
 
 -   o transporte de mercadorias e pessoas para suprimento e apoio a
     navios e a plataformas de pesquisas e exploração de minerais e
@@ -252,6 +269,14 @@ de Apoio**, que abarca atividades como:
 
 -   os serviços de socorro e salvamento realizado por empresas de apoio
     portuário.
+
+Observa-se que o grupo de **Transporte por Navegação Interior**, segundo
+maior grupo em número de vínculos no **Transporte Aguaviário**,
+finalizou 2020 com quase 11.500 vínculos. São atividades como *o
+transporte de carga municipal, por rios, canais, lagos, lagoas, baias e
+outras vias de navegação interior, exceto travessia* e *o fretamento de
+embarcações com tripulação*, mas não inclui *a operação e gestão de
+terminais de carga*.
 
 \
 <br>
@@ -291,21 +316,36 @@ print(a)
 
 <br>
 
-Observa-se que o grupo de **Transporte por Navegação Interior**
-compreende atividades como *o transporte de carga municipal, por rios,
-canais, lagos, lagoas, baias e outras vias de navegação interior, exceto
-travessia* e *o fretamento de embarcações com tripulação*, mas não
-inclui *a operação e gestão de terminais de carga*.
-
 <br>
 
-Além disso, a queda do número de vínculos em **Transporte Marítimo de
-Cabotagem e Longo Curso** foi bastante acentuada, saindo de quase 9 mil
-vínculos em 2010 para menos de 4 mil em 2020.
+Nota-se ainda, ao analisar o gráfico acima, a queda do número de
+vínculos em **Transporte Marítimo de Cabotagem e Longo Curso**, que foi
+bastante acentuada, saindo de quase 9 mil vínculos em 2010 para menos de
+4 mil em 2020.
 
-<br>
+Esses dados podem detalhados um pouco mais a partir da análise das
+seções da CNAE, o que permite identificar quais áreas impactaram
+diretamente o estoque de empregos na área portuária e aguaviária.
 
-<br>
+Pelo gráfico a seguir, alguns sumários do setor podem ser obtidos por
+grupo de atividade:
+
+-   Ao considerar a **Gestão de Portos e Terminais**, o destaque foi
+    para as *Operações de Terminais*, que apresentou número crescente de
+    vínculos entre 2010 e 2020, registrando 35.360 vínculos. Por outro
+    lado, as atividades de Administração da Infra-estrutura Portuária
+    tiveram um declínio de quase 100%, considerando o ano de 2011 (maior
+    número de vínculos);
+
+-   O **Transporte Marítico de Carga poor Cabotagem**, por sua vez, teve
+    uma redução drástica de vínculos: saiu de 8.290 em 2010 para 3.320
+    em 2020.
+
+-   O **Transporte por Navegação Interior de Carga**, por outro lado,
+    apresentou leve aumento: passou de 7.520 para 8.380 vínculos.
+
+-   A **Navegação de Apoio Marítimo**, por sua vez, duplicou o número de
+    vínculos e chegou a 15.370 profissionais na área.
 
 ```{r  g_classe, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
 # manipulação dos dados
@@ -331,20 +371,6 @@ print(a)
 
 
 ```
-
-<br>
-
-Ao detalhar as informações, verifica-se que houve acentuado aumento de
-vínculos no Brasil nas **Operações Portuárias**, saltando de 14.760
-vínculos para XXX, enquanto houve uma redução na **Administração da
-Infra-Estrutura Portuária**, que em 2010 apresentava pouco mais de 5 mil
-vínculos e apresentava apenas 3 mil em 2020.
-
-**Continuar a descrição e melhorar a leitura do gráfico**
-
-<br>
-
-##### 
 
 ```{r funcao2, echo=FALSE, message=FALSE, warning=FALSE, fig.height=14, fig.width=14}
 subclasse <- 
@@ -376,10 +402,15 @@ print(a)
 
 ### Escolaridade do Trabalhador Portuário e aquaviário
 
-Ao analisar o perfil dos trabalhadores por sexo, observa-se que a participação masculina é destacada. Em 2020, do total de 76.317 vínculos, 65.735 eram homens, sendo apenas 10.582 mulheres (13,87%). 
+Ao analisar o perfil dos trabalhadores por sexo, observa-se que a
+participação masculina é destacada. Em 2020, do total de 76.317
+vínculos, 65.735 eram homens, sendo apenas 10.582 mulheres (13,87%).
 
-Apesar da baixa participação feminina no setor, observa-se que apresentam maior escolaridade: 44,5% têm curso superior, contra 17,7% dos homens com a mesma escolaridade. 
-De forma agregada, observa-se o aumento da escolarização entre 2010 e 2020, apesar do número de profissionais com pós-graduação ainda ser baixo.
+Apesar da baixa participação feminina no setor, observa-se que
+apresentam maior escolaridade: 44,5% têm curso superior, contra 17,7%
+dos homens com a mesma escolaridade. De forma agregada, observa-se o
+aumento da escolarização entre 2010 e 2020, apesar do número de
+profissionais com pós-graduação ainda ser baixo.
 
 ```{r g_operacao_escol_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 # ordem_esc <- c("Fundamental incompleto", "Fundamental completo", 
@@ -428,10 +459,13 @@ a <-
 
 ### Raça ou cor do Trabalhador Portuário e aquaviário
 
-Como há uma discrepância da quantidade de vínculos das categorias de **raça ou cor** quando comparadas por **sexo**, optou-se pela **escala logarítmica**  no lugar da escala aritimética (escala habitual nos gráficos) para representar os dados quantidade de vínculos (**eixo y**) , pois a logarítmica permite, no caso do gráfico abaixo, uma visualização das tendências das quantidades de vínculos por cada raça ou cor ao longo dos anos analisados.
-
-
-
+Como há uma discrepância da quantidade de vínculos das categorias de
+**raça ou cor** quando comparadas por **sexo**, optou-se pela **escala
+logarítmica** no lugar da escala aritimética (escala habitual nos
+gráficos) para representar os dados quantidade de vínculos (**eixo y**)
+, pois a logarítmica permite, no caso do gráfico abaixo, uma
+visualização das tendências das quantidades de vínculos por cada raça ou
+cor ao longo dos anos analisados.
 
 ```{r g_operacao_raca_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -606,7 +640,6 @@ rais %>%
     col = guide_legend(nrow = 1)) +
   ggthemes::scale_color_gdocs()
 ```
-
 
 ```{r g_operacao_remuneracao _mediana_raca_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -825,7 +858,6 @@ rais %>%
 
 # Trabalhadores da Gestão e Operação Portuária
 
-
 ```{r dados_uf_teste, include=FALSE, results='hide'}
 
 uf <-
@@ -914,7 +946,6 @@ g1<-
   mutate(ano = factor(ano, lvls_ano))
 ```
 
-
 ```{r g_secao_ma,  echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 lvls_ano <- c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
 
@@ -978,9 +1009,3 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
   scale_y_continuous(labels = label_number(scale = 1/1000))
   
 ```
-
-
-
-
-
-
