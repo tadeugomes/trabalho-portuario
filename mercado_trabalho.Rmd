@@ -928,16 +928,19 @@ ggplot(aes(x = ano, y = n, group = secao)) +
   labs(x = "Ocupação", y = "Número de vínculos (em mil)",
        title = "Número de Vínculos do Setor Portuário e aquaviário no Maranhão (2010 - 2020)", subtitle = "Seção da CNAE H",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
-  guides(color = "none") +
-  theme_classic() +
-  theme(plot.title = element_text(size = 16L, face = "bold"),
-        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
-        axis.title.y = element_text(size = 14L, face = "bold"), 
-        axis.title.x = element_text(size = 14L, face = "bold"),
-        axis.text.x = element_text(size = 12L, face = "bold"),
-        axis.text.y = element_text(size = 12L, face = "bold"),
-        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1)) + scale_y_continuous(labels = label_number(scale = 1/1000)) +
-  ggthemes::scale_color_gdocs()
+    bbc_style() +
+  labs(
+       title = "Vínculos do Setor Portuário e Aquaviário no País (2010 - 2020)", 
+       subtitle = "em milhares",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+    ggthemes::scale_color_gdocs() +
+  scale_y_continuous(labels = label_number(scale = 1/1000)) +
+  theme(legend.position = "none",
+        panel.grid.major.y = element_blank(),
+        axis.text.y = element_blank(),
+        panel.grid.major.x = element_line(
+          color = "gray90",
+          linetype = "solid"))
 ```
 
 ```{r g_divisao_ma,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.height=14, fig.width=12}
@@ -957,25 +960,32 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
     data = . %>% group_by(n_divisao) %>% filter(n == max(n)), 
     aes(x = ano, y = n), 
     size = 3, color = "red") +
-  geom_text_repel(aes(x = ano, y = n, label = scales::number(n, scale = 1/1000, decimal.mark = ",", big.mark = ".", accuracy = 0.01, suffix = " mil")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
-  geom_text_repel(data = subset(g2, ano == 2020),
-    aes(xend = ano, yend = n, label = str_wrap(n_divisao, 20), color = n_divisao), nudge_x = 2, nudge_y = -2, direction = "y", hjust = "left", size = 4, segment.curvature = -0.1, segment.ncp = 3, segment.angle = 2, segment.size = 2) +
-  labs(x = "Ano", y = "Número de vínculos (em mil)",
+ geom_text_repel(aes(x = ano, y = n, label = scales::number(n, scale = 1/1000, decimal.mark = ",", big.mark = ".", accuracy = 0.01, suffix = " mil")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
+  geom_label_repel(
+    data = . %>% filter(ano == 2020),
+    aes(x = ano, y = n,
+        label = str_wrap(n_divisao, 22), 
+        color = n_divisao), 
+    label.size = NA, 
+    family="Helvetica",
+    direction = "y",
+    hjust = -.01,
+    face = "bold"
+    ) + #labels apresentados
+  bbc_style() +
+   labs(title = "Vínculos do Setor Portuário e Aquaviário (2010 - 2020) ",
+        subtitle = "por grupo da CNAE",
          caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
-  labs(x = "Ocupação", y = "Número de vínculos (em mil)",
-         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
-  theme_classic() +
-  theme(plot.title = element_text(size = 16L, face = "bold"),
-        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
-        axis.title.y = element_text(size = 14L, face = "bold"), 
-        axis.title.x = element_text(size = 14L, face = "bold"),
-        axis.text.x = element_text(size = 12L, face = "bold"),
-        axis.text.y = element_text(size = 12L, face = "bold"),
-        legend.position = "none",
-        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1)) +
-  scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18)) +
+
+  scale_y_continuous(labels = label_number(scale = 1/1000)) +
   ggthemes::scale_color_gdocs() +
-  scale_y_continuous(labels = label_number(scale = 1/1000))
+  scale_x_discrete(expand = expansion(mult = c(.1, .3))) +
+  theme(legend.position = "none",
+        panel.grid.major.y = element_blank(),
+        axis.text.y = element_blank(),
+        panel.grid.major.x = element_line(
+          color = "gray90",
+          linetype = "solid"))
   
 ```
 
