@@ -3,21 +3,24 @@ title: "Mercado de Trabalho no Setor Portuário brasileiro e maranhense"
 author: "Observatório Portuário"
 output:
   html_document:
-    toc: true
-    number_sections: true
-    toc_float: true
-    collapsed: true
-    smooth_scroll: true
+    toc: yes
+    number_sections: yes
+    toc_float: yes
+    collapsed: yes
+    smooth_scroll: yes
     toc_depth: 2
     keep_tex: yes
     fig_width: 14
     fig_height: 10
-    fig_caption: true
+    fig_caption: yes
     fig_align: center
     theme: cerulean
     highlight: kate
-editor_options: 
-  markdown: 
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
+editor_options:
+  markdown:
     wrap: 72
 ---
 
@@ -38,7 +41,7 @@ O setor portuário brasileiro impacta direta e indiretamente os destinos
 e a economia do país.
 
 O Observatório Portuário apresenta neste relatório uma síntese da
-evolução do Trabalho Portuário e Aguaviário no Brasil e no Maranhão.
+evolução do Trabalho Portuário e aquaviário no Brasil e no Maranhão.
 
 Trata-se de um setor abrangente e com atividades diversas como
 instalações portuárias, embarcações mercantes, de passageiros, pesca,
@@ -46,7 +49,7 @@ atividades em plataformas marítimas e de repação naval.
 
 Como se trata de uma ampla gama de atividades, o relatório estará
 organizado em duas seções com focos direcionados: a primeira com um
-panorama abarcado pelo Trabalho Portuário e Aguaviário e a segunda com
+panorama abarcado pelo Trabalho Portuário e aquaviário e a segunda com
 um recorte específico sobre a operação e gestão portuária.
 
 ## Metodologia
@@ -63,7 +66,7 @@ celetistas).
 Este relatório apresenta os dados em uma perspectiva longitudinal:
 apresenta os dados de 2010 a 2020.
 
-O recorte dos dados sobre o trabalho portuário e aguaviário foi
+O recorte dos dados sobre o trabalho portuário e aquaviário foi
 realizado a partir da Classificação Nacional de Atividades Econômicas
 (CNAE).
 
@@ -73,7 +76,7 @@ está organizada em ordem decrescente de agregação das informações:
 Seções, Divisões, Grupos, Classes e Subclasses.
 
 A partir dessa divisão é possível mapear as atividades com trabalho
-portuário e aguaviário e, especificamente, de operações e gestão
+portuário e aquaviário e, especificamente, de operações e gestão
 portuária.
 
 Na tabela estão detalhadas as informações da CNAE utilizadas:
@@ -99,14 +102,14 @@ rais %>%
   collapse_rows(columns = 1:4, valign = "top") %>% 
   footnote(general = "Observatório Portuário \nDados: IBGE - CNAE",
            alphabet_title = "Fonte: ",
-            footnote_as_chunk = T) %>% 
-  scroll_box(width = "100%", height = "400px")
+            footnote_as_chunk = T) #%>% 
+  #scroll_box(width = "100%", height = "400px")
 
 ```
 
 # Panorama do trabalho no setor portuário e aquaviário no Brasil
 
-Foram 76.350 vínculos registrados no setor portuário e aguaviário no
+Foram 76.350 vínculos registrados no setor portuário e aquaviário no
 Brasil em 2020, de acordo com os dados da Relação Anual de Informações
 Sociais (RAIS).
 
@@ -135,12 +138,21 @@ ggplot(aes(x = ano, y = n, group = secao)) +
   geom_line(aes(color = secao), size = 2) +
   geom_point(color = "black", size = 4) +
   ggrepel::geom_text_repel(aes(x = ano, y = n, label = scales::number(n, scale = 1/1000, decimal.mark = ",", big.mark = ".", accuracy = 0.01, suffix = " mil")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
-  labs(x = "Ocupação", y = "Número de vínculos (em mil)",
-       title = "Vínculos do Setor Portuário e Aguaviário no País (2010 - 2020)", subtitle = "",
-         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
-  guides(color = "none") +
   bbc_style() +
-   theme(plot.title = element_text(size = 15L, face = "bold"))
+  labs(
+       title = "Vínculos do Setor Portuário e Aquaviário no País (2010 - 2020)", 
+       subtitle = "em milhares",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+    ggthemes::scale_color_gdocs() +
+  scale_y_continuous(labels = label_number(scale = 1/1000)) +
+  theme(legend.position = "none",
+        panel.grid.major.y = element_blank(),
+        axis.text.y = element_blank(),
+        panel.grid.major.x = element_line(
+          color = "gray90",
+          linetype = "solid"))
+
+
       
 
 ```
@@ -149,18 +161,18 @@ ggplot(aes(x = ano, y = n, group = secao)) +
 
 Ao analisar os dados por setor de atividade, verifica-se redução do
 número de vínculos no grupo de profissionais atuantes nos (Divisão,
-conforme nomenclatura da CNAE) **Transportes Aguaviários**, conforme se
+conforme nomenclatura da CNAE) **Transportes aquaviários**, conforme se
 verifica no gráfico, com uma redução de 44.420 mil vínculos em 2013 para
 37.910 mil em 2020, com uma redução de 6.510 vínculos.
 
 Por outro lado, nota-se que o grupo de atividades agrupadas como
 **Armazenamento e Atividades Auxiliares dos Transportes** apresentou um
 comportamento crescente no período, superando em 2020 o número de
-vínculos no **Transporte Aguaviário**.
+vínculos no **Transporte aquaviário**.
 
 <br>
 
-```{r g_divisao,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.height=14, fig.width=12}
+```{r g_divisao,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.height=10, fig.width=12}
 
 g2 <- 
 rais %>%
@@ -178,24 +190,32 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
     aes(x = ano, y = n), 
     size = 3, color = "red") +
   geom_text_repel(aes(x = ano, y = n, label = scales::number(n, scale = 1/1000, decimal.mark = ",", big.mark = ".", accuracy = 0.01, suffix = " mil")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
-  geom_text_repel(data = subset(g2, ano == 2020),
-    aes(xend = ano, yend = n, label = str_wrap(n_divisao, 20), color = n_divisao), nudge_x = 2, nudge_y = -2, direction = "y", hjust = "left", size = 4, segment.curvature = -0.1, segment.ncp = 3, segment.angle = 2, segment.size = 2) +
-  labs(x = "Ano", y = "Número de vínculos (em mil)",
+  geom_label_repel(
+    data = . %>% filter(ano == 2020),
+    aes(x = ano, y = n,
+        label = str_wrap(n_divisao, 22), 
+        color = n_divisao), 
+    label.size = NA, 
+    family="Helvetica",
+    direction = "y",
+    hjust = -.01,
+    face = "bold"
+    ) + #labels apresentados
+  bbc_style() +
+   labs(title = "Vínculos do Setor Portuário e Aquaviário (2010 - 2020) ",
+        subtitle = "por grupo da CNAE",
          caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
-  labs(x = "Ocupação", y = "Número de vínculos (em mil)",
-         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
-  theme_classic() +
-  theme(plot.title = element_text(size = 20L, face = "bold"),
-        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
-        axis.title.y = element_text(size = 14L, face = "bold"), 
-        axis.title.x = element_text(size = 14L, face = "bold"),
-        axis.text.x = element_text(size = 12L, face = "bold"),
-        axis.text.y = element_text(size = 12L, face = "bold"),
-        legend.position = "none",
-        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1)) +
-  scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18)) +
+
   scale_y_continuous(labels = label_number(scale = 1/1000)) +
-  ggthemes::scale_color_gdocs()
+  ggthemes::scale_color_gdocs() +
+  scale_x_discrete(expand = expansion(mult = c(.1, .3))) +
+  theme(legend.position = "none",
+        panel.grid.major.y = element_blank(),
+        axis.text.y = element_blank(),
+        panel.grid.major.x = element_line(
+          color = "gray90",
+          linetype = "solid"))
+
   
 ```
 
@@ -354,7 +374,7 @@ print(a)
 
 # Perfil do Trabalhador Portuário e Aquaviário
 
-### Escolaridade do Trabalhador Portuário e Aguaviário
+### Escolaridade do Trabalhador Portuário e aquaviário
 
 Ao analisar o perfil dos trabalhadores por sexo, observa-se que a participação masculina é destacada. Em 2020, do total de 76.317 vínculos, 65.735 eram homens, sendo apenas 10.582 mulheres (13,87%). 
 
@@ -406,7 +426,7 @@ a <-
 
 ```
 
-### Raça ou cor do Trabalhador Portuário e Aguaviário
+### Raça ou cor do Trabalhador Portuário e aquaviário
 
 Como há uma discrepância da quantidade de vínculos das categorias de **raça ou cor** quando comparadas por **sexo**, optou-se pela **escala logarítmica**  no lugar da escala aritimética (escala habitual nos gráficos) para representar os dados quantidade de vínculos (**eixo y**) , pois a logarítmica permite, no caso do gráfico abaixo, uma visualização das tendências das quantidades de vínculos por cada raça ou cor ao longo dos anos analisados.
 
@@ -475,7 +495,7 @@ rais %>%
   #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
     labs(x = "Ano", y = "Número de Vínculos", color = "Raça ou cor",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
-  facet_wrap(~sexo, scales = 'free_x', ncol = 2)+
+  facet_wrap(~sexo,ncol = 2)+
   theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
         plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
@@ -563,7 +583,7 @@ rais %>%
   #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
     labs(x = "Ano", y = "Remuneração média (R$)", color = "Raça ou cor",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
-  facet_wrap(~sexo, scales = 'free_x', ncol = 2) +
+  facet_wrap(~sexo, ncol = 2) +
   theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
         plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
@@ -650,7 +670,7 @@ rais %>%
   #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
     labs(x = "Ano", y = "Remuneração mediana (R$)", color = "Raça ou cor",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
-  facet_wrap(~sexo, scales = 'free_x', ncol = 2) +
+  facet_wrap(~sexo, ncol = 2) +
   theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
         plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
@@ -906,7 +926,7 @@ ggplot(aes(x = ano, y = n, group = secao)) +
   geom_point(color = "black", size = 4) +
   ggrepel::geom_text_repel(aes(x = ano, y = n, label = scales::number(n, scale = 1/1000, decimal.mark = ",", big.mark = ".", accuracy = 0.01, suffix = " mil")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
   labs(x = "Ocupação", y = "Número de vínculos (em mil)",
-       title = "Número de Vínculos do Setor Portuário e Aguaviário no Maranhão (2010 - 2020)", subtitle = "Seção da CNAE H",
+       title = "Número de Vínculos do Setor Portuário e aquaviário no Maranhão (2010 - 2020)", subtitle = "Seção da CNAE H",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
   guides(color = "none") +
   theme_classic() +
