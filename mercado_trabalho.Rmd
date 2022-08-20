@@ -55,61 +55,6 @@ organizado em duas seções com focos direcionados: a primeira com um
 panorama abarcado pelo Trabalho Portuário e aquaviário e a segunda com
 um recorte específico sobre a operação e gestão portuária.
 
-## Metodologia
-
-Os dados apresentados neste relatório são originários da Relação Anual
-de Informações Sociais (RAIS).
-
-A RAIS é um registro administrativo que as organizações públicas e
-privadas são obrigadas a enviar ao Ministério da Economia anualmente.
-Seus dados, assim, abarcam estabelecimentos formais e permitem
-identificar o estoque de vínculos formais de emprego (estatutários e
-celetistas).
-
-Este relatório apresenta os dados em uma perspectiva longitudinal:
-apresenta os dados de 2010 a 2020.
-
-O recorte dos dados sobre o trabalho portuário e aquaviário foi
-realizado a partir da Classificação Nacional de Atividades Econômicas
-(CNAE).
-
-A CNAE é a classificação oficialmente adotada pelo Sistema Estatístico
-Nacional e pelos órgãos federais gestores de registros administrativos e
-está organizada em ordem decrescente de agregação das informações:
-Seções, Divisões, Grupos, Classes e Subclasses.
-
-A partir dessa divisão é possível mapear as atividades com trabalho
-portuário e aquaviário e, especificamente, de operações e gestão
-portuária.
-
-Na tabela estão detalhadas as informações da CNAE utilizadas:
-
-```{r tabela1, echo=FALSE, message=FALSE, warning=FALSE}
-library(kableExtra)
-options(knitr.table.format = "html")
-
-rais %>% 
-  filter(!is.na(n_subclasse)) %>% 
-  select(secao, n_divisao, n_grupo, n_classe, n_subclasse) %>%
-  mutate_if(is.factor, as.character) %>% 
-  distinct(n_subclasse, .keep_all = T) %>% 
-  arrange_all() %>% 
-  kbl(align = "l", 
-      booktabs = T,
-      col.names = c("Seção", "Divisão", "Grupo", "Classe", "Subclasse"),
-      escape = F,
-      caption = "<center>Subclasses da Classificação Nacional de Atividades Econômicas 2.0 usadas <br> Seção H: Transporte, Armazenagem e Correio</center>") %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>% 
-  kable_paper(full_width = F) %>%
-  column_spec(1, bold = T) %>%
-  collapse_rows(columns = 1:4, valign = "top") %>% 
-  footnote(general = "Observatório Portuário \nDados: IBGE - CNAE",
-           alphabet_title = "Fonte: ",
-            footnote_as_chunk = T) #%>% 
-  #scroll_box(width = "100%", height = "400px")
-
-```
-
 # Panorama do trabalho no setor portuário e aquaviário no Brasil
 
 Foram 76.350 vínculos registrados no setor portuário e aquaviário no
@@ -162,11 +107,11 @@ ggplot(aes(x = ano, y = n, group = secao)) +
 
 <br>
 
-Ao analisar os dados por setor de atividade, verifica-se redução do
-número de vínculos no grupo de profissionais atuantes nos (Divisão,
-conforme nomenclatura da CNAE) **Transportes aquaviários**, conforme se
-verifica no gráfico, com uma redução de 44.420 mil vínculos em 2013 para
-37.910 mil em 2020, com uma redução de 6.510 vínculos.
+Ao analisar os dados por setor de atividade no contexto nacional,
+verifica-se redução do número de vínculos no grupo de profissionais
+atuantes no **Transporte aquaviário**, com uma redução de 44.420 mil
+vínculos em 2013 para 37.910 mil em 2020, com uma redução de 6.510
+vínculos.
 
 Por outro lado, nota-se que o grupo de atividades agrupadas como
 **Armazenamento e Atividades Auxiliares dos Transportes** apresentou um
@@ -205,7 +150,7 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
     face = "bold"
     ) + #labels apresentados
   bbc_style() +
-   labs(title = "Vínculos do Setor Portuário e Aquaviário (2010 - 2020) ",
+   labs(title = "Vínculos do Setor Portuário e Aquaviário no País (2010 - 2020) ",
         subtitle = "Grupos com maior participação",
          caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
 
@@ -275,7 +220,7 @@ maior grupo em número de vínculos no **Transporte Aguaviário**,
 finalizou 2020 com quase 11.500 vínculos. São atividades como *o
 transporte de carga municipal, por rios, canais, lagos, lagoas, baias e
 outras vias de navegação interior, exceto travessia* e *o fretamento de
-embarcações com tripulação*, mas não inclui *a operação e gestão de
+embarcações com tripulação*, mas não inclui a *operação e gestão de
 terminais de carga*.
 
 \
@@ -390,6 +335,190 @@ grafico(
 
 
 print(a)
+
+```
+
+# Panorama do trabalho no setor portuário e aquaviário no Maranhão
+
+Ao analisar os dados para o estado do Maranhão, verifica-se que os
+vínculos diretos foram ascendentes até o ano de 2017, quando foram
+identificados 2020 vínculos. Em 2020, depois de quedas em 2018 e 2019,
+apresentou ligeira recuperação e o número de vínculos registrados foi de
+1.920.
+
+```{r, include=FALSE}
+g1<-
+  rais %>%
+  filter(!is.na(secao) & sigla_uf == "MA") %>% 
+  group_by(ano, secao) %>% 
+  summarise(n = n()) %>% 
+  mutate(ano = factor(ano, lvls_ano))
+```
+
+```{r g_secao_ma,  echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+lvls_ano <- c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
+
+
+
+g1 %>% 
+ggplot(aes(x = ano, y = n, group = secao)) +
+  geom_line(aes(color = secao), size = 2) +
+  geom_point(color = "black", size = 4) +
+  ggrepel::geom_text_repel(aes(x = ano, y = n, label = scales::number(n, scale = 1/1000, decimal.mark = ",", big.mark = ".", accuracy = 0.01, suffix = " mil")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
+  labs(x = "Ocupação", y = "Número de vínculos (em mil)",
+       title = "Vínculos do Setor Portuário e aquaviário no Maranhão (2010 - 2020)", subtitle = "Seção da CNAE H",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+    bbc_style() +
+  labs(
+       title = "Vínculos do Setor Portuário e aquaviário no Maranhão", 
+       subtitle = "Por setor de atividade",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+    ggthemes::scale_color_gdocs() +
+  scale_y_continuous(labels = label_number(scale = 1/1000)) +
+  theme(legend.position = "none",
+        panel.grid.major.y = element_blank(),
+        axis.text.y = element_blank(),
+        panel.grid.major.x = element_line(
+          color = "gray90",
+          linetype = "solid"))
+```
+
+<br>
+
+No caso do Maranhão, o **Transporte Aguaviário** é o grupo de atividade
+que apresenta o maior número de empregos diretos, com 1.000 vínculos em
+2020.
+
+Ao mesmo tempo, as atividades abarcadas pelo **Armazenamento e
+Atividades Auxiliares dos Transportes** apresentaram permanente
+crescimento no perído, o que se relaciona com o aumento das atividades
+portuárias no estado,com o registro de 920 vínculos em 2020.
+
+<br>
+
+```{r g_divisao_ma,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.height=14, fig.width=12}
+
+g2 <- 
+rais %>%
+  filter(!is.na(n_divisao) & sigla_uf == "MA") %>% 
+  group_by(ano, n_divisao) %>% 
+  summarise(n = n()) %>% 
+  mutate(ano = factor(ano, lvls_ano)) 
+
+g2 %>% 
+ggplot(aes(x = ano, y = n, group = n_divisao)) +
+  geom_line(aes(color = n_divisao), size = 2) +
+  geom_point(color = "black", size = 3) +
+  geom_point(
+    data = . %>% group_by(n_divisao) %>% filter(n == max(n)), 
+    aes(x = ano, y = n), 
+    size = 3, color = "red") +
+ geom_text_repel(aes(x = ano, y = n, label = scales::number(n, scale = 1/1000, decimal.mark = ",", big.mark = ".", accuracy = 0.01, suffix = " mil")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
+  geom_label_repel(
+    data = . %>% filter(ano == 2020),
+    aes(x = ano, y = n,
+        label = str_wrap(n_divisao, 22), 
+        color = n_divisao), 
+    label.size = NA, 
+    family="Helvetica",
+    direction = "y",
+    hjust = -.01,
+    face = "bold"
+    ) + #labels apresentados
+  bbc_style() +
+   labs(title = "Vínculos do Setor Portuário e Aquaviário no Maranhão ",
+        subtitle = "Em mil",
+         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
+
+  scale_y_continuous(labels = label_number(scale = 1/1000)) +
+  ggthemes::scale_color_gdocs() +
+  scale_x_discrete(expand = expansion(mult = c(.1, .3))) +
+  theme(legend.position = "none",
+        panel.grid.major.y = element_blank(),
+        axis.text.y = element_blank(),
+        panel.grid.major.x = element_line(
+          color = "gray90",
+          linetype = "solid"))
+  
+```
+
+No gráfico a seguir pode-se observar as modalidades abarcadas pelo
+**Transporte Aguaviário** e suas representatividades no estado. O
+destaque positivo é para o setor de **Navegação de Apoio**, que auxilia
+as atividades portuárias.
+
+```{r g_grupo_ma, echo=FALSE, message=FALSE, warning=FALSE}
+
+# manipulação dos dados. Grupos CNAE
+grupo_ma <- rais %>% filter(sigla_uf=="MA")
+
+grupo_ma.2 <- 
+  manipulacao(
+    dataset = grupo_ma, 
+    nivel1 = n_divisao, 
+    nivel2 = n_grupo
+  )
+
+#grafico
+a.ma <- 
+grafico(
+  dataset = grupo_ma.2,
+  nivel1 = n_divisao, 
+  nivel2 = n_grupo, 
+  titulo = "Vínculos por setores no Maranhão", 
+  titulo_legenda = ""
+  )+
+  bbc_style()+
+  theme(plot.subtitle= element_blank(), 
+            legend.text = element_text(size = 12), 
+       panel.grid.major.x  = element_line(color = "black", linetype = 2, size = 0.1,),
+       legend.position = "top",
+       legend.justification = c("left", "top"),
+       legend.title = element_text(size = 10, face = "bold"), 
+       strip.text.x = element_text(size=12)
+  )
+
+
+print(a.ma)
+```
+
+<br>
+
+Ao analisar as subclasses de atividade, pode-se verificar que as
+atividades relacionadas a **Operações de Terminais** teve excelente
+resultado, saltando de 14 para 920 mil vínculos, o que indica uma
+transformação estrutural nas atividades.
+
+A **Navegação de Apoio Marítimo** e **Navegação de Apoio Portuário**
+também se destacam, embora com oscilações consideráveis na série.
+
+<br>
+
+```{r subclasse.ma, echo=FALSE, message=FALSE, warning=FALSE, fig.height=14, fig.width=14}
+
+
+subclasse.ma <- 
+  manipulacao(
+    dataset = grupo_ma, 
+    nivel1 = n_classe, 
+    nivel2 = n_subclasse
+  )
+
+#grafico
+a_ma_subclasse <- 
+subclasse.ma %>% 
+grafico(
+  nivel1 = n_classe, 
+  nivel2 = n_subclasse, 
+  titulo = "", 
+  titulo_legenda = ""
+  )+ theme(plot.subtitle= element_blank(), 
+            legend.text = element_text(size = 12), 
+           strip.text.x = element_text(size=14))
+
+
+
+print(a_ma_subclasse)
 
 ```
 
@@ -907,8 +1036,6 @@ ord_uf <-
 
 ```
 
-
-
 ```{r r g_operacao_uf,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.width=8, fig.height=16}
 
 uf %>%
@@ -948,87 +1075,57 @@ geom_text(
 
 ```
 
-# Panorama do trabalho no setor portuário e aquaviário no Maranhão
+# Metodologia
 
-```{r, include=FALSE}
-g1<-
-  rais %>%
-  filter(!is.na(secao) & sigla_uf == "MA") %>% 
-  group_by(ano, secao) %>% 
-  summarise(n = n()) %>% 
-  mutate(ano = factor(ano, lvls_ano))
-```
+Os dados apresentados neste relatório são originários da Relação Anual
+de Informações Sociais (RAIS).
 
-```{r g_secao_ma,  echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
-lvls_ano <- c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
+A RAIS é um registro administrativo que as organizações públicas e
+privadas são obrigadas a enviar ao Ministério da Economia anualmente.
+Seus dados, assim, abarcam estabelecimentos formais e permitem
+identificar o estoque de vínculos formais de emprego (estatutários e
+celetistas).
 
+Este relatório apresenta os dados em uma perspectiva longitudinal:
+apresenta os dados de 2010 a 2020.
 
+O recorte dos dados sobre o trabalho portuário e aquaviário foi
+realizado a partir da Classificação Nacional de Atividades Econômicas
+(CNAE).
 
-g1 %>% 
-ggplot(aes(x = ano, y = n, group = secao)) +
-  geom_line(aes(color = secao), size = 2) +
-  geom_point(color = "black", size = 4) +
-  ggrepel::geom_text_repel(aes(x = ano, y = n, label = scales::number(n, scale = 1/1000, decimal.mark = ",", big.mark = ".", accuracy = 0.01, suffix = " mil")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
-  labs(x = "Ocupação", y = "Número de vínculos (em mil)",
-       title = "Número de Vínculos do Setor Portuário e aquaviário no Maranhão (2010 - 2020)", subtitle = "Seção da CNAE H",
-         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
-    bbc_style() +
-  labs(
-       title = "Vínculos do Setor Portuário e Aquaviário no País (2010 - 2020)", 
-       subtitle = "em milhares",
-         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
-    ggthemes::scale_color_gdocs() +
-  scale_y_continuous(labels = label_number(scale = 1/1000)) +
-  theme(legend.position = "none",
-        panel.grid.major.y = element_blank(),
-        axis.text.y = element_blank(),
-        panel.grid.major.x = element_line(
-          color = "gray90",
-          linetype = "solid"))
-```
+A CNAE é a classificação oficialmente adotada pelo Sistema Estatístico
+Nacional e pelos órgãos federais gestores de registros administrativos e
+está organizada em ordem decrescente de agregação das informações:
+Seções, Divisões, Grupos, Classes e Subclasses.
 
-```{r g_divisao_ma,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.height=14, fig.width=12}
+A partir dessa divisão é possível mapear as atividades com trabalho
+portuário e aquaviário e, especificamente, de operações e gestão
+portuária.
 
-g2 <- 
-rais %>%
-  filter(!is.na(n_divisao) & sigla_uf == "MA") %>% 
-  group_by(ano, n_divisao) %>% 
-  summarise(n = n()) %>% 
-  mutate(ano = factor(ano, lvls_ano)) 
+Na tabela estão detalhadas as informações da CNAE utilizadas:
 
-g2 %>% 
-ggplot(aes(x = ano, y = n, group = n_divisao)) +
-  geom_line(aes(color = n_divisao), size = 2) +
-  geom_point(color = "black", size = 3) +
-  geom_point(
-    data = . %>% group_by(n_divisao) %>% filter(n == max(n)), 
-    aes(x = ano, y = n), 
-    size = 3, color = "red") +
- geom_text_repel(aes(x = ano, y = n, label = scales::number(n, scale = 1/1000, decimal.mark = ",", big.mark = ".", accuracy = 0.01, suffix = " mil")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
-  geom_label_repel(
-    data = . %>% filter(ano == 2020),
-    aes(x = ano, y = n,
-        label = str_wrap(n_divisao, 22), 
-        color = n_divisao), 
-    label.size = NA, 
-    family="Helvetica",
-    direction = "y",
-    hjust = -.01,
-    face = "bold"
-    ) + #labels apresentados
-  bbc_style() +
-   labs(title = "Vínculos do Setor Portuário e Aquaviário (2010 - 2020) ",
-        subtitle = "por grupo da CNAE",
-         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
+```{r tabela1, echo=FALSE, message=FALSE, warning=FALSE}
+library(kableExtra)
+options(knitr.table.format = "html")
 
-  scale_y_continuous(labels = label_number(scale = 1/1000)) +
-  ggthemes::scale_color_gdocs() +
-  scale_x_discrete(expand = expansion(mult = c(.1, .3))) +
-  theme(legend.position = "none",
-        panel.grid.major.y = element_blank(),
-        axis.text.y = element_blank(),
-        panel.grid.major.x = element_line(
-          color = "gray90",
-          linetype = "solid"))
-  
+rais %>% 
+  filter(!is.na(n_subclasse)) %>% 
+  select(secao, n_divisao, n_grupo, n_classe, n_subclasse) %>%
+  mutate_if(is.factor, as.character) %>% 
+  distinct(n_subclasse, .keep_all = T) %>% 
+  arrange_all() %>% 
+  kbl(align = "l", 
+      booktabs = T,
+      col.names = c("Seção", "Divisão", "Grupo", "Classe", "Subclasse"),
+      escape = F,
+      caption = "<center>Subclasses da Classificação Nacional de Atividades Econômicas 2.0 usadas <br> Seção H: Transporte, Armazenagem e Correio</center>") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>% 
+  kable_paper(full_width = F) %>%
+  column_spec(1, bold = T) %>%
+  collapse_rows(columns = 1:4, valign = "top") %>% 
+  footnote(general = "Observatório Portuário \nDados: IBGE - CNAE",
+           alphabet_title = "Fonte: ",
+            footnote_as_chunk = T) #%>% 
+  #scroll_box(width = "100%", height = "400px")
+
 ```
