@@ -32,16 +32,10 @@ text-align: justify;
 font-size: 12px}
 </style>
 ```
-
-
 ```{r lendo, child = "Setup.Rmd"}
 #lendo arquivo Setup.Rmd
 #optei por esta estratégia para plotar apenas os gráficos neste arquivo
 #e pequenas operações
-```
-
-```{r, include=FALSE, results='hide'}
-virgula <- function(x) format(x, digits = 1, big.mark = ".", decimal.mark = ",")
 ```
 
 # Introdução
@@ -281,7 +275,7 @@ maior grupo em número de vínculos no **Transporte Aguaviário**,
 finalizou 2020 com quase 11.500 vínculos. São atividades como *o
 transporte de carga municipal, por rios, canais, lagos, lagoas, baias e
 outras vias de navegação interior, exceto travessia* e *o fretamento de
-embarcações com tripulação, *mas não inclui* a operação e gestão de
+embarcações com tripulação*, mas não inclui *a operação e gestão de
 terminais de carga*.
 
 \
@@ -289,51 +283,35 @@ terminais de carga*.
 
 ```{r g_grupo, echo=FALSE, message=FALSE, warning=FALSE}
 
- # manipulação dos dados. Grupos CNAE
- grupo <-
-   manipulacao(
-     dataset = rais,
-     nivel1 = n_divisao,
-     nivel2 = n_grupo
-   )
+# manipulação dos dados. Grupos CNAE
+grupo <- 
+  manipulacao(
+    dataset = rais, 
+    nivel1 = n_divisao, 
+    nivel2 = n_grupo
+  )
 
-a <-
- grafico(
+#grafico
+a <- 
+grafico(
   dataset = grupo,
-  nivel1 = n_divisao,
-  nivel2 = n_grupo,
-  titulo = "",
+  nivel1 = n_divisao, 
+  nivel2 = n_grupo, 
+  titulo = "", 
   titulo_legenda = ""
-  ) +
-  geom_label_repel(
-    data = . %>% filter(ano == 2020),
-    aes(x = ano, y = n,
-        label = str_wrap(n_grupo, 28),
-        color = n_grupo),
-    label.size = NA,
-    family="Helvetica",
-    direction = "y",
-    hjust = -.005,
-    face = "bold"
-    ) + 
-  bbc_style() +
-   labs(title = "Vínculos do Setor Portuário e Aquaviário (2010 - 2020) ",
-         subtitle = "Grupos com maior participação",
-          caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
-    
-   scale_y_continuous(labels = label_number(scale = 1/1000)) +
-   ggthemes::scale_color_gdocs() +
-   scale_x_discrete(expand = expansion(mult = c(.3, .3))) +
-   theme(
-     legend.position = "none",
-     panel.grid.major.y = element_blank(),
-     axis.text.y = element_blank(),
-     panel.grid.major.x = element_line(
-     color = "gray90",
-     linetype = "solid")
-         )
-print(a)
+  )+
+  bbc_style()+
+  theme(plot.subtitle= element_blank(), 
+            legend.text = element_text(size = 12), 
+       panel.grid.major.x  = element_line(color = "black", linetype = 2, size = 0.1,),
+       legend.position = "top",
+       legend.justification = c("left", "top"),
+       legend.title = element_text(size = 10, face = "bold"), 
+       strip.text.x = element_text(size=12)
+  )
 
+
+print(a)
 ```
 
 <br>
@@ -374,41 +352,16 @@ classe <-
   )
 
 
-
-a <-
-classe %>%
+#grafico
+a <- 
+classe %>% 
 grafico(
-  nivel1 = n_grupo,
-  nivel2 = n_classe,
-  titulo = "",
-  titulo_legenda = ""
-  ) +
-  geom_label_repel(
-    data = . %>% filter(ano == 2020),
-    aes(x = ano, y = n,
-        label = str_wrap(n_classe, 28),
-        color = n_grupo),
-    label.size = NA,
-    family="Helvetica",
-    direction = "y",
-    hjust = -.005,
-    face = "bold"
-    ) + 
-  bbc_style() +
-   labs(title = "Vínculos do Setor Portuário e Aquaviário (2010 - 2020) ",
-         subtitle = "Grupos com maior participação",
-          caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
-       scale_y_continuous(labels = label_number(scale = 1/1000)) +
-     ggthemes::scale_color_gdocs() +
-   scale_x_discrete(expand = expansion(mult = c(.3, .3))) +
-   theme(
-     legend.position = "none",
-     panel.grid.major.y = element_blank(),
-     axis.text.y = element_blank(),
-     panel.grid.major.x = element_line(
-     color = "gray90",
-     linetype = "solid")
-         )
+  nivel1 = n_grupo, 
+  nivel2 = n_classe, 
+  titulo = "Vínculos profissionais por setor de atuação", 
+  titulo_legenda = "Classes da CNAE"
+  )
+
 print(a)
 
 
@@ -427,12 +380,12 @@ a <-
 subclasse %>% 
 grafico(
   nivel1 = n_classe, 
-  nivel2 = n_subclasse,
-  titulo = "",
-  titulo_legenda = "") +
-  bbc_style() +
-  ggthemes::scale_color_gdocs() 
-
+  nivel2 = n_subclasse, 
+  titulo = "", 
+  titulo_legenda = ""
+  )+ theme(plot.subtitle= element_blank(), 
+            legend.text = element_text(size = 12), 
+           strip.text.x = element_text(size=14))
 
 
 
@@ -464,45 +417,19 @@ escolaridade <-
 manipulacao(
     dataset = rais, 
     nivel1 = sexo, 
-    nivel2 = grau_instrucao_apos_2005
-    )
+    nivel2 = grau_instrucao_apos_2005)
 
 
 
 #grafico
- a <- 
+a <- 
 escolaridade %>% 
 grafico(
   nivel1 = sexo, 
-  nivel2 = grau_instrucao_apos_2005,
-  titulo = "",
-  titulo_legenda = ""
-  )  +
- geom_text_repel(
-    data = . %>% filter(ano == 2020),
-    aes(x = ano , y = n,
-        label = str_wrap(grau_instrucao_apos_2005, 28),
-        color = grau_instrucao_apos_2005
-        ),
-    hjust = 0,
-    vjust = .5,
-    #nudge_x = 0.5, 
-    direction = "y", 
-    hjust = "left",
-    face = "bold"
-    ) +
-   scale_y_log10() +
-ggthemes::scale_color_gdocs() +
-  bbc_style() +
-   scale_x_discrete(expand = expansion(mult = c(0,.8))) +
-   theme(
-     legend.position = "none",
-     panel.grid.major.y = element_blank(),
-     axis.text.y = element_blank(),
-     panel.grid.major.x = element_line(
-     color = "gray90",
-     linetype = "solid")
-         )
+  nivel2 = grau_instrucao_apos_2005, 
+  titulo = "Quantidade de Vínculos por grau de escolaridade e sexo (em mil)", 
+  titulo_legenda = "Escolaridade"
+  )
 
 print(a)
 
@@ -511,23 +438,96 @@ print(a)
 
 ## INSERIR GRAFICO DE REMUNERAÇÃO E ESCOLARIDADE DESDE 2010
 
-```{r g_remun_escol_sexo, ,cache=FALSE, results='hide', echo=FALSE, message=FALSE, warning=FALSE, error=TRUE}
+```{r g_remun_escol_sexo,results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
-rem_esc_sexo <- 
-  remuneracao_m(
-    dataset = rais,
-    nivel1 = sexo,
-    nivel2 = grau_instrucao_apos_2005)
-
-a <-
-   grafico_remuneracao_m(
-     dataset = rem_esc_sexo,
-     nivel1 = sexo,
-     nivel2 = grau_instrucao_apos_2005
-     ) bbc_style() +
+rais %>% 
+    filter(valor_remuneracao_media != 0.00 | !is.na(valor_remuneracao_media)) %>%
+  group_by(sexo, grau_instrucao_apos_2005, ano) %>% 
+  summarise(remuneracao_media = mean(valor_remuneracao_media)) %>% 
+  mutate(ano = factor(ano, lvls_ano)) %>%
+  ggplot(
+    aes(x = ano, 
+        y = remuneracao_media, 
+        group = grau_instrucao_apos_2005, 
+        color = grau_instrucao_apos_2005)
+    ) +
+   geom_line(size = 2) +
+  geom_point(
+    data = . %>% filter(ano %in% c("2010", "2020")),
+    color = "black", 
+    size = 5
+    ) +
+  geom_point(
+    data = . %>%  group_by(grau_instrucao_apos_2005, sexo) %>% filter(remuneracao_media == max(remuneracao_media)),
+    aes(x = ano, y = remuneracao_media), 
+    color = "red", size = 5) +
+   geom_text_repel(
+      data = . %>% filter(ano %in% c("2010", "2020")),
+      aes(
+        label = scales::number(
+          remuneracao_media,
+          scale = 1/10^3,
+          accuracy = 0.01,
+          suffix = " mil",
+          decimal.mark = ",",
+          big.mark = "."),
+        ),
+      size = 5,
+      min.segment.length  =  0.5,
+      box.padding  =  1,
+      force = 8,
+    ) +
+  geom_text_repel(
+        data = . %>% group_by(grau_instrucao_apos_2005, sexo) %>% filter(remuneracao_media == max(remuneracao_media)),
+        aes(x =ano, y = remuneracao_media,
+            label = scales::number(
+            remuneracao_media,
+            scale = 1/10^3,
+            suffix = " mil",
+            accuracy = 0.01,
+            decimal.mark = ",",
+            big.mark = "."
+            )
+          ),
+        size = 5,
+        min.segment.length  =  .5,
+        box.padding  =  1,
+        force =8,
+      ) +
+  scale_y_log10(labels = label_number(scale = 1/10^3,
+            suffix = " mil",
+            accuracy = 0.1,
+            decimal.mark = ",",
+            big.mark = ".")) +
+  # scale_y_continuous(
+  #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
+    labs(x = "Ano", y = "Número de Vínculos", color = "Raça ou cor",
+         title = "Remuneração Média por sexo e grau de instrução (2010 - 2020)",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+  facet_wrap(~sexo, ncol = 2)+
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        #tema legenda
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+        legend.position = "top",
+        legend.justification = c("top"),
+        legend.title = element_text(size = 16L, face = "bold"),
+        #legend.background = element_rect(fill = "white", colour = "black"),
+        legend.key.width = unit(1.5, "cm"),
+        legend.key.height = unit(1.5, "cm"),
+        #
+  ) +
+  guides(
+    col = guide_legend(nrow = 1)) +
   ggthemes::scale_color_gdocs()
-
-print(a)
+  #bbc_style()
+ 
 
 ```
 
@@ -555,14 +555,14 @@ qualificação e diversidade mais assertivas.
 
 
 rais %>%
-  group_by(ano, raca_cor, sexo,) %>% 
+  group_by(ano, raca_cor, sexo) %>% 
   summarise(n = n()) %>% 
    mutate(raca_cor = forcats::fct_reorder(raca_cor, n)) %>% 
   mutate(ano = factor(ano, lvls_ano)) %>%
   ggplot(aes(x =ano, y = n, group = raca_cor, color = raca_cor)) +
    geom_line(size = 2) +
   geom_point(
-    data = . %>% filter(ano %in% c(2010, 2020)),
+    data = . %>% filter(ano %in% c("2010", "2020")),
       aes(x = ano, y = n), 
       color = "black", size = 5,
     show.legend = F) +
@@ -572,7 +572,7 @@ rais %>%
       color = "red", size = 5,
     show.legend = F) +
    geom_text_repel(
-      data = . %>% filter(ano %in% c(2010, 2020)),
+      data = . %>% filter(ano %in% c("2010", "2020")),
       aes(
         label = scales::number(
           n,
@@ -613,7 +613,7 @@ rais %>%
   #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
     labs(x = "Ano", y = "Número de Vínculos", color = "Raça ou cor",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
-  facet_wrap(~sexo,ncol = 2, scales = "fixed")+
+  facet_wrap(~sexo,ncol = 2)+
   theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
         plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
@@ -634,8 +634,8 @@ rais %>%
   ) +
   guides(
     col = guide_legend(nrow = 1)) +
-  bbc_style() +
   ggthemes::scale_color_gdocs()
+  #bbc_style()
  
 ```
 
@@ -657,7 +657,7 @@ rais %>%
   ggplot(aes(x =ano, y = media, group = raca_cor, color = raca_cor)) +
    geom_line(size = 2) +
   geom_point(
-    data = . %>% filter(ano %in% c(2010, 2020)),
+    data = . %>% filter(ano %in% c("2010", "2020")),
       aes(x = ano, y = media), 
       color = "black", size = 5,
     show.legend = F) +
@@ -667,7 +667,7 @@ rais %>%
       color = "red", size = 5,
     show.legend = F) +
    geom_text_repel(
-      data = . %>% group_by(raca_cor, sexo) %>%  filter(ano %in% c(2010, 2020)),
+      data = . %>% group_by(raca_cor, sexo) %>%  filter(ano %in% c("2010", "2020")),
       aes(
         label = scales::number(
           media,
@@ -708,11 +708,28 @@ rais %>%
   #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
     labs(x = "Ano", y = "Remuneração média (R$)", color = "Raça ou cor",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
-  facet_wrap(~sexo, ncol = 2, scales = "fixed") +
-  bbc_style() +
-  ggthemes::scale_color_gdocs() +
+  facet_wrap(~sexo, ncol = 2) +
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        #tema legenda
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+        legend.position = "top",
+        legend.justification = c("top"),
+        legend.title = element_text(size = 16L, face = "bold"),
+        #legend.background = element_rect(fill = "white", colour = "black"),
+        legend.key.width = unit(1.5, "cm"),
+        legend.key.height = unit(1.5, "cm"),
+        #
+        ) +
   guides(
-    col = guide_legend(nrow = 1)) 
+    col = guide_legend(nrow = 1)) +
+  ggthemes::scale_color_gdocs()
 ```
 
 ```{r g_operacao_remuneracao _mediana_raca_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
@@ -726,7 +743,7 @@ rais %>%
   ggplot(aes(x =ano, y = media, group = raca_cor, color = raca_cor)) +
    geom_line(size = 2) +
   geom_point(
-    data = . %>% filter(ano %in% c(2010, 2020)),
+    data = . %>% filter(ano %in% c("2010", "2020")),
       aes(x = ano, y = media), 
       color = "black", size = 5,
     show.legend = F) +
@@ -736,7 +753,7 @@ rais %>%
       color = "red", size = 5,
     show.legend = F) +
    geom_text_repel(
-      data = . %>% group_by(raca_cor, sexo) %>% filter(ano %in% c(2010, 2020)),
+      data = . %>% group_by(raca_cor, sexo) %>% filter(ano %in% c("2010", "2020")),
       aes(
         label = scales::number(
           media,
@@ -777,9 +794,25 @@ rais %>%
   #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
     labs(x = "Ano", y = "Remuneração mediana (R$)", color = "Raça ou cor",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
-  facet_wrap(~sexo, ncol = 2, scales = "fixed") +
-  bbc_style() +
-  ggthemes::scale_color_gdocs() +
+  facet_wrap(~sexo, ncol = 2) +
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        #tema legenda
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+        legend.position = "top",
+        legend.justification = c("top"),
+        legend.title = element_text(size = 16L, face = "bold"),
+        #legend.background = element_rect(fill = "white", colour = "black"),
+        legend.key.width = unit(1.5, "cm"),
+        legend.key.height = unit(1.5, "cm"),
+        #
+        ) +
   guides(
     col = guide_legend(nrow = 1)) +
   ggthemes::scale_color_gdocs()
@@ -808,7 +841,7 @@ rais %>%
   ggplot(aes(x = ano, y = n, group = cbo_2002, color = cbo_2002)) +
   geom_line(size = 1.25) +
   geom_point(
-    data = . %>% filter(ano %in% c(2010, 2020)),
+    data = . %>% filter(ano %in% c("2010", "2020")),
 
       color = "black", size = 3) +
   geom_point(
@@ -820,11 +853,22 @@ rais %>%
   scale_y_continuous(
     labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",",
                                             prefix = "")) +
-  bbc_style() +
-  ggthemes::scale_color_gdocs() +
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+        legend.position = "top",
+        legend.justification = c("left", "top"),
+        legend.title = element_text(size = 16L, face = "bold")) +
   labs(x = "Ano", y = "Número de vínculos", color = " ",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
-    scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18)) 
+    scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18)) +
+  ggthemes::scale_color_gdocs()
 
  
   
@@ -842,7 +886,7 @@ rais %>%
   ggplot(aes(x = ano, y = n, group = nome_uf, color = nome_uf)) +
    geom_line(size = 1.25) +
   geom_point(
-    data = . %>%  group_by(nome_uf) %>% filter(ano %in% c(2010, 2020)),
+    data = . %>%  group_by(nome_uf) %>% filter(ano %in% c("2010", "2020")),
       aes(x = ano, y = n), 
       color = "black", size = 3) +
   geom_point(
@@ -852,11 +896,22 @@ rais %>%
   scale_y_continuous(
     labels = label_number(scale = 1/1000, 
                           big.mark = ".", decimal.mark = ",")) +
-  bbc_style() +
-  ggthemes::scale_color_gdocs() +
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+        legend.position = "top",
+        legend.justification = c("left", "top"),
+        legend.title = element_text(size = 16L, face = "bold")) +
   labs(x = "Ano", y = "Remuneração média", color = "",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
-    scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18)) 
+    scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18)) +
+  ggthemes::scale_color_gdocs()
 
   
 ```
@@ -873,7 +928,7 @@ rais %>%
   ggplot(aes(x = ano, y = n, group = nome_municipio, color = nome_municipio)) +
    geom_line(size = 1.25) +
   geom_point(
-    data = . %>% filter(ano %in% c(2010, 2020)),
+    data = . %>% filter(ano %in% c("2010", "2020")),
       aes(x = ano, y = n), 
       color = "black", size = 3) +
   geom_point(
@@ -882,13 +937,25 @@ rais %>%
       color = "red", size = 2) +
   scale_y_continuous(
     labels = label_number(big.mark = ".", decimal.mark = ",")) +
-  bbc_style() +
-  ggthemes::scale_color_gdocs() +
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+        legend.position = "top",
+        legend.justification = c("left", "top"),
+        legend.title = element_text(size = 16L, face = "bold")) +
   labs(x = "Ano", y = "Remuneração média", color = "",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
     scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18)) +
   scale_y_continuous(labels = label_number(scale = 1/1000)) +
-    scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18)) 
+    scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18)) +
+  ggthemes::scale_color_gdocs()
+
 ```
 
 # Trabalhadores da Gestão e Operação Portuária
@@ -911,16 +978,13 @@ ord_uf <-
 
    uf <- uf %>% mutate(sigla_uf = factor(sigla_uf, levels = ord_uf))
 
+
 ```
 
-O Brasil apresentou
-`r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(ano == 2010) %>% select(total) %>% pull() %>%  virgula()`
-vínculos de trabalho para a o setor **portuário** e **aquaviário**.  Em `r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(total == max(total)) %>% select(ano) %>% pull()`, ano com a maior quantidade de vínculos da série, foram `r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(total == max(total)) %>% select(total) %>% pull() %>% virgula()` vínculos. Em 2020, último ano da série histórica, foram `r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(ano == "2020") %>% select(total) %>% pull() %>% virgula()` São Paulo e Rio de Janeiro permanceram na primeira e segunda coloção durante toda a série. Em 2020, por exempo, **Rio de Janeiro** possuía 
-`r uf %>% filter(ano == "2020" & n == max(n)) %>% select(n) %>% pull() %>% virgula()` vínculos empregatícios e **São Paulo**, possuía cerca de `r uf %>% filter(ano == "2020" & sigla_uf == "RJ") %>% select(n) %>% pull() %>% virgula()`.
-Por outro lado, o estado do **Maranhão** possuía
-`r uf %>% filter(ano == "2020" & sigla_uf == "MA") %>% select(n) %>% pull()  %>% virgula()` vínculos no mesmo ano.
 
-```{r g_operacao_uf,  echo=FALSE, message=FALSE,  warning=FALSE, results='hide', fig.width=8, fig.height=16}
+
+```{r r g_operacao_uf,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.width=8, fig.height=16}
+
 uf %>%
   filter(!is.na(sigla_uf)) %>% 
   mutate(ano = factor(ano, lvls_ano)) %>% 
@@ -955,7 +1019,7 @@ geom_text(
      labels = number_format(scale = 1/1000,
                                             big.mark = ".", decimal.mark = ",")) +
   facet_wrap(~ano, ncol = 3, scales = "fixed") 
-       
+
 ```
 
 # Panorama do trabalho no setor portuário e aquaviário no Maranhão
@@ -970,8 +1034,6 @@ g1<-
 ```
 
 ```{r g_secao_ma,  echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
-lvls_ano <- c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
-
 
 
 g1 %>% 
@@ -989,8 +1051,12 @@ ggplot(aes(x = ano, y = n, group = secao)) +
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
     ggthemes::scale_color_gdocs() +
   scale_y_continuous(labels = label_number(scale = 1/1000)) +
-  bbc_style() +
-  ggthemes::scale_color_gdocs()
+  theme(legend.position = "none",
+        panel.grid.major.y = element_blank(),
+        axis.text.y = element_blank(),
+        panel.grid.major.x = element_line(
+          color = "gray90",
+          linetype = "solid"))
 ```
 
 ```{r g_divisao_ma,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.height=14, fig.width=12}
@@ -1022,8 +1088,7 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
     hjust = -.01,
     face = "bold"
     ) + #labels apresentados
- bbc_style() +
-  ggthemes::scale_color_gdocs() +
+  bbc_style() +
    labs(title = "Vínculos do Setor Portuário e Aquaviário (2010 - 2020) ",
         subtitle = "por grupo da CNAE",
          caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
