@@ -358,8 +358,7 @@ ggplot(
   ggtitle(label = {{titulo}}, subtitle = "De 2010 a 2020") +
   scale_colour_discrete(name = str_wrap(paste0({{titulo_legenda}}), 10), labels = label_wrap_gen(width = 18))+
   scale_y_continuous(labels = label_number(scale = 1/1000)) +
-  facet_wrap(vars({{nivel1}}), ncol = 2, scales = "free_y") +
-  theme_classic() +
+  facet_wrap(vars({{nivel1}}), ncol = 2, scales = "fixed") +
   theme(
       plot.title = element_text(size = 16L, face = "bold"),
       plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
@@ -376,98 +375,9 @@ ggplot(
 
 
 }
-```
 
-```{r funcoes_remuneracao, include=FALSE, results='hide', cache=FALSE}
 
-remuneracao_m <- function(dataset, nivel1, nivel2){
-  lvls_ano = c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
-  
-  dataset %>% 
-    group_by({{nivel1}}, {{nivel2}}, ano) %>% # agrupamento
-    summarise(n = n(), 
-              media = mean(valor_remuneracao_media, na.rm = T),
-                           .groups = "drop") %>% #sumarização
-    mutate(ano = factor(ano, lvls_ano))  # reordenamento da variável 
-}
-
-grafico_remuneracao_m <- function(dataset, nivel1, nivel2, titulo, titulo_legenda){
- 
- nivel1 <- enquo(nivel1)
- 
- dataset %>% 
- ggplot(
-     aes(
-       x = ano, 
-       y = media, 
-       group = {{nivel2}}
-       )
-   ) +
-   geom_line(
-       aes(color = {{nivel2}}),
-       size = 2
-     ) +
-   geom_point(
-       data = dataset %>% filter(ano %in% c(2010, 2020)),
-       color = "black", 
-       size = 5
-     ) +
-   geom_text_repel(
-       data = dataset %>% filter(ano %in% c(2010, 2020)),
-       aes(
-         label = scales::number(
-           n,
-           scale = 1/10^3,
-           accuracy = 0.01,
-           suffix = " mil",
-           decimal.mark = ",",
-           big.mark = ".")
-         ),
-       size = 6
-     ) +
-   geom_text_repel(
-         data = dataset %>% group_by({{nivel2}}) %>% filter(n == max(n)),
-         aes(
-             label = scales::number(
-             n,
-             scale = 1/10^3,
-             suffix = " mil",
-             accuracy = 0.01,
-             decimal.mark = ",",
-             big.mark = "."
-             )
-           ),
-         size = 6
-       ) +
-     geom_point(
-       data = dataset %>% group_by({{nivel2}}) %>%  filter(n == max(n)),
-       color = "red", size = 5
-     ) +
-   labs(
-         y = "Número de vínculos (em mil)",
-         caption = "Fonte: Observatório Portuário - Dados da RAIS",
-         x = "Ano") +
-   ggtitle(label = {{titulo}}, subtitle = "De 2010 a 2020") +
-   scale_colour_discrete(name = str_wrap(paste0({{titulo_legenda}}), 10), labels = label_wrap_gen(width = 18))+
-   scale_y_continuous(labels = label_number(scale = 1/1000)) +
-   facet_wrap(vars({{nivel1}}), ncol = 2, scales = "free_y") +
-   theme_classic() +
-   theme(
-       plot.title = element_text(size = 16L, face = "bold"),
-       plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
-       axis.title.y = element_text(size = 14L, face = "bold"), 
-       axis.title.x = element_text(size = 14L, face = "bold"),
-       axis.text.x = element_text(size = 12L, face = "bold"),
-       axis.text.y = element_text(size = 12L, face = "bold"),
-       legend.text = element_text(size = 14L),
-       panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
-       legend.position = "top",
-       legend.justification = c("left", "top"),
-       legend.title = element_text(size = 16L, face = "bold")
-   )
- 
- 
- }
 
 ```
+
 
