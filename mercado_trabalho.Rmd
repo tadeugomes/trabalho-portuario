@@ -907,21 +907,13 @@ ord_uf <-
 
 ```
 
-O Brasil apresentou
-`r rais %>% group_by(sigla_uf) %>%      summarise(n = n()) %>% select(n) %>% sum() %>% comma(big.mark = ".", decimal.mark = ",")`
-vínculos de trabalho para a subclasse **Operações de Terminais**. São
-Paulo foi o estado com a maior quantidade de vínculos, ao todo foram
-`r uf %>% filter(n == max(n)) %>% select(n) %>% pull() %>% comma(big.mark = ".", decimal.mark = ",")`
-vínculos no estado. Rio de Janeiro, segundo estado com a maior
-quantidade de vículos, possuía cerca de
-`r uf %>% filter(n == nth(n, 2)) %>% select(n) %>% pull() %>% comma(big.mark = ".", decimal.mark = ",")`.
-O estado do Maranhão possuía
-`r uf %>% filter(sigla_uf == "MA") %>% select(n) %>% pull()  %>% comma(big.mark = ".", decimal.mark = ",")`
-vínculos.
 
-```{r g_operacao_uf,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.width=8, fig.height=16}
+
+```{r r g_operacao_uf,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.width=8, fig.height=16}
+
 uf %>%
   filter(!is.na(sigla_uf)) %>% 
+  mutate(ano = factor(ano, lvls_ano)) %>% 
 ggplot(aes(x = sigla_uf, y = n,
            fill = fill, 
            size = .05))+
@@ -942,16 +934,9 @@ geom_text(
       uf %>% filter(ano == 2010) %>%  select(n) %>% pull() %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),
       "vínculos de trabalho em todo o país em 2010 e", uf %>% filter(ano == 2020) %>%  select(n) %>% pull() %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),  "vínculos em 2020",
       sep = " ")) +
-theme_classic() +
-  theme(plot.title = element_text(size = 14L, face = "bold"),
-        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
-        axis.title.y = element_text(size = 12L, face = "bold"), 
-        axis.title.x = element_text(size = 12L, face = "bold"),
-        axis.text.x = element_text(size = 12L, face = "bold"),
-        axis.text.y = element_text(size = 10L),
-        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
-        legend.position = "none")+
-  # geom_text(aes(label= prettyNum(n, big.mark = ".", decimal.mark = ",")), 
+  bbc_style()+
+  bbc_style() +
+# geom_text(aes(label= prettyNum(n, big.mark = ".", decimal.mark = ",")), 
   #           size =4,  
   #           hjust=-.5, vjust=.5, colour="black") +
   scale_fill_manual(values = c("lightblue", "#4682B4")) +
@@ -959,8 +944,8 @@ theme_classic() +
     breaks = seq(0,3*10^4, 10^4), limits = c(0, 3.5*10^4),
      labels = number_format(scale = 1/1000,
                                             big.mark = ".", decimal.mark = ",")) +
-  facet_wrap(~ano, ncol = 3) 
-       
+  facet_wrap(~ano, ncol = 3, scales = "fixed") 
+
 ```
 
 # Panorama do trabalho no setor portuário e aquaviário no Maranhão
