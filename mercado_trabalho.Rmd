@@ -526,7 +526,7 @@ print(a_ma_subclasse)
 
 ```
 
-# Perfil do Trabalhador Portuário e Aquaviário
+# Perfil do Trabalhador Portuário e Aquaviário no Brasil
 
 ### Escolaridade do Trabalhador Portuário e aquaviário
 
@@ -569,7 +569,9 @@ print(a)
 
 ```
 
-## INSERIR GRAFICO DE REMUNERAÇÃO E ESCOLARIDADE DESDE 2010
+Ao avaliar a remuneração média por escolaridade, verifica-se que os
+profissionais com pós-graduação têm uma renda significativamente
+superior aos demais níveis de escolaridade.
 
 ```{r g_remun_escol_sexo,results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -634,8 +636,8 @@ rais %>%
             big.mark = ".")) +
   # scale_y_continuous(
   #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
-    labs(x = "Ano", y = "Número de Vínculos", color = "Raça ou cor",
-         title = "Remuneração Média por sexo e grau de instrução (2010 - 2020)",
+    labs(x = "Ano", y = "Remuneração média", color = "",
+         title = "Remuneração Média por sexo e grau de instrução",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
   facet_wrap(~sexo, ncol = 2)+
   theme_classic() +
@@ -646,10 +648,9 @@ rais %>%
         axis.text.x = element_text(size = 12L, face = "bold"),
         axis.text.y = element_text(size = 12L, face = "bold"),
         #tema legenda
-        legend.text = element_text(size = 14L),
+        legend.text = element_text(size = 10L),
         panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
         legend.position = "top",
-        legend.justification = c("top"),
         legend.title = element_text(size = 16L, face = "bold"),
         #legend.background = element_rect(fill = "white", colour = "black"),
         legend.key.width = unit(1.5, "cm"),
@@ -1116,10 +1117,21 @@ ord_uf <-
 
 O Brasil apresentou
 `r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(ano == 2010) %>% select(total) %>% pull() %>%  virgula()`
-vínculos de trabalho para a o setor **portuário** e **aquaviário**.  Em `r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(total == max(total)) %>% select(ano) %>% pull()`, ano com a maior quantidade de vínculos da série, foram `r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(total == max(total)) %>% select(total) %>% pull() %>% virgula()` vínculos. Em 2020, último ano da série histórica, foram `r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(ano == "2020") %>% select(total) %>% pull() %>% virgula()` São Paulo e Rio de Janeiro permanceram na primeira e segunda coloção durante toda a série. Em 2020, por exempo, **Rio de Janeiro** possuía
-`r uf %>% filter(ano == "2020" & n == max(n)) %>% select(n) %>% pull() %>% virgula()` vínculos empregatícios e **São Paulo**, possuía cerca de `r uf %>% filter(ano == "2020" & sigla_uf == "RJ") %>% select(n) %>% pull() %>% virgula()`.
+vínculos de trabalho para a o setor **portuário** e **aquaviário**. Em
+`r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(total == max(total)) %>% select(ano) %>% pull()`,
+ano com a maior quantidade de vínculos da série, foram
+`r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(total == max(total)) %>% select(total) %>% pull() %>% virgula()`
+vínculos. Em 2020, último ano da série histórica, foram
+`r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(ano == "2020") %>% select(total) %>% pull() %>% virgula()`
+São Paulo e Rio de Janeiro permanceram na primeira e segunda coloção
+durante toda a série. Em 2020, por exempo, **Rio de Janeiro** possuía
+`r uf %>% filter(ano == "2020" & n == max(n)) %>% select(n) %>% pull() %>% virgula()`
+vínculos empregatícios e **São Paulo**, possuía cerca de
+`r uf %>% filter(ano == "2020" & sigla_uf == "RJ") %>% select(n) %>% pull() %>% virgula()`.
 Por outro lado, o estado do **Maranhão** possuía
-`r uf %>% filter(ano == "2020" & sigla_uf == "MA") %>% select(n) %>% pull()  %>% virgula()` vínculos no mesmo ano.
+`r uf %>% filter(ano == "2020" & sigla_uf == "MA") %>% select(n) %>% pull()  %>% virgula()`
+vínculos no mesmo ano.
+
 ```{r r g_operacao_uf,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.width=8, fig.height=16}
 
 uf %>%
@@ -1213,7 +1225,6 @@ rais %>%
   #scroll_box(width = "100%", height = "400px")
 ```
 
-
 ```{r, include=FALSE}
 g1<-
   rais %>%
@@ -1222,4 +1233,3 @@ g1<-
   summarise(n = n()) %>% 
   mutate(ano = factor(ano, lvls_ano))
 ```
-
