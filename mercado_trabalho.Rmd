@@ -526,9 +526,9 @@ print(a_ma_subclasse)
 
 ```
 
-# Perfil do Trabalhador Portuário e Aquaviário no Brasil
+# Perfil do Trabalhador Portuário e Aquaviário
 
-### Escolaridade do Trabalhador Portuário e aquaviário
+#### Escolaridade do Trabalhador Portuário e aquaviário
 
 Ao analisar o perfil dos trabalhadores portuários e aguaviários por
 sexo, observa-se que a participação masculina é predominante. Em 2020,
@@ -560,8 +560,8 @@ escolaridade %>%
 grafico(
   nivel1 = sexo, 
   nivel2 = grau_instrucao_apos_2005, 
-  titulo = "Quantidade de Vínculos por grau de escolaridade e sexo (em mil)", 
-  titulo_legenda = "Escolaridade"
+  titulo = "Vínculos por grau de escolaridade e sexo no país", 
+  titulo_legenda = ""
   )
 
 print(a)
@@ -569,9 +569,41 @@ print(a)
 
 ```
 
-Ao avaliar a remuneração média por escolaridade, verifica-se que os
-profissionais com pós-graduação têm uma renda significativamente
-superior aos demais níveis de escolaridade.
+
+O Maranhão acompanha a tendência nacional: há o predomínio de profissionais com ensino médio completo e, em seguida, ensino superior. Apesar de crescente, o número de pessoas com pós-graduação ainda é incipiente.  
+
+
+
+```{r g_operacao_escol_sexo.ma, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+# ordem_esc <- c("Fundamental incompleto", "Fundamental completo", 
+#         "Médio incompleto", "Médio completo", "Superior incompleto",
+#         "Superior completo", "Pós-graduação", "Não informado")
+
+escolaridade.ma <- 
+manipulacao(
+    dataset = grupo_ma, 
+    nivel1 = sexo, 
+    nivel2 = grau_instrucao_apos_2005)
+
+
+
+#grafico
+grafico.escolaridade.ma <- 
+escolaridade.ma %>% 
+grafico(
+  nivel1 = sexo, 
+  nivel2 = grau_instrucao_apos_2005, 
+  titulo = "Vínculos por grau de escolaridade e sexo no Maranhão", 
+  titulo_legenda = ""
+  )
+
+print(grafico.escolaridade.ma)
+
+
+```
+
+
+Ao avaliar a remuneração média por escolaridade no país, verifica-se que os profissionais com pós-graduação têm uma renda significativamente superior aos demais níveis de escolaridade.
 
 ```{r g_remun_escol_sexo,results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -637,7 +669,7 @@ rais %>%
   # scale_y_continuous(
   #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
     labs(x = "Ano", y = "Remuneração média", color = "",
-         title = "Remuneração Média por sexo e grau de instrução",
+         title = "Remuneração Média por sexo e grau de instrução no país",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
   facet_wrap(~sexo, ncol = 2)+
   theme_classic() +
@@ -665,7 +697,104 @@ rais %>%
 
 ```
 
-### Raça ou cor do Trabalhador Portuário e aquaviário
+
+A renda do trabalhador maranhense segue a tendência nacional: profissional com pós-graduação aufere rendimentos bem superiores aos dos demais profissionais.
+
+
+```{r g_remun_escol_sexo.ma,results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+
+grupo_ma %>% 
+    filter(valor_remuneracao_media != 0.00 | !is.na(valor_remuneracao_media)) %>%
+  group_by(sexo, grau_instrucao_apos_2005, ano) %>% 
+  summarise(remuneracao_media = mean(valor_remuneracao_media)) %>% 
+  mutate(ano = factor(ano, lvls_ano)) %>%
+  ggplot(
+    aes(x = ano, 
+        y = remuneracao_media, 
+        group = grau_instrucao_apos_2005, 
+        color = grau_instrucao_apos_2005)
+    ) +
+   geom_line(size = 2) +
+  geom_point(
+    data = . %>% filter(ano %in% c("2010", "2020")),
+    color = "black", 
+    size = 5
+    ) +
+  geom_point(
+    data = . %>%  group_by(grau_instrucao_apos_2005, sexo) %>% filter(remuneracao_media == max(remuneracao_media)),
+    aes(x = ano, y = remuneracao_media), 
+    color = "red", size = 5) +
+   geom_text_repel(
+      data = . %>% filter(ano %in% c("2010", "2020")),
+      aes(
+        label = scales::number(
+          remuneracao_media,
+          scale = 1/10^3,
+          accuracy = 0.01,
+          suffix = " mil",
+          decimal.mark = ",",
+          big.mark = "."),
+        ),
+      size = 5,
+      min.segment.length  =  0.5,
+      box.padding  =  1,
+      force = 8,
+    ) +
+  geom_text_repel(
+        data = . %>% group_by(grau_instrucao_apos_2005, sexo) %>% filter(remuneracao_media == max(remuneracao_media)),
+        aes(x =ano, y = remuneracao_media,
+            label = scales::number(
+            remuneracao_media,
+            scale = 1/10^3,
+            suffix = " mil",
+            accuracy = 0.01,
+            decimal.mark = ",",
+            big.mark = "."
+            )
+          ),
+        size = 5,
+        min.segment.length  =  .5,
+        box.padding  =  1,
+        force =8,
+      ) +
+  scale_y_log10(labels = label_number(scale = 1/10^3,
+            suffix = " mil",
+            accuracy = 0.1,
+            decimal.mark = ",",
+            big.mark = ".")) +
+  # scale_y_continuous(
+  #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
+    labs(x = "Ano", y = "Remuneração média", color = "",
+         title = "Remuneração Média por sexo e grau de instrução no Maranhão",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+  facet_wrap(~sexo, ncol = 2)+
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        #tema legenda
+        legend.text = element_text(size = 10L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+        legend.position = "top",
+        legend.title = element_text(size = 16L, face = "bold"),
+        #legend.background = element_rect(fill = "white", colour = "black"),
+        legend.key.width = unit(1.5, "cm"),
+        legend.key.height = unit(1.5, "cm"),
+        #
+  ) +
+  guides(
+    col = guide_legend(nrow = 1)) +
+  ggthemes::scale_color_gdocs()
+  #bbc_style()
+ 
+
+```
+
+
+#### Raça ou cor do Trabalhador Portuário e aquaviário
 
 O perfil racial dos profissionais pode ser observado no gráfico a
 seguir[^1]. Nota-se o predomínio de pardos e brancos, tanto entre os
@@ -866,6 +995,7 @@ rais %>%
   ggthemes::scale_color_gdocs()
 ```
 
+
 ```{r g_operacao_remuneracao _mediana_raca_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
 rais %>%
@@ -951,6 +1081,192 @@ rais %>%
     col = guide_legend(nrow = 1)) +
   ggthemes::scale_color_gdocs()
 ```
+
+
+
+No Maranhão, 
+
+
+
+```{r g_operacao_raca_sexo.ma, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+
+
+grupo_ma %>%
+  group_by(ano, raca_cor, sexo) %>% 
+  summarise(n = n()) %>% 
+   mutate(raca_cor = forcats::fct_reorder(raca_cor, n)) %>% 
+  mutate(ano = factor(ano, lvls_ano)) %>%
+  ggplot(aes(x =ano, y = n, group = raca_cor, color = raca_cor)) +
+   geom_line(size = 2) +
+  geom_point(
+    data = . %>% filter(ano %in% c("2010", "2020")),
+      aes(x = ano, y = n), 
+      color = "black", size = 5,
+    show.legend = F) +
+  geom_point(
+    data = . %>%  group_by(raca_cor, sexo) %>% filter(n == max(n)),
+      aes(x = ano, y = n), 
+      color = "red", size = 5,
+    show.legend = F) +
+   geom_text_repel(
+      data = . %>% filter(ano %in% c("2010", "2020")),
+      aes(
+        label = scales::number(
+          n,
+          scale = 1/10^3,
+          accuracy = 0.01,
+          suffix = " mil",
+          decimal.mark = ",",
+          big.mark = "."),
+        ),
+      size = 5,
+      min.segment.length  =  0.5,
+      box.padding  =  1,
+      force = 8,
+    ) +
+  geom_text_repel(
+        data = . %>% group_by(raca_cor) %>% filter(n == max(n)),
+        aes(x =ano, y = n,
+            label = scales::number(
+            n,
+            scale = 1/10^3,
+            suffix = " mil",
+            accuracy = 0.01,
+            decimal.mark = ",",
+            big.mark = "."
+            )
+          ),
+        size = 5,
+        min.segment.length  =  .5,
+        box.padding  =  1,
+        force =8,
+      ) +
+  scale_y_log10(labels = label_number(scale = 1/10^3,
+            suffix = " mil",
+            accuracy = 0.1,
+            decimal.mark = ",",
+            big.mark = ".")) +
+  # scale_y_continuous(
+  #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
+    labs(x = "Ano", y = "Número de Vínculos", color = "Raça ou cor",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+  facet_wrap(~sexo,ncol = 2)+
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        #tema legenda
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+        legend.position = "top",
+        legend.justification = c("top"),
+        legend.title = element_text(size = 16L, face = "bold"),
+        #legend.background = element_rect(fill = "white", colour = "black"),
+        legend.key.width = unit(1.5, "cm"),
+        legend.key.height = unit(1.5, "cm"),
+        #
+  ) +
+  guides(
+    col = guide_legend(nrow = 1)) +
+  ggthemes::scale_color_gdocs()
+  #bbc_style()
+ 
+```
+
+Renda no mA 
+
+
+```{r g_operacao_remuneracao _mediana_raca_sexo.ma, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+
+grupo_ma %>%
+  filter(valor_remuneracao_media != 0.00 | !is.na(valor_remuneracao_media)) %>%
+  group_by(ano, raca_cor, sexo, .groups = 'drop') %>% 
+  summarise(n = n(),
+            media = median(valor_remuneracao_media)) %>% 
+  mutate(ano = factor(ano, lvls_ano)) %>%
+  ggplot(aes(x =ano, y = media, group = raca_cor, color = raca_cor)) +
+   geom_line(size = 2) +
+  geom_point(
+    data = . %>% filter(ano %in% c("2010", "2020")),
+      aes(x = ano, y = media), 
+      color = "black", size = 5,
+    show.legend = F) +
+  geom_point(
+    data = . %>%  group_by(raca_cor, sexo) %>% filter(media== max(media)),
+      aes(x = ano, y = media), 
+      color = "red", size = 5,
+    show.legend = F) +
+   geom_text_repel(
+      data = . %>% group_by(raca_cor, sexo) %>% filter(ano %in% c("2010", "2020")),
+      aes(
+        label = scales::number(
+          media,
+          scale = 1/10^3,
+          accuracy = 0.01,
+          suffix = " mil",
+          decimal.mark = ",",
+          big.mark = "."),
+        ),
+      size = 5,
+      min.segment.length  =  0.5,
+      box.padding  =  1,
+      force = 8,
+    ) +
+  geom_text_repel(
+        data = . %>% group_by(raca_cor, sexo) %>% filter(media == max(media)),
+        aes(x =ano, y = media,
+            label = scales::number(
+            media,
+            scale = 1/10^3,
+            suffix = " mil",
+            accuracy = 0.01,
+            decimal.mark = ",",
+            big.mark = "."
+            )
+          ),
+        size = 5,
+        min.segment.length  =  .5,
+        box.padding  =  1,
+        force =8,
+      ) +
+  scale_y_log10(labels = label_number(scale = 1/10^3,
+            suffix = " mil",
+            accuracy = 0.1,
+            decimal.mark = ",",
+            big.mark = ".")) +
+  # scale_y_continuous(
+  #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
+    labs(x = "Ano", y = "Remuneração mediana (R$)", color = "Raça ou cor",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+  facet_wrap(~sexo, ncol = 2) +
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        #tema legenda
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+        legend.position = "top",
+        legend.justification = c("top"),
+        legend.title = element_text(size = 16L, face = "bold"),
+        #legend.background = element_rect(fill = "white", colour = "black"),
+        legend.key.width = unit(1.5, "cm"),
+        legend.key.height = unit(1.5, "cm"),
+        #
+        ) +
+  guides(
+    col = guide_legend(nrow = 1)) +
+  ggthemes::scale_color_gdocs()
+```
+
+
+
 
 ## Ocupações dos Trabalhadores Portuários e Aquaviários
 
