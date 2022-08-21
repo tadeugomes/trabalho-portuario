@@ -462,3 +462,39 @@ rais %>%
       ggthemes::scale_color_gdocs()
       
   
+library(tidyverse)
+      
+grupo_ma <- rais %>% filter(sigla_uf=="MA")
+      
+
+# manipulação dos dados. Grupos CNAE
+grupo_ma.2 <- 
+        manipulacao(
+          dataset = grupo_ma, 
+          nivel1 = n_divisao, 
+          nivel2 = n_grupo
+        )
+      
+      #grafico
+      a <- 
+        grafico(
+          dataset = grupo_ma.2,
+          nivel1 = n_divisao, 
+          nivel2 = n_grupo, 
+          titulo = "", 
+          titulo_legenda = ""
+        )+
+        theme_classic()+
+        theme(plot.subtitle= element_blank(), 
+              legend.text = element_text(size = 12), 
+              panel.grid.major.x  = element_line(color = "black", linetype = 2, size = 0.1,),
+              legend.position = "top",
+              legend.justification = c("left", "top"),
+              legend.title = element_text(size = 10, face = "bold"), 
+              strip.text.x = element_text(size=10)
+        )
+      
+      
+      print(a)
+      
+      
