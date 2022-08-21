@@ -32,6 +32,8 @@ text-align: justify;
 font-size: 12px}
 </style>
 ```
+
+
 ```{r lendo, child = "Setup.Rmd"}
 #lendo arquivo Setup.Rmd
 #optei por esta estratégia para plotar apenas os gráficos neste arquivo
@@ -154,7 +156,7 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
     face = "bold"
     ) + #labels apresentados
   bbc_style() +
-   labs(title = "Vínculos do Setor Portuário e Aquaviário no País (2010 - 2020) ",
+   labs(title = "Vínculos do Setor Portuário e Aquaviário no País",
         subtitle = "Grupos com maior participação",
          caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
 
@@ -346,7 +348,7 @@ print(a)
 
 Ao analisar os dados para o estado do Maranhão, verifica-se que os
 vínculos diretos foram ascendentes até o ano de 2017, quando foram
-identificados 2020 vínculos. Em 2020, depois de quedas em 2018 e 2019,
+identificados 2.020 vínculos. Em 2020, depois de quedas em 2018 e 2019,
 apresentou ligeira recuperação e o número de vínculos registrados foi de
 1.920.
 
@@ -374,8 +376,8 @@ ggplot(aes(x = ano, y = n, group = secao)) +
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
     bbc_style() +
   labs(
-       title = "Vínculos do Setor Portuário e aquaviário no Maranhão", 
-       subtitle = "Por setor de atividade",
+       title = "Vínculos do Setor Portuário e Aquaviário no Maranhão", 
+       subtitle = "Grupos com maior participação",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
     ggthemes::scale_color_gdocs() +
   scale_y_continuous(labels = label_number(scale = 1/1000)) +
@@ -446,10 +448,14 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
   
 ```
 
+<br>
+
 No gráfico a seguir pode-se observar as modalidades abarcadas pelo
 **Transporte Aguaviário** e suas representatividades no estado. O
 destaque positivo é para o setor de **Navegação de Apoio**, que auxilia
 as atividades portuárias.
+
+<br>
 
 ```{r g_grupo_ma, echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -535,8 +541,8 @@ sexo, observa-se que a participação masculina é predominante. Em 2020,
 do total de 76.317 vínculos, 65.735 eram homens, sendo apenas 10.582
 mulheres (13,87%).
 
-Apesar da baixa participação feminina no setor, observa-se que
-apresentam maior escolaridade: 44,5% têm curso superior, contra 17,7%
+Apesar da baixa participação feminina no setor, observa-se que elas
+apresentavam maior escolaridade: 44,5% têm curso superior, contra 17,7%
 dos homens com a mesma escolaridade. De forma agregada, observa-se o
 aumento da escolarização entre 2010 e 2020, apesar do número de
 profissionais com pós-graduação ainda ser baixo.
