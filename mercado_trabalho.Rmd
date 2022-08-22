@@ -28,7 +28,8 @@ editor_options:
 ```{=html}
 <style>
 body {
-text-align: justify; 
+text-align: justify;
+font-family: "Times New Roman";
 font-size: 12px}
 </style>
 ```
@@ -370,7 +371,7 @@ g1 %>%
 ggplot(aes(x = ano, y = n, group = secao)) +
   geom_line(aes(color = secao), size = 2) +
   geom_point(color = "black", size = 4) +
-  ggrepel::geom_text_repel(aes(x = ano, y = n, label = scales::number(n, scale = 1/1000, decimal.mark = ",", big.mark = ".", accuracy = 0.01, suffix = " mil")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
+  ggrepel::geom_text_repel(aes(x = ano, y = n, label = scales::number(n, decimal.mark = ",", big.mark = ".")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
   labs(x = "Ocupação", y = "Número de vínculos (em mil)",
        title = "Vínculos do Setor Portuário e aquaviário no Maranhão (2010 - 2020)", subtitle = "Seção da CNAE H",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
@@ -419,7 +420,7 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
     data = . %>% group_by(n_divisao) %>% filter(n == max(n)), 
     aes(x = ano, y = n), 
     size = 3, color = "red") +
- geom_text_repel(aes(x = ano, y = n, label = scales::number(n, scale = 1/1000, decimal.mark = ",", big.mark = ".", accuracy = 0.01, suffix = " mil")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
+ geom_text_repel(aes(x = ano, y = n, label = scales::number(n, decimal.mark = ",", big.mark = ".")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
   geom_label_repel(
     data = . %>% filter(ano == 2020),
     aes(x = ano, y = n,
@@ -475,7 +476,7 @@ grafico(
   dataset = grupo_ma.2,
   nivel1 = n_divisao, 
   nivel2 = n_grupo, 
-  titulo = "Vínculos por setores no Maranhão", 
+  titulo = "Vínculos por setor no Maranhão", 
   titulo_legenda = ""
   )+
   bbc_style()+
@@ -547,6 +548,7 @@ dos homens com a mesma escolaridade. De forma agregada, observa-se o
 aumento da escolarização entre 2010 e 2020, apesar do número de
 profissionais com pós-graduação ainda ser baixo.
 
+<br>
 ```{r g_operacao_escol_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 # ordem_esc <- c("Fundamental incompleto", "Fundamental completo", 
 #         "Médio incompleto", "Médio completo", "Superior incompleto",
@@ -575,10 +577,10 @@ print(a)
 
 ```
 
-
+<br>
 O Maranhão acompanha a tendência nacional: há o predomínio de profissionais com ensino médio completo e, em seguida, ensino superior. Apesar de crescente, o número de pessoas com pós-graduação ainda é incipiente.  
 
-
+<br>
 
 ```{r g_operacao_escol_sexo.ma, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 # ordem_esc <- c("Fundamental incompleto", "Fundamental completo", 
@@ -608,9 +610,9 @@ print(grafico.escolaridade.ma)
 
 ```
 
-
+<br>
 Ao avaliar a remuneração média por escolaridade no país, verifica-se que os profissionais com pós-graduação têm uma renda significativamente superior aos demais níveis de escolaridade.
-
+<br>
 ```{r g_remun_escol_sexo,results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
 rais %>% 
@@ -682,10 +684,11 @@ rais %>%
 
 ```
 
+<br>
 
 A renda do trabalhador maranhense segue a tendência nacional: profissional com pós-graduação aufere rendimentos bem superiores aos dos demais profissionais.
 
-
+<br>
 ```{r g_remun_escol_sexo.ma,results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
 grupo_ma %>% 
