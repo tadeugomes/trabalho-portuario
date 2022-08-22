@@ -6,10 +6,10 @@ output:
     css: custom.css
     toc: yes
     number_sections: yes
-    toc_float: yes
+    toc_float: no
     collapsed: yes
     smooth_scroll: yes
-    toc_depth: 2
+    toc_depth: 4
     keep_tex: yes
     fig_width: 14
     fig_height: 10
@@ -1062,7 +1062,8 @@ rais %>%
             big.mark = ".")) +
   # scale_y_continuous(
   #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
-    labs(x = "Ano", y = "Remuneração mediana (R$)", color = "Raça ou cor",
+    labs(title = "Remuneração Média no Brasil por Cor ou Raça",
+           x = "Ano", y = "Remuneração mediana (R$)", color = "Raça ou cor",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
   facet_wrap(~sexo, ncol = 2) +
   theme_classic() +
@@ -1154,7 +1155,8 @@ grupo_ma %>%
             big.mark = ".")) +
   # scale_y_continuous(
   #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
-    labs(x = "Ano", y = "Número de Vínculos", color = "Raça ou cor",
+    labs(title = "Número de Vínculos no Maranhão por cor ou Raça",
+           x = "Ano", y = "Número de Vínculos", color = "Raça ou cor",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
   facet_wrap(~sexo,ncol = 2)+
   theme_classic() +
@@ -1182,13 +1184,12 @@ grupo_ma %>%
  
 ```
 
-Renda no mA 
-
+A renda dos profissionais no estado do Maranhão acompanha a tendência nacional. (Adicionar descrição)
 
 ```{r g_operacao_remuneracao _mediana_raca_sexo.ma, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
 grupo_ma %>%
-  filter(valor_remuneracao_media != 0.00 | !is.na(valor_remuneracao_media)) %>%
+  filter(valor_remuneracao_media != 0.00 | !is.na(valor_remuneracao_media) | raca_cor != 'Não identificado') %>%
   group_by(ano, raca_cor, sexo, .groups = 'drop') %>% 
   summarise(n = n(),
             media = median(valor_remuneracao_media)) %>% 
@@ -1245,7 +1246,8 @@ grupo_ma %>%
             big.mark = ".")) +
   # scale_y_continuous(
   #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
-    labs(x = "Ano", y = "Remuneração mediana (R$)", color = "Raça ou cor",
+    labs(title = "Remuneração mediana no Maranhão por Cor ou Raça",
+    x = "Ano", y = "Remuneração mediana (R$)", color = "Raça ou cor",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
   facet_wrap(~sexo, ncol = 2) +
   theme_classic() +
@@ -1479,8 +1481,6 @@ geom_text(
       uf %>% filter(ano == 2010) %>%  select(n) %>% pull() %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),
       "vínculos de trabalho em todo o país em 2010 e", uf %>% filter(ano == 2020) %>%  select(n) %>% pull() %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),  "vínculos em 2020",
       sep = " ")) +
-  bbc_style()+
-  bbc_style() +
 # geom_text(aes(label= prettyNum(n, big.mark = ".", decimal.mark = ",")), 
   #           size =4,  
   #           hjust=-.5, vjust=.5, colour="black") +
@@ -1489,7 +1489,14 @@ geom_text(
     breaks = seq(0,3*10^4, 10^4), limits = c(0, 3.5*10^4),
      labels = number_format(scale = 1/1000,
                                             big.mark = ".", decimal.mark = ",")) +
-  facet_wrap(~ano, ncol = 3, scales = "fixed") 
+  facet_wrap(~ano, ncol = 3, scales = "fixed")+
+  theme_classic()+
+  theme(legend.position = "none",  
+ plot.caption = element_text(size = 12L,face = "bold", hjust = 0),
+axis.text.x = element_text(size = 10L), 
+axis.text.y = element_text(size = 10L), 
+axis.title.y = element_text(size = 10L),
+axis.title.x = element_text(size = 10L))
 
 ```
 
