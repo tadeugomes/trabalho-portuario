@@ -20,6 +20,7 @@ output:
   pdf_document:
     toc: yes
     toc_depth: '2'
+    geometry: a4paper
 editor_options:
   markdown:
     wrap: 72
@@ -55,12 +56,13 @@ evolução do Trabalho Portuário e aquaviário no Brasil e no Maranhão.
 
 Trata-se de um setor abrangente e com atividades diversas como
 instalações portuárias, embarcações mercantes, de passageiros, pesca,
-atividades em plataformas marítimas e de repação naval.
+atividades em plataformas marítimas e de repação naval que movimentam inúmeras cadeias produtivas e setores econômicos.
 
-Como se trata de uma ampla gama de atividades, o relatório estará
-organizado em duas seções com focos direcionados: a primeira com um
-panorama abarcado pelo Trabalho Portuário e aquaviário e a segunda com
-um recorte específico sobre a operação e gestão portuária.
+Espera-se que as ss informações apresentadas (a metodologia está disponível na última seção) possam auxiliar o debate no setor e subsidiar a elaboração de políticas de gestão públicas e privadas. 
+
+Este é o primeiro de uma série de quatro relatórios sobre o mercado de trabalho portuário e aguaviário brasileiro e maranhense. 
+
+Boa leitura.
 
 # Panorama do trabalho no setor portuário e aquaviário no Brasil
 
@@ -177,8 +179,8 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
 <br>
 
 Ao analisar os grupos de atividades com maior participação no número de
-vínculos empregatícios, verifica-se o destaque das atividades de
-**Armazenamento e Atividades Auxiliares dos Transportes** e também do
+vínculos empregatícios, destacam-se as atividades de
+**Armazenamento e Atividades Auxiliares dos Transportes** e 
 **Transporte Aguaviário**.
 
 O **Armazenamento e Atividades Auxiliares dos Transportes** compreende,
@@ -195,17 +197,17 @@ atividades relacionadas
 > carga.
 
 Destaque também deve ser dado para o número de vínculos "Transporte
-Aguaviário\*\*, cujas atividades são as relacionadas aos transporte de
+Aguaviário\*\*, cujas atividades são as relacionadas aos transportes de
 pessoas e mercadorias, além das embarcações turísticas e o fretamento de
 embarcações com tripulação. Nela também estão as operações e embarcações
 para apoio marítimo e portuário.
 
 No gráfico a seguir estão detalhados os vínculos e atividades
-contemplados no Transporte Aguaviário.
+contemplados no Transporte Aguaviário no país.
 
 Com o recorte, verifica-se que as atividades de **Navegação de Apoio**
 apresentam o maior número de vínculo, registrando o maior número de
-vínculos em 2014 (quase 19.600). A categoria abarca atividades como:
+vínculos em 2020 na categoria (18.237). A categoria abarca atividades como:
 
 -   o transporte de mercadorias e pessoas para suprimento e apoio a
     navios e a plataformas de pesquisas e exploração de minerais e
@@ -224,7 +226,7 @@ vínculos em 2014 (quase 19.600). A categoria abarca atividades como:
 
 Observa-se que o grupo de **Transporte por Navegação Interior**, segundo
 maior grupo em número de vínculos no **Transporte Aguaviário**,
-finalizou 2020 com quase 11.500 vínculos. São atividades como *o
+finalizou 2020 com 11.488 vínculos. São atividades como *o
 transporte de carga municipal, por rios, canais, lagos, lagoas, baias e
 outras vias de navegação interior, exceto travessia* e *o fretamento de
 embarcações com tripulação*, mas não inclui a *operação e gestão de
@@ -271,7 +273,7 @@ print(a)
 <br>
 
 Esses dados podem detalhados um pouco mais a partir da análise das
-seções da CNAE, o que permite identificar quais áreas impactaram
+seções da Classificação Nacional de Atividades Econômicas (CNAE) do Instituto Brasileiro de Geografia e Estatística (IBGE), o que permite identificar quais áreas impactaram
 diretamente o estoque de empregos na área portuária e aguaviária.
 
 Pelo gráfico a seguir, alguns destaques do setor podem ser obtidos por
@@ -279,20 +281,19 @@ grupo de atividade:
 
 -   Ao considerar a **Gestão de Portos e Terminais**, o destaque foi
     para as *Operações de Terminais*, que apresentou número crescente de
-    vínculos entre 2010 e 2020, registrando 35.360 vínculos. Por outro
+    vínculos entre 2010 e 2020, registrando 35.357 vínculos. Por outro
     lado, as atividades de Administração da Infra-estrutura Portuária
-    tiveram um declínio de quase 100%, considerando o ano de 2011 (maior
-    número de vínculos);
+    tiveram um declínio de 41,25%, resultado da destruição de 2.170 vínculos;
 
--   O **Transporte Marítico de Carga poor Cabotagem**, por sua vez, teve
-    uma redução drástica de vínculos: saiu de 8.290 em 2010 para 3.320
+-   O **Transporte Marítico de Carga por Cabotagem**, por sua vez, teve
+    uma redução drástica de vínculos: saiu de 8.289 em 2010 para 3.316
     em 2020.
 
 -   O **Transporte por Navegação Interior de Carga**, por outro lado,
-    apresentou leve aumento: passou de 7.520 para 8.380 vínculos.
+    apresentou leve aumento: passou de 7.524 para 8.382 vínculos.
 
 -   A **Navegação de Apoio Marítimo**, por sua vez, duplicou o número de
-    vínculos e chegou a 15.370 profissionais na área.
+    vínculos e chegou a 15.372 profissionais na área.
 
 ```{r  g_classe, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
 # manipulação dos dados
@@ -362,13 +363,18 @@ print(a)
 
 ```
 
+<br>
+Os dados são um reflexo das políticas de regulação para o setor, evidenciando como as estratégias governamentais e empresariais se refletem no estoque de empregos no setor. 
+
+Na próxima seção os dados para o estado do Maranhão são apresentados. 
+
 # Panorama do trabalho no setor portuário e aquaviário no Maranhão
 
 Ao analisar os dados para o estado do Maranhão, verifica-se que os
 vínculos diretos foram ascendentes até o ano de 2017, quando foram
-identificados 2.020 vínculos. Em 2020, depois de quedas em 2018 e 2019,
+identificados 2.016 vínculos. Em 2020, depois de quedas em 2018 e 2019,
 apresentou ligeira recuperação e o número de vínculos registrados foi de
-1.920.
+1.924.
 
 ```{r, include=FALSE}
 g1<-
@@ -561,8 +567,10 @@ sexo, observa-se que a participação masculina é predominante. Em 2020,
 do total de 76.317 vínculos, 65.735 eram homens, sendo apenas 10.582
 mulheres (13,87%).
 
+No Maranhão a proporção é igual: dos 1.924 vínculos, apenas 14% eram mulheres (2.629)
+
 Apesar da baixa participação feminina no setor, observa-se que elas
-apresentavam maior escolaridade: 44,5% têm curso superior, contra 17,7%
+apresentavam maior escolaridade no contexto nacional: 44,5% tinham curso superior, contra 17,7%
 dos homens com a mesma escolaridade. De forma agregada, observa-se o
 aumento da escolarização entre 2010 e 2020, apesar do número de
 profissionais com pós-graduação ainda ser baixo.
@@ -597,7 +605,8 @@ print(a)
 ```
 
 <br>
-O Maranhão acompanha a tendência nacional: há o predomínio de profissionais com ensino médio completo e, em seguida, ensino superior. Apesar de crescente, o número de pessoas com pós-graduação ainda é incipiente.  
+
+O Maranhão também acompanha a tendência nacional no quesito escolarização: há o predomínio de profissionais com ensino médio completo e, em seguida, ensino superior. Apesar de crescente, o número de pessoas com pós-graduação ainda é incipiente, o que irá refletir na remuneração, como se observa no gráfico:
 
 <br>
 
@@ -708,7 +717,7 @@ rais %>%
 
 <br>
 
-A renda do trabalhador maranhense segue a tendência nacional: profissional com pós-graduação aufere rendimentos bem superiores aos dos demais profissionais.
+A renda do trabalhador maranhense segue a tendência nacional: profissional com pós-graduação aufere rendimentos bem superiores aos dos demais profissionais. 
 
 <br>
 ```{r g_remun_escol_sexo.ma,results='hide', echo=FALSE, message=FALSE, warning=FALSE}
@@ -1096,9 +1105,7 @@ grupo_ma %>%
 ```
 
 
-A renda dos profissionais no estado do Maranhão acompanha a tendência nacional. (Adicionar descrição)
-
-A renda dos trabalhadores por cor ou raça no Maranhão, por sua vez, evidencia que os autodeclarados amarelos se destacam entre os homens, com remuneração mediana acima das demais (amarelos, de acordo com o Instituto Brasileiro de Geografia e Estatística-IBGE, são aqueles que se declaram de origem asiática: japoneses, coreanos e chineses). 
+A renda dos trabalhadores por cor ou raça no Maranhão, por sua vez, evidencia que os autodeclarados amarelos se destacam entre os homens, com remuneração mediana acima das demais (amarelos, de acordo com o IBGE, são aqueles que se declaram de origem asiática: japoneses, coreanos e chineses). 
 
 ```{r g_operacao_remuneracao _mediana_raca_sexo.ma, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -1166,7 +1173,6 @@ grupo_ma %>%
 
 
 
-
 ## Ocupações dos Trabalhadores Portuários e Aquaviários
 
 As ocupações com maior participação no setor estão no gráfico a seguir,
@@ -1231,9 +1237,18 @@ rais %>%
   
 ```
 
-## Remuneração Média dos Trabalhadores nos Estados
+## Remuneração dos Trabalhadores nos Estados
 
-```{r g_operacao_estado, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+Verifica-se que a remuneração mediana dos trabalhadores portuários e aguaviários varia conforme o estado da federação. O Rio de Janeiro é o estado com a maior remuneração no período analisado, com o registro de R$ 8.535 em 2020. O Espírito Santo aparece em segundo lugar, com R$ 6.012. 
+
+O estado do Maranhão teve uma evolução signifitiva no valor da remuneração mediana: saltou de R$ 2.090 em 2010 para R$ 4.765 em 2020. 
+
+
+
+```{r g_operacao_estado, echo=FALSE, message=FALSE, warning=FALSE, results='hide', include=FALSE}
+
+
+# Remuneracao com valor nominal. Não plotar. 
 rais %>% 
   group_by(ano, nome_uf) %>% 
   summarise(n = n()) %>% 
@@ -1258,9 +1273,9 @@ rais %>%
         n, 
         prefix = "R$",
         suffix = "")), 
-    nudge_x = -0.2, 
+    nudge_x = -.02, 
     direction = "both", 
-    hjust = "right", 
+    hjust = 1,
     size = 4) +
   theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
@@ -1282,20 +1297,23 @@ rais %>%
   
 ```
 
+
+
+
 ```{r g_operacao_estado_rem, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 lvls <- 
   rais %>% 
   group_by(ano, nome_uf) %>% 
-  summarise(media = mean(valor_remuneracao_media)) %>% 
+  summarise(media = median(valor_remuneracao_media)) %>% # mediana da remuneracao
   filter(ano == 2020) %>% 
-  slice_max(media, n = 5) %>% 
+  slice_max(media, n = 8) %>% 
   select(nome_uf) %>% 
   pull()
 
 rais %>% 
     filter(valor_remuneracao_media != 0.00 | !is.na(valor_remuneracao_media)) %>%
   group_by(ano, nome_uf) %>% 
-  summarise(media = mean(valor_remuneracao_media)) %>% 
+  summarise(media = median(valor_remuneracao_media)) %>% # mediana
   mutate(ano = factor(ano, lvls_ano)) %>%
   filter(nome_uf %in% lvls) %>% 
   ggplot(aes(x = ano, y = media, group = nome_uf, color = nome_uf)) +
@@ -1318,7 +1336,7 @@ rais %>%
     nudge_x = -0.2, 
     direction = "both", 
     hjust = "right", 
-    size = 5) +
+    size = 4) +
   scale_y_continuous(
     labels = label_number(scale = 1/1000, 
                           big.mark = ".", decimal.mark = ",")) +
@@ -1342,7 +1360,7 @@ rais %>%
                                 #hjust = .5
                                    ),
     strip.background = element_blank()) +
-  labs(x = "Ano", y = "Remuneração média (em mil)", color = "",
+  labs(x = "Ano", y = "Remuneração mediana (em mil)", color = "",
        title = "Estados com as melhores remunerações dos setores Portuário e\n Aquaviário",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
     scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18)) +
@@ -1351,7 +1369,9 @@ rais %>%
   
 ```
 
-## Remuneração Média dos Trabalhadores nos municípios
+## Remuneração dos Trabalhadores nos municípios
+
+
 
 ```{r g_operacao_municipio, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 rais %>% 
@@ -1359,7 +1379,7 @@ rais %>%
   summarise(n = n()) %>% 
   mutate(ano = factor(ano, lvls_ano)) %>%
   arrange(n) %>% 
-  top_n(5, n) %>% 
+  top_n(8, n) %>% 
   ggplot(aes(x = ano, y = n, group = nome_municipio, color = nome_municipio)) +
    geom_line(size = 2) +
   geom_point(
@@ -1455,7 +1475,7 @@ ggplot(aes(x = sigla_uf, y = n,
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
 geom_text(
   data = . %>% group_by(ano) %>% slice_max(order_by = n, n = 3), 
-    aes(label = scales::number(n, scale = 1/1000,  decimal.mark = ",", big.mark = ".", accuracy = .01, suffix = " mil")), hjust =  -.1, size = 2.5) +
+    aes(label = scales::number(n, big.mark = ".", suffix = " mil")), hjust =  -.1, size = 2.5) +
   geom_text(
   data = . %>% filter(sigla_uf == "MA"), 
     aes(label = scales::number(n, scale = 1/1000,  decimal.mark = ",", big.mark = ".", accuracy = .01, suffix = " mil")), hjust =  -.1, size = 2.5) +
@@ -1477,7 +1497,7 @@ geom_text(
   facet_wrap(~ano, ncol = 3, scales = "fixed")+
   theme_classic()+
   theme(legend.position = "none",  
- plot.caption = element_text(size = 12L,face = "bold", hjust = 0),
+ plot.caption = element_text(size = 10L, hjust = 0),
 axis.text.x = element_text(size = 10L), 
 axis.text.y = element_text(size = 10L), 
 axis.title.y = element_text(size = 10L),

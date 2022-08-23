@@ -328,7 +328,7 @@ ggplot(
           #scale = 1/10^3,
           #accuracy = 0.01,
           #suffix = " mil",
-          decimal.mark = ",",
+          #decimal.mark = ",",
           big.mark = ".")
         ),
       size = 4
