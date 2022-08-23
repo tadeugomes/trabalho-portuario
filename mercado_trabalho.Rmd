@@ -312,6 +312,16 @@ grafico(
   nivel2 = n_classe, 
   titulo = "Vínculos profissionais por setor de atuação", 
   titulo_legenda = "Classes da CNAE"
+  )+
+  bbc_style()+
+  theme(plot.subtitle= element_blank(), 
+            legend.text = element_text(size = 12), 
+       panel.grid.major.x  = element_line(color = "black", linetype = 2, size = 0.1,),
+       legend.position = "top",
+       legend.justification = c("left", "top"),
+       legend.title = element_text(size = 10, face = "bold"), 
+       strip.text.x = element_text(size=12)
+      
   )
 
 print(a)
@@ -335,9 +345,16 @@ grafico(
   nivel2 = n_subclasse, 
   titulo = "", 
   titulo_legenda = ""
-  )+ theme(plot.subtitle= element_blank(), 
+  )+ 
+  bbc_style()+
+  theme(plot.subtitle= element_blank(), 
             legend.text = element_text(size = 12), 
-           strip.text.x = element_text(size=14))
+       panel.grid.major.x  = element_line(color = "black", linetype = 2, size = 0.1,),
+       legend.position = "top",
+       legend.justification = c("left", "top"),
+       legend.title = element_text(size = 10, face = "bold"), 
+       strip.text.x = element_text(size=12)
+  )
 
 
 
@@ -525,7 +542,9 @@ grafico(
   titulo_legenda = ""
   )+ theme(plot.subtitle= element_blank(), 
             legend.text = element_text(size = 12), 
-           strip.text.x = element_text(size=14))
+           strip.text.x = element_text(size=14),
+           legend.key.width = unit(1.5, "cm"),
+           legend.key.height = unit(1.5, "cm"))
 
 
 
@@ -611,8 +630,11 @@ print(grafico.escolaridade.ma)
 ```
 
 <br>
+
 Ao avaliar a remuneração média por escolaridade no país, verifica-se que os profissionais com pós-graduação têm uma renda significativamente superior aos demais níveis de escolaridade.
+
 <br>
+
 ```{r g_remun_escol_sexo,results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
 rais %>% 
@@ -655,7 +677,7 @@ rais %>%
             big.mark = ".")) +
   # scale_y_continuous(
   #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
-    labs(x = "Ano", y = "Remuneração média", color = "",
+    labs(x = "Ano", y = "Remuneração média (R$)", color = "",
          title = "Remuneração Média por sexo e grau de instrução no país",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
   facet_wrap(~sexo, ncol = 2)+
@@ -731,7 +753,7 @@ grupo_ma %>%
             big.mark = ".")) +
   # scale_y_continuous(
   #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
-    labs(x = "Ano", y = "Remuneração média", color = "",
+    labs(x = "Ano", y = "Remuneração média (R$)", color = "",
          title = "Remuneração Média por sexo e grau de instrução no Maranhão",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
   facet_wrap(~sexo, ncol = 2)+
@@ -761,7 +783,7 @@ grupo_ma %>%
 ```
 
 
-#### Raça ou cor do Trabalhador Portuário e aquaviário
+#### Raça ou cor do Trabalhador Portuário e Aquaviário
 
 O perfil racial dos profissionais pode ser observado no gráfico a
 seguir[^1]. Nota-se o predomínio de pardos e brancos, tanto entre os
@@ -1166,7 +1188,7 @@ rais %>%
   arrange(n) %>% 
   top_n(6, n) %>% 
   ggplot(aes(x = ano, y = n, group = cbo_2002, color = cbo_2002)) +
-  geom_line(size = 1.25) +
+  geom_line(size = 2) +
   geom_point(
     data = . %>% filter(ano %in% c("2010", "2020")),
 
@@ -1219,7 +1241,7 @@ rais %>%
   arrange(n, .by_group = T) %>% 
   top_n(7) %>% 
   ggplot(aes(x = ano, y = n, group = nome_uf, color = nome_uf)) +
-   geom_line(size = 1.25) +
+   geom_line(size = 2) +
   geom_point(
     data = . %>%  group_by(nome_uf) %>% filter(ano %in% c("2010", "2020")),
       aes(x = ano, y = n), 
@@ -1239,7 +1261,7 @@ rais %>%
     nudge_x = -0.2, 
     direction = "both", 
     hjust = "right", 
-    size = 5) +
+    size = 4) +
   theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
         plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
@@ -1339,7 +1361,7 @@ rais %>%
   arrange(n) %>% 
   top_n(5, n) %>% 
   ggplot(aes(x = ano, y = n, group = nome_municipio, color = nome_municipio)) +
-   geom_line(size = 1.25) +
+   geom_line(size = 2) +
   geom_point(
     data = . %>% filter(ano %in% c("2010", "2020")),
       aes(x = ano, y = n), 
@@ -1429,7 +1451,7 @@ ggplot(aes(x = sigla_uf, y = n,
            size = .05))+
   geom_bar(position = "dodge", stat = "identity") +
   coord_flip() +
-  labs(x = "Ocupação", y = "Número de vínculos (em mil)",
+  labs(x = "", y = "Número de vínculos (em mil)",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
 geom_text(
   data = . %>% group_by(ano) %>% slice_max(order_by = n, n = 3), 
