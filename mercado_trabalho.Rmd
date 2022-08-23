@@ -116,8 +116,8 @@ ggplot(aes(x = ano, y = n, group = secao)) +
 
 Ao analisar os dados por setor de atividade no contexto nacional,
 verifica-se redução do número de vínculos no grupo de profissionais
-atuantes no **Transporte aquaviário**, com uma redução de 44.420 mil
-vínculos em 2013 para 37.910 mil em 2020, com uma redução de 6.510
+atuantes no **Transporte aquaviário**, com uma redução de 44.420
+vínculos em 2013 para 37.910 em 2020, com uma redução de 6.510
 vínculos.
 
 Por outro lado, nota-se que o grupo de atividades agrupadas como
@@ -179,7 +179,7 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
 Ao analisar os grupos de atividades com maior participação no número de
 vínculos empregatícios, verifica-se o destaque das atividades de
 **Armazenamento e Atividades Auxiliares dos Transportes** e também do
-**Transporte Aguaviário**.
+**Transporte Aquaviário**.
 
 O **Armazenamento e Atividades Auxiliares dos Transportes** compreende,
 de acordo com a Classificação Nacional de Atividades Econômicas-CNAE,
@@ -195,13 +195,13 @@ atividades relacionadas
 > carga.
 
 Destaque também deve ser dado para o número de vínculos "Transporte
-Aguaviário\*\*, cujas atividades são as relacionadas aos transporte de
+Aquaviário\*\*, cujas atividades são as relacionadas aos transporte de
 pessoas e mercadorias, além das embarcações turísticas e o fretamento de
 embarcações com tripulação. Nela também estão as operações e embarcações
 para apoio marítimo e portuário.
 
 No gráfico a seguir estão detalhados os vínculos e atividades
-contemplados no Transporte Aguaviário.
+contemplados no Transporte Aquaviário.
 
 Com o recorte, verifica-se que as atividades de **Navegação de Apoio**
 apresentam o maior número de vínculo, registrando o maior número de
@@ -223,7 +223,7 @@ vínculos em 2014 (quase 19.600). A categoria abarca atividades como:
     portuário.
 
 Observa-se que o grupo de **Transporte por Navegação Interior**, segundo
-maior grupo em número de vínculos no **Transporte Aguaviário**,
+maior grupo em número de vínculos no **Transporte Aquaviário**,
 finalizou 2020 com quase 11.500 vínculos. São atividades como *o
 transporte de carga municipal, por rios, canais, lagos, lagoas, baias e
 outras vias de navegação interior, exceto travessia* e *o fretamento de
@@ -251,6 +251,7 @@ grafico(
   nivel2 = n_grupo, 
   titulo = ""
   ) +
+    scale_y_continuous(labels = label_number(scale = 1/1000)) +
   bbc_style()+
   theme(plot.subtitle= element_blank(), 
             legend.text = element_text(size = 12), 
@@ -264,7 +265,8 @@ grafico(
   guides(
     color = guide_legend(
       title = "Grupos da\nCNAE",
-      ncol = 2, keywidth = unit(1.5, "cm")))
+      ncol = 2, keywidth = unit(1.5, "cm"))) +
+  ggthemes::scale_fill_gdocs()
 
 
 print(a)
@@ -276,7 +278,7 @@ print(a)
 
 Esses dados podem detalhados um pouco mais a partir da análise das
 seções da CNAE, o que permite identificar quais áreas impactaram
-diretamente o estoque de empregos na área portuária e aguaviária.
+diretamente o estoque de empregos na área portuária e aquaviária.
 
 Pelo gráfico a seguir, alguns destaques do setor podem ser obtidos por
 grupo de atividade:
@@ -316,7 +318,9 @@ grafico(
   nivel2 = n_classe, 
   titulo = "Vínculos profissionais por setor de atuação"
   )+
+    scale_y_continuous(labels = label_number(scale = 1/1000)) +
   bbc_style()+
+  labs(color = "Subclasses\nCNAE")+
   theme(plot.subtitle= element_blank(), 
             legend.text = element_text(size = 12), 
        panel.grid.major.x  = element_line(color = "black", linetype = 2, size = 0.1,),
@@ -348,6 +352,7 @@ grafico(
   nivel2 = n_subclasse, 
   titulo = "") + 
   bbc_style()+
+  scale_y_continuous(labels = label_number(scale = 1/1000)) +
   theme(plot.subtitle= element_blank(), 
             legend.text = element_text(size = 12), 
        panel.grid.major.x  = element_line(color = "black", linetype = 2, size = 0.1,),
@@ -412,7 +417,7 @@ ggplot(aes(x = ano, y = n, group = secao)) +
 
 <br>
 
-No caso do Maranhão, o **Transporte Aguaviário** é o grupo de atividade
+No caso do Maranhão, o **Transporte Aquaviário** é o grupo de atividade
 que apresenta o maior número de empregos diretos, com 1.000 vínculos em
 2020.
 
@@ -474,7 +479,7 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
 <br>
 
 No gráfico a seguir pode-se observar as modalidades abarcadas pelo
-**Transporte Aguaviário** e suas representatividades no estado. O
+**Transporte Aquaviário** e suas representatividades no estado. O
 destaque positivo é para o setor de **Navegação de Apoio**, que auxilia
 as atividades portuárias.
 
@@ -500,6 +505,7 @@ grafico(
   nivel2 = n_grupo, 
   titulo = "Vínculos por setores no Maranhão") +
   bbc_style() +
+    scale_y_continuous(labels = label_number(scale = 1/1000)) +
   theme(
     legend.text = element_text(size = 12), 
     panel.grid.major.x  = element_line(color = "black", linetype = 2, size = 0.1),
@@ -565,7 +571,7 @@ print(a_ma_subclasse)
 
 #### Escolaridade do Trabalhador Portuário e aquaviário
 
-Ao analisar o perfil dos trabalhadores portuários e aguaviários por
+Ao analisar o perfil dos trabalhadores portuários e aquaviários por
 sexo, observa-se que a participação masculina é predominante. Em 2020,
 do total de 76.317 vínculos, 65.735 eram homens, sendo apenas 10.582
 mulheres (13,87%).
@@ -599,6 +605,7 @@ grafico(
   titulo = "Quantidade de Vínculos por grau de escolaridade e sexo (em mil)"
   ) +
   ggthemes::scale_color_gdocs() +
+  scale_y_continuous(labels = label_number(scale = 1/1000)) +
   theme(
     strip.text.x = element_text(size=14, face = "bold"                                   ),
     strip.background = element_blank(),
@@ -634,7 +641,9 @@ escolaridade.ma %>%
 grafico(
   nivel1 = sexo, 
   nivel2 = grau_instrucao_apos_2005, 
-  titulo = "Vínculos por grau de escolaridade e sexo no Maranhão" )
+  titulo = "Vínculos por grau de escolaridade e sexo no Maranhão" ) +
+  scale_y_continuous(labels = label_number(scale = 1/1000)) +
+  ggthemes::scale_color_gdocs()
 
 print(grafico.escolaridade.ma)
 
@@ -1150,13 +1159,13 @@ grupo_ma %>%
       box.padding  =  1,
       force = 8,
     ) +
-  scale_y_log10(labels = label_number(scale = 1/10^3,
-            suffix = " mil",
-            accuracy = 0.1,
-            decimal.mark = ",",
-            big.mark = ".")) +
-  # scale_y_continuous(
-  #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
+  # scale_y_log10(labels = label_number(scale = 1/10^3,
+  #           suffix = " mil",
+  #           accuracy = 0.1,
+  #           decimal.mark = ",",
+  #           big.mark = ".")) +
+  scale_y_continuous(
+    labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
     labs(title = "Remuneração mediana no Maranhão por Cor ou Raça",
     x = "Ano", y = "Remuneração mediana (R$)", color = "")+
   facet_wrap(~sexo, ncol = 2) +
@@ -1252,7 +1261,7 @@ rais %>%
       label_number(
         scale = 1/1000, 
         big.mark = ".", 
-        decimal.mark = ",", prefix = "")) +
+        decimal.mark = ",")) +
   theme_classic() +
   theme(plot.title = element_text(
       family = "Helvetica", size = 28, 
@@ -1351,8 +1360,7 @@ rais %>%
       label_number(
         scale = 1/1000, 
         big.mark = ".", 
-        decimal.mark = ",", 
-        prefix = "")) +
+        decimal.mark = ",")) +
   theme_classic() +
   theme(
     plot.title = element_text(
@@ -1459,7 +1467,6 @@ rais %>%
       y = n,
       label = scales::number(
         n, 
-        prefix = "R$",
         suffix = "")), 
     nudge_x = -0.2, 
     direction = "both", 
@@ -1509,6 +1516,10 @@ rais %>%
     data = . %>%  group_by(nome_uf) %>% filter(ano %in% c("2010", "2020")),
       aes(x = ano, y = media), 
       color = "black", size = 5) +
+  geom_point(
+    data = . %>% group_by(nome_uf) %>% filter(media == max(media)),
+      aes(x = ano, y = media), 
+      color = "red", size = 5) +
  geom_text_repel(
     data = . %>% filter(ano %in% c("2010", "2020")),
     aes(
@@ -1517,12 +1528,26 @@ rais %>%
       label = scales::number(
         media, 
         decimal.mark = ",", 
-        big.mark = ".", 
-        prefix = "R$",
-        suffix = " ")), 
+        big.mark = ".")), 
     nudge_x = -0.2, 
     direction = "both", 
     hjust = "right", 
+    size = 5) +
+  geom_text_repel(
+    data = . %>% group_by(nome_uf) %>% filter(media == max(media)),
+    aes(
+      x = ano, 
+      y = media,
+      label = scales::number(
+        media, 
+        scale = 1/1000, 
+        decimal.mark = ",", 
+        big.mark = ".", 
+        accuracy = 0.01, 
+        suffix = " mil")), 
+    nudge_x = -0.2, 
+    direction = "both", 
+  vhjust = "top", 
     size = 5) +
   scale_y_continuous(
     labels = label_number(scale = 1/1000, 
@@ -1644,18 +1669,6 @@ rais %>%
        title = "Municípios que mais empregam nos setores Portuário e Aquaviário") +
   scale_y_continuous(
     labels = label_number(big.mark = ".", decimal.mark = ",")) +
-   geom_text_repel(
-    data = . %>% filter(ano %in% c("2010", "2020")),
-    aes(
-      x = ano, 
-      y = n,
-      label = scales::number(
-        n, 
-        prefix = "R$")), 
-    nudge_x = -0.2, 
-    direction = "both", 
-    hjust = "right", 
-    size = 5) +
   theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
         plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
@@ -1718,7 +1731,7 @@ Por outro lado, o estado do **Maranhão** possuía
 `r uf %>% filter(ano == "2020" & sigla_uf == "MA") %>% select(n) %>% pull()  %>% virgula()`
 vínculos no mesmo ano.
 
-```{r r g_operacao_uf,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.width=8, fig.height=16}
+```{r r g_operacao_uf,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.width=12, fig.height=16}
 
 uf %>%
   filter(!is.na(sigla_uf)) %>% 
