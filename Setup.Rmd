@@ -244,12 +244,13 @@ rais %>%
           grau_instrucao_apos_2005 == 8 ~ "Superior incompleto", 
           grau_instrucao_apos_2005 == 9 ~ "Superior completo", 
           grau_instrucao_apos_2005 == 10 ~ "Pós-graduação", 
+          grau_instrucao_apos_2005 == 11 ~ "Doutorado", 
           grau_instrucao_apos_2005 == -1 ~ "Não informado"
         ), 
         levels = c( 
           "Fundamental incompleto", "Fundamental completo", 
           "Médio incompleto", "Médio completo", "Superior incompleto",
-          "Superior completo", "Pós-graduação", "Não informado"
+          "Superior completo", "Pós-graduação", "Doutorado", "Não informado"
         ) 
       )
     )
@@ -299,7 +300,7 @@ manipulacao <- function(dataset, nivel1, nivel2){
   mutate(ano = factor(ano, lvls_ano))  # reordenamento da variável 
 }
 
-grafico <- function(dataset, nivel1, nivel2, titulo, titulo_legenda){
+grafico <- function(dataset, nivel1, nivel2, titulo){
 
 nivel1 <- enquo(nivel1)
 
@@ -316,30 +317,48 @@ ggplot(
       size = 2
     ) +
   geom_point(
-      data = dataset %>% filter(ano %in% c(2010, 2020)),
+      data = dataset %>% filter(ano %in% c("2010", "2020")),
       color = "black", 
       size = 5
     ) +
   geom_text_repel(
-      data = dataset %>% filter(ano %in% c(2010, 2020)),
+      data = dataset %>% filter(ano %in% c("2010", "2020")),
       aes(
         label = scales::number(
           n,
-          #scale = 1/10^3,
-          #accuracy = 0.01,
-          #suffix = " mil",
+          scale = 1/10^3,
+          accuracy = 0.01,
+          suffix = " mil",
           decimal.mark = ",",
           big.mark = ".")
         ),
       size = 4
     ) +
+  geom_text_repel(
+        data = dataset %>% group_by({{nivel2}}) %>% filter(n == max(n)),
+        aes(
+            label = scales::number(
+            n,
+            scale = 1/10^3,
+            suffix = " mil",
+            accuracy = 0.01,
+            decimal.mark = ",",
+            big.mark = "."
+            )
+          ),
+        size = 4
+      ) +
+    geom_point(
+      data = dataset %>% group_by({{nivel2}}) %>%  filter(n == max(n)),
+      color = "red", size = 5
+    ) +
   labs(
         y = "Número de vínculos (em mil)",
         caption = "Fonte: Observatório Portuário - Dados da RAIS",
-        x = "Ano") +
-  ggtitle(label = {{titulo}}, subtitle = "De 2010 a 2020") +
-  scale_colour_discrete(name = str_wrap(paste0({{titulo_legenda}}), 10), labels = label_wrap_gen(width = 18)) +
-  #scale_y_continuous(labels = label_number(scale = 1/1000)) +
+        x = "Ano" 
+        ) +
+  ggtitle(label = {{titulo}}) +
+  scale_y_continuous(labels = label_number(scale = 1/1000)) +
   facet_wrap(vars({{nivel1}}), ncol = 2, scales = "fixed") +
   theme_classic() +
   theme(
@@ -356,7 +375,7 @@ ggplot(
       legend.title = element_text(size = 16L, face = "bold")
   )
 
-
+  
 }
 ```
 
