@@ -355,7 +355,8 @@ ggplot(
   labs(
         y = "Número de vínculos (em mil)",
         caption = "Fonte: Observatório Portuário - Dados da RAIS",
-        x = "Ano") +
+        x = "Ano" 
+        ) +
   ggtitle(label = {{titulo}}) +
   scale_y_continuous(labels = label_number(scale = 1/1000)) +
   facet_wrap(vars({{nivel1}}), ncol = 2, scales = "fixed") +
