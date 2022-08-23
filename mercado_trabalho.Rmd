@@ -251,6 +251,33 @@ grafico(
   nivel2 = n_grupo, 
   titulo = ""
   ) +
+    geom_text_repel(
+      data = . %>% filter(ano %in% c("2010", "2020")),
+      aes(
+        label = scales::number(
+          n,
+          scale = 1/10^3,
+          accuracy = 0.01,
+          suffix = " mil",
+          decimal.mark = ",",
+          big.mark = ".")
+        ),
+      size = 4
+    ) +
+  geom_text_repel(
+        data = . %>% group_by(n_grupo) %>% filter(n == max(n)),
+        aes(
+            label = scales::number(
+            n,
+            scale = 1/10^3,
+            suffix = " mil",
+            accuracy = 0.01,
+            decimal.mark = ",",
+            big.mark = "."
+            )
+          ),
+        size = 4
+      ) +
     scale_y_continuous(labels = label_number(scale = 1/1000)) +
   bbc_style()+
   theme(plot.subtitle= element_blank(), 
@@ -318,6 +345,33 @@ grafico(
   nivel2 = n_classe, 
   titulo = "Vínculos profissionais por setor de atuação"
   )+
+   geom_text_repel(
+      data = . %>% filter(ano %in% c("2010", "2020")),
+      aes(
+        label = scales::number(
+          n,
+          scale = 1/10^3,
+          accuracy = 0.01,
+          suffix = " mil",
+          decimal.mark = ",",
+          big.mark = ".")
+        ),
+      size = 4
+    ) +
+  geom_text_repel(
+        data = . %>% group_by(n_classe) %>% filter(n == max(n)),
+        aes(
+            label = scales::number(
+            n,
+            scale = 1/10^3,
+            suffix = " mil",
+            accuracy = 0.01,
+            decimal.mark = ",",
+            big.mark = "."
+            )
+          ),
+        size = 4
+      ) +
     scale_y_continuous(labels = label_number(scale = 1/1000)) +
   bbc_style()+
   labs(color = "Subclasses\nCNAE")+
@@ -327,7 +381,8 @@ grafico(
        legend.position = "top",
        legend.justification = c("left", "top"),
        legend.title = element_text(size = 10, face = "bold"), 
-       strip.text.x = element_text(size=12)
+       strip.text.x = element_text(size=12, face = "bold"),
+       strip.background = element_blank()
       
   )
 
@@ -351,7 +406,34 @@ grafico(
   nivel1 = n_classe, 
   nivel2 = n_subclasse, 
   titulo = "") + 
-  bbc_style()+
+  bbc_style() +
+     geom_text_repel(
+      data = . %>% filter(ano %in% c("2010", "2020")),
+      aes(
+        label = scales::number(
+          n,
+          scale = 1/10^3,
+          accuracy = 0.01,
+          suffix = " mil",
+          decimal.mark = ",",
+          big.mark = ".")
+        ),
+      size = 4
+    ) +
+  geom_text_repel(
+        data = . %>% group_by(n_subclasse) %>% filter(n == max(n)),
+        aes(
+            label = scales::number(
+            n,
+            scale = 1/10^3,
+            suffix = " mil",
+            accuracy = 0.01,
+            decimal.mark = ",",
+            big.mark = "."
+            )
+          ),
+        size = 4
+      ) +
   scale_y_continuous(labels = label_number(scale = 1/1000)) +
   theme(plot.subtitle= element_blank(), 
             legend.text = element_text(size = 12), 
@@ -505,6 +587,33 @@ grafico(
   nivel2 = n_grupo, 
   titulo = "Vínculos por setores no Maranhão") +
   bbc_style() +
+     geom_text_repel(
+      data = . %>% filter(ano %in% c("2010", "2020")),
+      aes(
+        label = scales::number(
+          n,
+          scale = 1/10^3,
+          accuracy = 0.01,
+          suffix = " mil",
+          decimal.mark = ",",
+          big.mark = ".")
+        ),
+      size = 4
+    ) +
+  geom_text_repel(
+        data = . %>% group_by(n_grupo) %>% filter(n == max(n)),
+        aes(
+            label = scales::number(
+            n,
+            scale = 1/10^3,
+            suffix = " mil",
+            accuracy = 0.01,
+            decimal.mark = ",",
+            big.mark = "."
+            )
+          ),
+        size = 4
+      ) +
     scale_y_continuous(labels = label_number(scale = 1/1000)) +
   theme(
     legend.text = element_text(size = 12), 
@@ -550,6 +659,33 @@ grafico(
   nivel2 = n_subclasse, 
   titulo = ""
   )+ 
+  geom_text_repel(
+      data = . %>% filter(ano %in% c("2010", "2020")),
+      aes(
+        label = scales::number(
+          n,
+          #scale = 1/10^3,
+          accuracy = 0.01,
+          suffix = " mil",
+          decimal.mark = ",",
+          big.mark = ".")
+        ),
+      size = 4
+    ) +
+  geom_text_repel(
+        data = . %>% group_by(n_subclasse) %>% filter(n == max(n)),
+        aes(
+            label = scales::number(
+            n,
+            #scale = 1/10^3,
+            suffix = " mil",
+            accuracy = 0.01,
+            decimal.mark = ",",
+            big.mark = "."
+            )
+          ),
+        size = 4
+      ) +
   theme(
     plot.subtitle= element_blank(), 
     legend.text = element_text(size = 12), 
@@ -604,6 +740,33 @@ grafico(
   nivel2 = grau_instrucao_apos_2005, 
   titulo = "Quantidade de Vínculos por grau de escolaridade e sexo (em mil)"
   ) +
+     geom_text_repel(
+      data = . %>% filter(ano %in% c("2010", "2020")),
+      aes(
+        label = scales::number(
+          n,
+          scale = 1/10^3,
+          accuracy = 0.01,
+          suffix = " mil",
+          decimal.mark = ",",
+          big.mark = ".")
+        ),
+      size = 4
+    ) +
+  geom_text_repel(
+        data = . %>% group_by(grau_instrucao_apos_2005) %>% filter(n == max(n)),
+        aes(
+            label = scales::number(
+            n,
+            scale = 1/10^3,
+            suffix = " mil",
+            accuracy = 0.01,
+            decimal.mark = ",",
+            big.mark = "."
+            )
+          ),
+        size = 4
+      ) +
   ggthemes::scale_color_gdocs() +
   scale_y_continuous(labels = label_number(scale = 1/1000)) +
   theme(
@@ -636,14 +799,41 @@ manipulacao(
 
 
 #grafico
-grafico.escolaridade.ma <- 
-escolaridade.ma %>% 
-grafico(
+grafico.escolaridade.ma <-
+  escolaridade.ma %>% 
+  grafico(
   nivel1 = sexo, 
   nivel2 = grau_instrucao_apos_2005, 
   titulo = "Vínculos por grau de escolaridade e sexo no Maranhão" ) +
   scale_y_continuous(labels = label_number(scale = 1/1000)) +
-  ggthemes::scale_color_gdocs()
+  ggthemes::scale_color_gdocs() +
+     geom_text_repel(
+      data = . %>% filter(ano %in% c("2010", "2020")),
+      aes(
+        label = scales::number(
+          n,
+          scale = 1/10^3,
+          accuracy = 0.01,
+          suffix = " mil",
+          decimal.mark = ",",
+          big.mark = ".")
+        ),
+      size = 4
+    ) +
+  geom_text_repel(
+        data = . %>% group_by(grau_instrucao_apos_2005) %>% filter(n == max(n)),
+        aes(
+            label = scales::number(
+            n,
+            scale = 1/10^3,
+            suffix = " mil",
+            accuracy = 0.01,
+            decimal.mark = ",",
+            big.mark = "."
+            )
+          ),
+        size = 4
+      ) 
 
 print(grafico.escolaridade.ma)
 

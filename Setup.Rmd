@@ -358,7 +358,6 @@ ggplot(
         x = "Ano" 
         ) +
   ggtitle(label = {{titulo}}) +
-  scale_y_continuous(labels = label_number(scale = 1/1000)) +
   facet_wrap(vars({{nivel1}}), ncol = 2, scales = "fixed") +
   theme_classic() +
   theme(
