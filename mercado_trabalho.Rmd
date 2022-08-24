@@ -17,10 +17,6 @@ output:
     fig_align: center
     theme: cerulean
     highlight: kate
-  pdf_document:
-    toc: yes
-    toc_depth: '2'
-    geometry: a4paper
 editor_options:
   markdown:
     wrap: 72
