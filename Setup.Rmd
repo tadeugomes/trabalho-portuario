@@ -310,8 +310,8 @@ ggplot(
     aes(
       x = ano, 
       y = n, 
-      group = {{nivel2}}
-      #,color = {{nivel2}}
+      group = {{nivel2}},
+      color = {{nivel2}}
       )
   ) +
   geom_line(
@@ -325,6 +325,7 @@ ggplot(
     ) +
     geom_point(
       data = dataset %>% group_by({{nivel1}}, {{nivel2}}) %>%  filter(n == max(n)),
+      aes(x = ano, y = n),
       color = "red", size = 3
     ) +
   labs(
