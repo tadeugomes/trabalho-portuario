@@ -303,6 +303,7 @@ manipulacao <- function(dataset, nivel1, nivel2){
 grafico <- function(dataset, nivel1, nivel2, titulo){
 
 nivel1 <- enquo(nivel1)
+nivel2 <- enquo(nivel2)
 
 dataset %>% 
 ggplot(
@@ -310,6 +311,7 @@ ggplot(
       x = ano, 
       y = n, 
       group = {{nivel2}}
+      #,color = {{nivel2}}
       )
   ) +
   geom_line(
@@ -319,14 +321,14 @@ ggplot(
   geom_point(
       data = dataset %>% filter(ano %in% c("2010", "2020")),
       color = "black", 
-      size = 5
+      size = 3
     ) +
     geom_point(
-      data = dataset %>% group_by({{nivel2}}) %>%  filter(n == max(n)),
-      color = "red", size = 5
+      data = dataset %>% group_by({{nivel1}}, {{nivel2}}) %>%  filter(n == max(n)),
+      color = "red", size = 3
     ) +
   labs(
-        y = "Número de vínculos (em mil)",
+        y = "Número de vínculos",
         caption = "Fonte: Observatório Portuário - Dados da RAIS",
         x = "Ano" 
         ) +
@@ -341,7 +343,8 @@ ggplot(
       axis.text.x = element_text(size = 12L, face = "bold"),
       axis.text.y = element_text(size = 12L, face = "bold"),
       legend.text = element_text(size = 14L),
-      panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+      panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
+    panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1),
       legend.position = "top",
       legend.justification = c("left", "top"),
       legend.title = element_text(size = 16L, face = "bold")
