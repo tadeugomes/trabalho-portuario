@@ -2,21 +2,22 @@
 title: "Mercado de Trabalho no Setor Portuário brasileiro e maranhense"
 author: "Observatório Portuário"
 output:
-  word_document:
-    reference_docx: word_model.docx
-   # css: custom.css
+  html_document:
+  #word_document:
+    #reference_docx: word_model.docx
+    css: custom.css
     toc: yes
     number_sections: yes
-    #toc_float: no
-    #collapsed: yes
-    #smooth_scroll: yes
+    toc_float: no
+    collapsed: yes
+    smooth_scroll: yes
     toc_depth: 4
-    #keep_tex: yes
+    keep_tex: yes
     fig_width: 16
     fig_height: 14
     fig_caption: yes
-    #fig_align: center
-    #theme: cerulean
+    fig_align: center
+    theme: cerulean
     highlight: kate
   pdf_document:
     toc: yes
@@ -1287,83 +1288,31 @@ rais %>%
 
 ## Remuneração dos Trabalhadores nos Estados
 
-Verifica-se que a remuneração média dos trabalhadores portuários e aquaviários varia conforme o estado da federação. O Rio de Janeiro é o estado com a maior remuneração no período analisado, com o registro de R$ 5.668,50 em 2020. O Espírito Santo aparece em segundo lugar, com R$ 4.584,20.  
+Verifica-se que a remuneração média dos trabalhadores portuários e aquaviários varia conforme o estado da federação. O Rio de Janeiro é o estado com a maior remuneração no período analisado, com o registro de R$ 8.5345 em 2020. O Espírito Santo aparece em segundo lugar, com R$ 6.112.  
 
-O estado do Maranhão teve uma evolução signifitiva no valor da remuneração média: saltou de R$ 1.257,90 em 2010 para R$ 2.803.50 em 2020.
-
-
-
-```{r g_operacao_estado, echo=FALSE, message=FALSE, warning=FALSE, results='hide', include=FALSE}
+O estado do Maranhão teve uma evolução signifitiva no valor da remuneração média: saltou de R$ 2.090 em 2010 para R$ 4.765 em 2020.
 
 
-# Remuneracao com valor nominal. Não plotar. 
-rais %>% 
-  group_by(ano, nome_uf) %>% 
-  summarise(n = n()) %>% 
-  mutate(ano = factor(ano, lvls_ano)) %>%
-  arrange(n, .by_group = T) %>% 
-  top_n(7) %>% 
-  ggplot(aes(x = ano, y = n, group = nome_uf, color = nome_uf)) +
-   geom_line(size = 2) +
-  geom_point(
-    data = . %>%  group_by(nome_uf) %>% filter(ano %in% c("2010", "2020")),
-      aes(x = ano, y = n), 
-      color = "black", size = 3) +
-  scale_y_continuous(
-    labels = label_number(scale = 1/1000, 
-                          big.mark = ".", decimal.mark = ",")) +
-   geom_text_repel(
-    data = . %>% filter(ano %in% c("2010", "2020")),
-    aes(
-      x = ano, 
-      y = n,
-      label = scales::number(
-        n, 
-        prefix = "R$",
-        suffix = "")), 
-    nudge_x = -0.2, 
-    direction = "both", 
-    hjust = "right", 
-    size = 3) +
-  theme_classic() +
-   theme(
-        plot.title = element_text(
-          family = "Helvetica", size = 28),
-        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
-        axis.title.y = element_text(size = 14L, face = "bold"), 
-        axis.title.x = element_text(size = 14L, face = "bold"),
-        axis.text.x = element_text(size = 12L, face = "bold"),
-        axis.text.y = element_text(size = 12L, face = "bold"),
-        legend.text = element_text(size = 14L),
-        panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
-    panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1),
-        legend.position = "top",
-        legend.justification = c("left", "top"),
-        legend.title = element_text(size = 16L, face = "bold")) +
-  labs(x = "Ano", y = "Remuneração média", color = "")+
-    ggthemes::scale_color_gdocs()
-
-
-
-  
-```
 
 ```{r g_operacao_estado_rem, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
-lvls <- 
+lvls_estado <-
   rais %>% 
   group_by(ano, nome_uf) %>% 
+      filter(valor_remuneracao_media != 0.00 | !is.na(valor_remuneracao_media)) %>%
   summarise(media = mean(valor_remuneracao_media)) %>% # média da remuneracao
   filter(ano == 2020) %>% 
-  slice_max(media, n = 7) %>% 
-  select(nome_uf) %>% 
-  pull()
+  slice_max(media, n = 7)# %>% 
+  # select(nome_uf) %>% 
+  # pull()
+
+View(lvls_estado)
 
 rais %>% 
     filter(valor_remuneracao_media != 0.00 | !is.na(valor_remuneracao_media)) %>%
   group_by(ano, nome_uf) %>% 
   summarise(media = mean(valor_remuneracao_media)) %>% # média
   mutate(ano = factor(ano, lvls_ano)) %>%
-  filter(nome_uf %in% lvls) %>% 
+  filter(nome_uf %in% lvls_estado) %>% 
   ggplot(aes(x = ano, y = media, group = nome_uf, color = nome_uf
              )) +
    geom_line(size = 2) +
@@ -1387,9 +1336,8 @@ rais %>%
     hjust = "right", 
     size = 4, 
     vjust= 1) +
-  scale_y_continuous(
-    labels = label_number(scale = 1/1000, 
-                          big.mark = ".", decimal.mark = ",")) +
+   scale_y_continuous(
+    labels = label_number(big.mark = ".", decimal.mark = ",")) +
   theme_classic()+
   theme_classic() +
   theme(plot.title = element_text(size = 16L, face = "bold"),
@@ -1403,7 +1351,7 @@ rais %>%
         legend.position = "top",
         legend.justification = c("left", "top"),
         legend.title = element_text(size = 16L, face = "bold")) +
-  labs(x = "Ano", y = "Remuneração média (em mil)", color = "",
+  labs(x = "Ano", y = "Remuneração média", color = "",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
     scale_colour_discrete(name = str_wrap("Grupos da CNAE", 7), labels = label_wrap_gen(width = 14)) +
   ggthemes::scale_color_gdocs() +
@@ -1418,30 +1366,47 @@ rais %>%
 ## Remuneração dos Trabalhadores nos municípios
 
 
-Ao analisar a remuneração média por município, o destaque positivo fica com o município do Rio de Janeiro, juntamente com Santos, que pagam as maiores remunerações, acima de R$ 8.500,00. 
+Ao analisar a remuneração média por município, o destaque positivo fica com os município de Macaé, Rio de Janeiro, São João da Barra e Itajaí que pagam as maiores remunerações, acima de 8 mil reais. No entanto, Macaé possui uma remuneração média superior ao segundo colocado em quase 3 mil reais.  
 
 
 ```{r g_operacao_municipio, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
-lvls <- 
+lvls_municipio <- 
 rais %>% 
-  group_by(ano, nome_municipio) %>% 
-  summarise(n = n()) %>% 
-  filter(ano == 2020) %>% 
-  slice_max(n, n = 5) %>% 
+  group_by(ano, nome_municipio) %>%
+  filter(
+    valor_remuneracao_media != 0.00 | 
+      !is.na(valor_remuneracao_media)
+    ) %>%
+  summarise(n = n(),
+            media = mean(valor_remuneracao_media)) %>% 
+  filter(
+    ano == 2020 & 
+      n >= 1000 
+         ) %>% 
+  arrange(desc(media)) %>% 
+  filter(
+          row_number() == c(1:8)
+
+  ) %>% 
   select(nome_municipio) %>% 
-  pull()
+  pull() 
+
+View(lvls_municipio)
+
+
 
 rais %>% 
   group_by(ano, nome_municipio) %>% 
-  summarise(n = n()) %>% 
+      filter(valor_remuneracao_media != 0.00 | !is.na(valor_remuneracao_media)) %>%
+  summarise(media = mean(valor_remuneracao_media)) %>% 
   mutate(ano = factor(ano, lvls_ano)) %>%
-  filter(nome_municipio %in% lvls) %>% 
-  ggplot(aes(x = ano, y = n, group = nome_municipio, color = nome_municipio
+  filter(nome_municipio %in% lvls_municipio) %>% 
+  ggplot(aes(x = ano, y = media, group = nome_municipio, color = nome_municipio
              )) +
    geom_line(size = 2) +
   geom_point(
     data = . %>%  group_by(nome_municipio) %>% filter(ano %in% c("2010", "2020")),
-      aes(x = ano, y = n), 
+      aes(x = ano, y = media), 
       color = "black", size = 3) +
   scale_y_continuous(
     labels = label_number(big.mark = ".", decimal.mark = ",")) +
@@ -1449,9 +1414,9 @@ rais %>%
     data = . %>% filter(ano %in% c("2010", "2020")),
     aes(
       x = ano, 
-      y = n,
+      y = media,
       label = scales::number(
-        n, 
+        media, 
         prefix = "R$")), 
     nudge_x = -0.2, 
     direction = "both", 
@@ -1470,7 +1435,9 @@ rais %>%
         legend.position = "top",
         legend.justification = c("left", "top"),
         legend.title = element_text(size = 16L, face = "bold")) +
-  labs(x = "Ano", y = "Remuneração média (em mil)", color = "",
+  labs(x = "Ano", y = "Remuneração média", color = "",
+       title = "Remuneração média dos municípios que possuem mais de 1000 vínculos",
+       subtitle = "Top 8",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
     scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18)) +
   ggthemes::scale_color_gdocs() +
@@ -1503,14 +1470,13 @@ ord_uf <-
 
 ```
 
-O Brasil apresentou
+Em 2010, o Brasil apresentou
 `r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(ano == 2010) %>% select(total) %>% pull() %>%  virgula()`
 vínculos de trabalho para a o setor **portuário** e **aquaviário**. Em
 `r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(total == max(total)) %>% select(ano) %>% pull()`,
 ano com a maior quantidade de vínculos da série, foram
 `r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(total == max(total)) %>% select(total) %>% pull() %>% virgula()`
-vínculos. Em 2020, último ano da série histórica, foram
-`r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(ano == "2020") %>% select(total) %>% pull() %>% virgula()`
+vínculos. No entanto, os dois anos seguintes ocorreram duas reduções na quantidade de vínculos. Com essas reduções, o ano 2020, último ano da série histórica, a quantidade de vínculos foi de `r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(ano == 2020) %>% select(total) %>% pull() %>%  virgula()`. Quanto aos estados,
 São Paulo e Rio de Janeiro permanceram na primeira e segunda coloção
 durante toda a série. Em 2020, por exempo, **Rio de Janeiro** possuía
 `r uf %>% filter(ano == "2020" & n == max(n)) %>% select(n) %>% pull() %>% virgula()`
@@ -1518,7 +1484,7 @@ vínculos empregatícios e **São Paulo**, possuía cerca de
 `r uf %>% filter(ano == "2020" & sigla_uf == "RJ") %>% select(n) %>% pull() %>% virgula()`.
 Por outro lado, o estado do **Maranhão** possuía
 `r uf %>% filter(ano == "2020" & sigla_uf == "MA") %>% select(n) %>% pull()  %>% virgula()`
-vínculos no mesmo ano.
+vínculos no último ano da série.
 
 ```{r r g_operacao_uf,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.width=12, fig.height=16}
 
