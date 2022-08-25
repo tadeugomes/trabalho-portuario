@@ -323,6 +323,31 @@ ggplot(
       color = "black", 
       size = 3
     ) +
+    geom_point(
+      data = dataset %>% group_by({{nivel1}}, {{nivel2}}) %>% filter(n == max(n)),
+      aes(x = ano, y = n),
+      color = "red", 
+      size = 3
+    ) +
+  labs(
+        y = "Número de vínculos",
+        caption = "Fonte: Observatório Portuário - Dados da RAIS",
+        x = "Ano" 
+        ) +
+  # geom_text_repel(
+  #     data = dataset %>% group_by({{nivel1}}) %>% filter(n == max(n)),
+  #     aes(
+  #       x = ano, y = n,
+  #       label = scales::number(
+  #         n,
+  #         #scale = 1/10^3,
+  #         #accuracy = 0.01,
+  #         #suffix = " mil",
+  #         #decimal.mark = ",",
+  #         big.mark = ".")
+  #       ),
+  #     size = 5
+  #   ) +
   geom_text_repel(
       data = dataset %>% filter(ano %in% c(2010, 2020)),
       aes(
