@@ -244,13 +244,12 @@ rais %>%
           grau_instrucao_apos_2005 == 8 ~ "Superior incompleto", 
           grau_instrucao_apos_2005 == 9 ~ "Superior completo", 
           grau_instrucao_apos_2005 == 10 ~ "Pós-graduação", 
-          grau_instrucao_apos_2005 == 11 ~ "Doutorado", 
           grau_instrucao_apos_2005 == -1 ~ "Não informado"
         ), 
         levels = c( 
           "Fundamental incompleto", "Fundamental completo", 
           "Médio incompleto", "Médio completo", "Superior incompleto",
-          "Superior completo", "Pós-graduação", "Doutorado", "Não informado"
+          "Superior completo", "Pós-graduação", "Não informado"
         ) 
       )
     )
@@ -300,10 +299,9 @@ manipulacao <- function(dataset, nivel1, nivel2){
   mutate(ano = factor(ano, lvls_ano))  # reordenamento da variável 
 }
 
-grafico <- function(dataset, nivel1, nivel2, titulo){
+grafico <- function(dataset, nivel1, nivel2, titulo, titulo_legenda){
 
 nivel1 <- enquo(nivel1)
-nivel2 <- enquo(nivel2)
 
 dataset %>% 
 ggplot(
@@ -319,21 +317,36 @@ ggplot(
       size = 2
     ) +
   geom_point(
-      data = dataset %>% filter(ano %in% c("2010", "2020")),
+      data = dataset %>% filter(ano %in% c(2010, 2020)),
       color = "black", 
-      size = 3
+      size = 5
     ) +
     geom_point(
       data = dataset %>% group_by({{nivel1}}, {{nivel2}}) %>%  filter(n == max(n)),
       aes(x = ano, y = n),
-      color = "red", size = 3
+      color = "red", 
+      size = 3
+    ) +
+  geom_text_repel(
+      data = dataset %>% filter(ano %in% c(2010, 2020)),
+      aes(
+        label = scales::number(
+          n,
+          #scale = 1/10^3,
+          #accuracy = 0.01,
+          #suffix = " mil",
+          #decimal.mark = ",",
+          big.mark = ".")
+        ),
+      size = 4
     ) +
   labs(
-        y = "Número de vínculos",
+        y = "Número de vínculos (em mil)",
         caption = "Fonte: Observatório Portuário - Dados da RAIS",
-        x = "Ano" 
-        ) +
-  ggtitle(label = {{titulo}}) +
+        x = "Ano") +
+  ggtitle(label = {{titulo}}, subtitle = "De 2010 a 2020") +
+  scale_colour_discrete(name = str_wrap(paste0({{titulo_legenda}}), 10), labels = label_wrap_gen(width = 18)) +
+  #scale_y_continuous(labels = label_number(scale = 1/1000)) +
   facet_wrap(vars({{nivel1}}), ncol = 2, scales = "fixed") +
   theme_classic() +
   theme(
@@ -344,14 +357,13 @@ ggplot(
       axis.text.x = element_text(size = 12L, face = "bold"),
       axis.text.y = element_text(size = 12L, face = "bold"),
       legend.text = element_text(size = 14L),
-      panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
-    panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1),
+      panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
       legend.position = "top",
       legend.justification = c("left", "top"),
       legend.title = element_text(size = 16L, face = "bold")
   )
 
-  
+
 }
 ```
 

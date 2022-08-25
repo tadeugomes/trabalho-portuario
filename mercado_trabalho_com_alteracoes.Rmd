@@ -1,0 +1,1643 @@
+---
+title: "Mercado de Trabalho no Setor Portuário brasileiro e maranhense"
+author: "Observatório Portuário"
+output:
+  word_document:
+    reference_docx: word_model.docx
+   # css: custom.css
+    toc: yes
+    number_sections: yes
+    #toc_float: no
+    #collapsed: yes
+    #smooth_scroll: yes
+    toc_depth: 4
+    #keep_tex: yes
+    fig_width: 16
+    fig_height: 14
+    fig_caption: yes
+    #fig_align: center
+    #theme: cerulean
+    highlight: kate
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
+    geometry: a4paper
+editor_options:
+  markdown:
+    wrap: 72
+always_allow_html: true
+---
+
+```{=html}
+<style>
+body {
+text-align: justify;
+font-family: "Times New Roman";
+font-size: 14px}
+</style>
+```
+
+
+```{r lendo, child = "Setup_alteracoes.Rmd"}
+#lendo arquivo Setup.Rmd
+#optei por esta estratégia para plotar apenas os gráficos neste arquivo
+#e pequenas operações
+```
+
+```{r, include=FALSE, results='hide'}
+virgula <- function(x) format(x, digits = 2, big.mark = ".", decimal.mark = ",")
+```
+
+# Introdução
+
+O setor portuário brasileiro impacta direta e indiretamente os destinos
+e a economia do país.
+
+O Observatório Portuário apresenta neste relatório uma síntese da
+evolução do Trabalho Portuário e aquaviário no Brasil e no Maranhão.
+
+Trata-se de um setor abrangente e com atividades diversas como
+instalações portuárias, embarcações mercantes, de passageiros, pesca,
+atividades em plataformas marítimas e de repação naval que movimentam inúmeras cadeias produtivas e setores econômicos.
+
+Espera-se que as ss informações apresentadas (a metodologia está disponível na última seção) possam auxiliar o debate no setor e subsidiar a elaboração de políticas de gestão públicas e privadas. 
+
+Este é o primeiro de uma série de quatro relatórios sobre o mercado de trabalho portuário e aquaviário brasileiro e maranhense. 
+
+Boa leitura.
+
+# Panorama do trabalho no setor portuário e aquaviário no Brasil
+
+Foram 76.350 vínculos registrados no setor portuário e aquaviário no
+Brasil em 2020, de acordo com os dados da Relação Anual de Informações
+Sociais (RAIS).
+
+O número apresenta um decréscimo em relação aos anos anteriores,
+sobretudo em relação ano de 2018, quando quase 80 mil vínculos foram
+registrados. Considerando a tendência de queda do número de vínculos
+identificada a partir de 2014, reitera-se a associação entre desempenho
+das atividades econômicas do país e sua influência no estoque de
+empregos do setor.
+
+<br>
+
+```{r g_secao,  echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+lvls_ano <- c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
+
+
+g1<-
+  rais %>%
+  filter(!is.na(secao)) %>% 
+  group_by(ano, secao) %>% 
+  summarise(n = n()) %>% 
+  mutate(ano = factor(ano, lvls_ano))
+
+g1 %>% 
+ggplot(aes(x = ano, y = n, group = secao)) +
+  geom_line(aes(color = secao), size = 2) +
+  geom_point(color = "black", size = 3) +
+  ggrepel::geom_text_repel(aes(x = ano, y = n, label = scales::number(n, scale = 1/1000, decimal.mark = ",", big.mark = ".", accuracy = 0.01, suffix = " mil")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
+  bbc_style() +
+  labs(
+       title = "Vínculos do Setor Portuário e Aquaviário no País (2010 - 2020)", 
+       subtitle = "em milhares",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+    ggthemes::scale_color_gdocs() +
+  scale_y_continuous(labels = label_number(scale = 1/1000)) +
+  theme(legend.position = "none",
+        panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
+    panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1),
+        axis.text.y = element_blank(),
+        )
+
+
+      
+
+```
+
+<br>
+
+Ao analisar os dados por setor de atividade no contexto nacional,
+verifica-se redução do número de vínculos no grupo de profissionais
+atuantes no **Transporte aquaviário**, com uma redução de 44.420 mil
+vínculos em 2013 para 37.910 mil em 2020, com uma redução de 6.510
+vínculos.
+
+Por outro lado, nota-se que o grupo de atividades agrupadas como
+**Armazenamento e Atividades Auxiliares dos Transportes** apresentou um
+comportamento crescente no período, superando em 2020 o número de
+vínculos no **Transporte aquaviário**.
+
+<br>
+
+```{r g_divisao,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.height=10, fig.width=12}
+
+g2 <- 
+rais %>%
+  filter(!is.na(n_divisao)) %>% 
+  group_by(ano, n_divisao) %>% 
+  summarise(n = n()) %>% 
+  mutate(ano = factor(ano, lvls_ano)) 
+
+g2 %>% 
+ggplot(aes(x = ano, y = n, group = n_divisao)) +
+  geom_line(aes(color = n_divisao), size = 2) +
+  geom_point(color = "black", size = 3) +
+  geom_point(
+    data = . %>% group_by(n_divisao) %>% filter(n == max(n)), 
+    aes(x = ano, y = n), 
+    size = 3, color = "red") +
+  geom_text_repel(aes(x = ano, y = n, label = scales::number(n, scale = 1/1000, decimal.mark = ",", big.mark = ".", accuracy = 0.01, suffix = " mil")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
+  geom_label_repel(
+    data = . %>% filter(ano == 2020),
+    aes(x = ano, y = n,
+        label = str_wrap(n_divisao, 22), 
+        color = n_divisao
+        ), 
+    label.size = NA, 
+    family="Helvetica",
+    direction = "y",
+    hjust = -.01,
+    face = "bold",
+    color = "black") + #labels apresentados
+  bbc_style() +
+   labs(title = "Vínculos do Setor Portuário e Aquaviário no País",
+        subtitle = "Grupos com maior participação",
+         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
+
+  scale_y_continuous(labels = label_number(scale = 1/1000)) +
+  ggthemes::scale_color_gdocs() +
+  scale_x_discrete(expand = expansion(mult = c(.1, .3))) +
+  theme(legend.position = "none",
+        axis.text.y = element_blank(),
+        panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
+    panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1))
+
+  
+```
+
+<br>
+
+Ao analisar os grupos de atividades com maior participação no número de
+vínculos empregatícios, destacam-se as atividades de
+**Armazenamento e Atividades Auxiliares dos Transportes** e 
+**Transporte Aquaviário**.
+
+O **Armazenamento e Atividades Auxiliares dos Transportes** compreende,
+de acordo com a Classificação Nacional de Atividades Econômicas-CNAE,
+atividades relacionadas
+
+> [...] com a movimentação e o armazenamento de cargas, antes ou depois
+> de seu transporte, ou entre segmentos de transporte de distintas
+> modalidades, as atividades auxiliares das diversas modalidades de
+> transporte envolvendo a operação da infraestrutura de suporte nas
+> rodovias, ferrovias, aeroportos, portos, pontes túneis, etc. e as
+> atividades de agenciamento de transporte. Esta divisão compreende
+> também as atividades relacionadas à organização do transporte de
+> carga.
+
+Destaque também deve ser dado para o número de vínculos "Transporte
+Aquaviário\*\*, cujas atividades são as relacionadas aos transportes de
+pessoas e mercadorias, além das embarcações turísticas e o fretamento de
+embarcações com tripulação. Nela também estão as operações e embarcações
+para apoio marítimo e portuário.
+
+No gráfico a seguir estão detalhados os vínculos e atividades
+contemplados no Transporte Aquaviário no país.
+
+Com o recorte, verifica-se que as atividades de **Navegação de Apoio**
+apresentam o maior número de vínculo, registrando o maior número de
+vínculos em 2020 na categoria (18.237). A categoria abarca atividades como:
+
+-   o transporte de mercadorias e pessoas para suprimento e apoio a
+    navios e a plataformas de pesquisas e exploração de minerais e
+    hidrocarbonetos;
+
+-   a navegação realizada para apoio logístico a navios e a plataformas
+    de exploração de minerais e hidrocarbonetos transporte;
+
+-   a navegação realizada nos portos e terminais aquaviários, para
+    atendimento a embarcações e instalações portuárias;
+
+-   os serviços de reboque realizado por empresas de apoio marítimo;
+
+-   os serviços de socorro e salvamento realizado por empresas de apoio
+    portuário.
+
+Observa-se que o grupo de **Transporte por Navegação Interior**, segundo
+maior grupo em número de vínculos no **Transporte Aquaviário**,
+finalizou 2020 com 11.488 vínculos. São atividades como *o
+transporte de carga municipal, por rios, canais, lagos, lagoas, baias e
+outras vias de navegação interior, exceto travessia* e *o fretamento de
+embarcações com tripulação*, mas não inclui a *operação e gestão de
+terminais de carga*.
+
+\
+<br>
+
+```{r g_grupo, echo=FALSE, message=FALSE, warning=FALSE}
+
+# manipulação dos dados. Grupos CNAE
+grupo <- 
+  manipulacao(
+    dataset = rais, 
+    nivel1 = n_divisao, 
+    nivel2 = n_grupo
+  )
+
+#grafico
+a <- 
+grafico(
+  dataset = grupo,
+  nivel1 = n_divisao, 
+  nivel2 = n_grupo, 
+  titulo = ""
+  )+
+  bbc_style()+
+  theme(
+    plot.subtitle= element_blank(), 
+            legend.text = element_text(size = 12), 
+    panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
+    panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1),
+       legend.position = "top",
+       legend.justification = c("left", "top"),
+       legend.title = element_text(size = 10, face = "bold"), 
+    strip.text.x = element_text(size=14, face = "bold"),
+    strip.background = element_blank()
+  ) +
+  guides(
+    color = guide_legend(
+      title = "",
+      ncol = 2, keywidth = unit(1.5, "cm"))) +
+  ggthemes::scale_fill_gdocs()
+
+
+print(a)
+```
+
+<br>
+
+<br>
+
+Esses dados podem detalhados um pouco mais a partir da análise das
+seções da Classificação Nacional de Atividades Econômicas (CNAE) do Instituto Brasileiro de Geografia e Estatística (IBGE), o que permite identificar quais áreas impactaram
+diretamente o estoque de empregos na área portuária e aquaviária.
+
+Pelo gráfico a seguir, alguns destaques do setor podem ser obtidos por
+grupo de atividade:
+
+-   Ao considerar a **Gestão de Portos e Terminais**, o destaque foi
+    para as *Operações de Terminais*, que apresentou número crescente de
+    vínculos entre 2010 e 2020, registrando 35.357 vínculos. Por outro
+    lado, as atividades de Administração da Infra-estrutura Portuária
+    tiveram um declínio de 41,25%, resultado da destruição de 2.170 vínculos;
+
+-   O **Transporte Marítico de Carga por Cabotagem**, por sua vez, teve
+    uma redução drástica de vínculos: saiu de 8.289 em 2010 para 3.316
+    em 2020.
+
+-   O **Transporte por Navegação Interior de Carga**, por outro lado,
+    apresentou leve aumento: passou de 7.524 para 8.382 vínculos.
+
+-   A **Navegação de Apoio Marítimo**, por sua vez, duplicou o número de
+    vínculos e chegou a 15.372 profissionais na área.
+
+```{r  g_classe, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE, fig.height=14, fig.width=14}
+# manipulação dos dados
+classe <- 
+  manipulacao(
+    dataset = rais, 
+    nivel1 = n_grupo, 
+    nivel2 = n_classe
+  )
+
+
+#grafico
+a <- 
+classe %>% 
+grafico(
+  nivel1 = n_grupo, 
+  nivel2 = n_classe, 
+  titulo = "Vínculos profissionais por setor de atuação"
+  )+
+  bbc_style()+
+  labs(color = "") +
+  theme(
+    plot.subtitle= element_blank(), 
+            legend.text = element_text(size = 12), 
+    panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
+    panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1),
+       legend.position = "top",
+       legend.justification = c("left", "top"),
+       legend.title = element_text(size = 10, face = "bold"), 
+    strip.text.x = element_text(size=12, face = "bold"),
+    strip.background = element_blank()
+      
+  ) +
+  guides(
+    color = guide_legend(
+      title = "",
+      ncol = 2, keywidth = unit(1.5, "cm"))) 
+
+print(a)
+
+
+```
+
+```{r funcao2, echo=FALSE, message=FALSE, warning=FALSE}
+subclasse <- 
+  manipulacao(
+    dataset = rais, 
+    nivel1 = n_classe, 
+    nivel2 = n_subclasse
+  )
+
+#grafico
+a <- 
+subclasse %>% 
+grafico(
+  nivel1 = n_classe, 
+  nivel2 = n_subclasse, 
+  titulo = ""
+  )+ 
+  bbc_style()+
+  theme(plot.subtitle= element_blank(), 
+            legend.text = element_text(size = 12), 
+    panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
+    panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1),
+       legend.position = "top",
+       legend.justification = c("left", "top"),
+       legend.title = element_text(size = 10, face = "bold"), 
+     strip.text.x = element_text(size=12, face = "bold"),
+     strip.background = element_blank()
+  )
+
+print(a)
+
+```
+<br>
+Os dados são um reflexo das políticas de regulação para o setor, evidenciando como as estratégias governamentais e empresariais se refletem no estoque de empregos no setor. 
+
+Na próxima seção os dados para o estado do Maranhão são apresentados. 
+
+# Panorama do trabalho no setor portuário e aquaviário no Maranhão
+
+Ao analisar os dados para o estado do Maranhão, verifica-se que os
+vínculos diretos foram ascendentes até o ano de 2017, quando foram
+identificados 2.016 vínculos. Em 2020, depois de quedas em 2018 e 2019,
+apresentou ligeira recuperação e o número de vínculos registrados foi de
+1.924.
+
+```{r, include=FALSE}
+g1<-
+  rais %>%
+  filter(!is.na(secao) & sigla_uf == "MA") %>% 
+  group_by(ano, secao) %>% 
+  summarise(n = n()) %>% 
+  mutate(ano = factor(ano, lvls_ano))
+```
+
+```{r g_secao_ma,  echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+lvls_ano <- c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
+
+
+g1 %>% 
+ggplot(aes(x = ano, y = n, group = secao)) +
+  geom_line(aes(color = secao), size = 2) +
+  geom_point(color = "black", size = 4) +
+  ggrepel::geom_text_repel(aes(x = ano, y = n, label = scales::number(n, decimal.mark = ",", big.mark = ".")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
+  labs(x = "Ocupação", y = "Número de vínculos (em mil)",
+       title = "Vínculos do Setor Portuário e aquaviário no Maranhão (2010 - 2020)", subtitle = "Seção da CNAE H",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+    bbc_style() +
+  labs(
+       title = "Vínculos do Setor Portuário e Aquaviário no Maranhão", 
+       subtitle = "Grupos com maior participação",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+  scale_colour_discrete(
+      name = "", 
+      labels = label_wrap_gen(width = 35)) +
+    ggthemes::scale_color_gdocs() +
+  scale_y_continuous(labels = label_number(scale = 1/1000)) +
+  theme(legend.position = "none",
+        panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
+    panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1),
+        axis.text.y = element_blank())
+```
+
+<br>
+
+No caso do Maranhão, o **Transporte Aquaviário** é o grupo de atividade
+que apresenta o maior número de empregos diretos, com 1.000 vínculos em
+2020.
+
+Ao mesmo tempo, as atividades abarcadas pelo **Armazenamento e
+Atividades Auxiliares dos Transportes** apresentaram permanente
+crescimento no perído, o que se relaciona com o aumento das atividades
+portuárias no estado,com o registro de 920 vínculos em 2020.
+
+<br>
+
+```{r g_divisao_ma,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.height=14, fig.width=12}
+
+g2 <- 
+rais %>%
+  filter(!is.na(n_divisao) & sigla_uf == "MA") %>% 
+  group_by(ano, n_divisao) %>% 
+  summarise(n = n()) %>% 
+  mutate(ano = factor(ano, lvls_ano)) 
+
+g2 %>% 
+ggplot(aes(x = ano, y = n, group = n_divisao)) +
+  geom_line(aes(color = n_divisao), size = 2) +
+  geom_point(color = "black", size = 3) +
+  geom_point(
+    data = . %>% group_by(n_divisao) %>% filter(n == max(n)), 
+    aes(x = ano, y = n), 
+    size = 3, color = "red") +
+ geom_text_repel(aes(x = ano, y = n, label = scales::number(n, decimal.mark = ",", big.mark = ".")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
+  geom_label_repel(
+    data = . %>% filter(ano == 2020),
+    aes(x = ano, y = n,
+        label = str_wrap(n_divisao, 22), 
+        color = n_divisao), 
+    label.size = NA, 
+    family="Helvetica",
+    direction = "y",
+    hjust = -.01,
+    face = "bold"
+    ) + #labels apresentados
+  bbc_style() +
+   labs(title = "Vínculos do Setor Portuário e Aquaviário no Maranhão ",
+        subtitle = "Em mil",
+         caption = "Fonte: Observatório Portuário do Maranhão - Dados da RAIS 2020") +
+
+ # scale_y_continuous(labels = label_number(scale = 1/1000)) +
+  scale_x_discrete(expand = expansion(mult = c(.1, .3))) +
+  scale_colour_discrete(
+      name = "", 
+      labels = label_wrap_gen(width = 35)) +
+   ggthemes::scale_color_gdocs() +
+  theme(
+    legend.text = element_text(size = 12), 
+    panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
+    panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1),
+    legend.position = "none") +
+  ggthemes::scale_color_gdocs() 
+  
+```
+
+<br>
+
+No gráfico a seguir pode-se observar as modalidades abarcadas pelo
+**Transporte Aquaviário** e suas representatividades no estado. O
+destaque positivo é para o setor de **Navegação de Apoio**, que auxilia
+as atividades portuárias.
+
+<br>
+
+```{r g_grupo_ma, echo=FALSE, message=FALSE, warning=FALSE}
+
+# manipulação dos dados. Grupos CNAE
+grupo_ma <- rais %>% filter(sigla_uf=="MA")
+
+grupo_ma.2 <- 
+  manipulacao(
+    dataset = grupo_ma, 
+    nivel1 = n_divisao, 
+    nivel2 = n_grupo
+  )
+
+#grafico
+a.ma <- 
+grafico(
+  dataset = grupo_ma.2,
+  nivel1 = n_divisao, 
+  nivel2 = n_grupo, 
+  titulo = "Vínculos por setor no Maranhão"
+  )+
+  bbc_style()+
+  theme(plot.subtitle= element_blank(), 
+            legend.text = element_text(size = 12), 
+    panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
+    panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1),
+       legend.position = "top",
+       legend.justification = c("left", "top"),
+       legend.title = element_text(size = 10, face = "bold"), 
+    strip.text.x = element_text(size=12, face = "bold"),
+    strip.background = element_blank()) +
+  ggthemes::scale_color_gdocs() +  
+  scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 30)) 
+
+print(a.ma)
+```
+
+<br>
+
+Ao analisar as subclasses de atividade, pode-se verificar que as
+atividades relacionadas a **Operações de Terminais** teve excelente
+resultado, saltando de 14 para 920 mil vínculos, o que indica uma
+transformação estrutural nas atividades.
+
+A **Navegação de Apoio Marítimo** e **Navegação de Apoio Portuário**
+também se destacam, embora com oscilações consideráveis na série.
+
+<br>
+
+```{r subclasse.ma, echo=FALSE, message=FALSE, warning=FALSE, fig.height=14, fig.width=14}
+
+
+subclasse.ma <- 
+  manipulacao(
+    dataset = grupo_ma, 
+    nivel1 = n_classe, 
+    nivel2 = n_subclasse
+  )
+
+#grafico
+a_ma_subclasse <- 
+subclasse.ma %>% 
+grafico(
+  nivel1 = n_classe, 
+  nivel2 = n_subclasse, 
+  titulo = ""
+  )+ theme(plot.subtitle= element_blank(), 
+            legend.text = element_text(size = 12), 
+    strip.text.x = element_text(size=14, face = "bold"                                   ),
+    strip.background = element_blank(),
+    legend.title = element_blank()) +
+      scale_colour_discrete(
+      name = "", 
+      ) +
+    guides(color = guide_legend(ncol = 1, keywidth = unit(1.5, "cm"))) +
+  ggthemes::scale_color_stata() 
+
+
+print(a_ma_subclasse)
+
+```
+
+# Perfil do Trabalhador Portuário e Aquaviário
+
+#### Escolaridade do Trabalhador Portuário e aquaviário
+
+Ao analisar o perfil dos trabalhadores portuários e aquaviários por
+sexo, observa-se que a participação masculina é predominante. Em 2020,
+do total de 76.317 vínculos, 65.735 eram homens, sendo apenas 10.582
+mulheres (13,87%).
+
+No Maranhão a proporção é igual: dos 1.924 vínculos, apenas 14% eram mulheres (2.629)
+
+Apesar da baixa participação feminina no setor, observa-se que elas
+apresentavam maior escolaridade no contexto nacional: 44,5% tinham curso superior, contra 17,7%
+dos homens com a mesma escolaridade. De forma agregada, observa-se o
+aumento da escolarização entre 2010 e 2020, apesar do número de
+profissionais com pós-graduação ainda ser baixo.
+
+Em 2020, a quantidade de ocupações que exigiam o **ensino médio completo**
+era de 58,57% (desses, 91,25% eram do sexo masculino e apenas 8,75% do sexo
+feminino), por outro lado, 21,4% das ocupações exigiam o **Superior
+completo** (desses, 71,19% eram do sexo masculino e 28,81% do sexo feminino)
+
+<br>
+```{r g_operacao_escol_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+# ordem_esc <- c("Fundamental incompleto", "Fundamental completo", 
+#         "Médio incompleto", "Médio completo", "Superior incompleto",
+#         "Superior completo", "Pós-graduação", "Não informado")
+
+escolaridade <- 
+manipulacao(
+    dataset = rais, 
+    nivel1 = sexo, 
+    nivel2 = grau_instrucao_apos_2005)
+
+
+
+#grafico
+a <- 
+escolaridade %>% 
+grafico(
+  nivel1 = sexo, 
+  nivel2 = grau_instrucao_apos_2005, 
+  titulo = "Vínculos por grau de escolaridade e sexo no país")+
+  ggthemes::scale_color_gdocs() +
+  scale_y_continuous(labels = label_number(scale = 1/1000)) +
+  theme(
+    strip.text.x = element_text(size=14, face = "bold"),
+    strip.background = element_blank(),
+    legend.title = element_blank()) 
+  
+
+print(a)
+
+
+```
+
+<br>
+
+O Maranhão também acompanha a tendência nacional no quesito escolarização: há o predomínio de profissionais com ensino médio completo e, em seguida, ensino superior. Apesar de crescente, o número de pessoas com pós-graduação ainda é incipiente, como se observa no gráfico:
+
+<br>
+
+```{r g_operacao_escol_sexo.ma, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+# ordem_esc <- c("Fundamental incompleto", "Fundamental completo", 
+#         "Médio incompleto", "Médio completo", "Superior incompleto",
+#         "Superior completo", "Pós-graduação", "Não informado")
+
+escolaridade.ma <- 
+manipulacao(
+    dataset = grupo_ma, 
+    nivel1 = sexo, 
+    nivel2 = grau_instrucao_apos_2005)
+
+
+
+#grafico
+grafico.escolaridade.ma <- 
+escolaridade.ma %>% 
+grafico(
+  nivel1 = sexo, 
+  nivel2 = grau_instrucao_apos_2005, 
+  titulo = "Vínculos por grau de escolaridade e sexo no Maranhão"
+         )+
+  theme(
+    strip.text.x = element_text(size=14, face = "bold"),
+    strip.background = element_blank(),
+    legend.title = element_blank())
+
+print(grafico.escolaridade.ma)
+
+
+```
+
+<br>
+
+Ao avaliar a remuneração média por escolaridade no país, verifica-se que os profissionais com pós-graduação têm uma renda significativamente superior aos demais níveis de escolaridade.
+
+<br>
+
+```{r g_remun_escol_sexo,results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+
+rais %>% 
+    filter(valor_remuneracao_media != 0.00 | !is.na(valor_remuneracao_media)) %>%
+  group_by(sexo, grau_instrucao_apos_2005, ano) %>% 
+  summarise(remuneracao_media = mean(valor_remuneracao_media)) %>% 
+  mutate(ano = factor(ano, lvls_ano)) %>%
+  ggplot(
+    aes(x = ano, 
+        y = remuneracao_media, 
+        group = grau_instrucao_apos_2005, color = grau_instrucao_apos_2005
+        )
+    ) +
+   geom_line(size = 2) +
+  geom_point(
+    data = . %>% filter(ano %in% c("2010", "2020")),
+    color = "black", 
+    size = 3
+    ) +
+   geom_text_repel(
+      data = . %>% filter(ano %in% c("2010", "2020")),
+      aes(
+        x = ano, y = remuneracao_media,
+        label = scales::number(
+          remuneracao_media,
+          scale = 1/10^3,
+          accuracy = 0.01,
+          suffix = " mil",
+          decimal.mark = ",",
+          big.mark = "."),
+        ),
+      size = 5,
+      min.segment.length  =  0.5,
+      box.padding  =  1,
+      force = 8
+    ) +
+  # scale_y_log10(labels = label_number(scale = 1/10^3,
+  #           suffix = " mil",
+  #           accuracy = 0.1,
+  #           decimal.mark = ",",
+  #           big.mark = ".")) +
+  # scale_y_continuous(
+  #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
+    labs(x = "Ano", y = "Remuneração média (R$)", color = "",
+         title = "Remuneração Média por sexo e grau de instrução no país",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+  facet_wrap(~sexo, ncol = 2)+
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        #tema legenda
+        legend.text = element_text(size = 10L),
+        panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
+    panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1),
+        legend.position = "top",
+        legend.justification = c("top"),
+        legend.title = element_text(size = 16L, face = "bold"),
+        #legend.background = element_rect(fill = "white", colour = "black"),
+        legend.key.width = unit(1.5, "cm"),
+        legend.key.height = unit(.5, "cm"),
+        strip.text.x = element_text(size=14, face = "bold"                                   ),
+        strip.background = element_blank()) +
+  guides(
+    col = guide_legend(nrow = 2)) +
+  ggthemes::scale_color_gdocs()
+  #bbc_style()
+ 
+
+```
+
+<br>
+
+A renda do trabalhador maranhense segue a tendência nacional: profissional com pós-graduação aufere rendimentos bem superiores aos dos demais profissionais. 
+
+<br>
+```{r g_remun_escol_sexo.ma,results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+
+grupo_ma %>% 
+    filter(valor_remuneracao_media != 0.00 | !is.na(valor_remuneracao_media)) %>%
+  group_by(sexo, grau_instrucao_apos_2005, ano) %>% 
+  summarise(remuneracao_media = mean(valor_remuneracao_media)) %>% 
+  mutate(ano = factor(ano, lvls_ano)) %>%
+  ggplot(
+    aes(x = ano, 
+        y = remuneracao_media, 
+        group = grau_instrucao_apos_2005, 
+        color = grau_instrucao_apos_2005)
+    ) +
+   geom_line(size = 2) +
+  geom_point(
+    data = . %>% filter(ano %in% c("2010", "2020")),
+    color = "black", 
+    size = 3
+    ) +
+   geom_text_repel(
+      data = . %>% filter(ano %in% c("2010", "2020")),
+      aes(
+        x = ano, y = remuneracao_media,
+        label = scales::number(
+          remuneracao_media,
+          scale = 1/10^3,
+          accuracy = 0.01,
+          suffix = " mil",
+          decimal.mark = ",",
+          big.mark = "."),
+        ),
+      size = 5,
+      min.segment.length  =  0.5,
+      box.padding  =  1,
+      force = 8,
+    ) +
+  # scale_y_log10(labels = label_number(scale = 1/10^3,
+  #           suffix = " mil",
+  #           accuracy = 0.1,
+  #           decimal.mark = ",",
+  #           big.mark = ".")) +
+  # scale_y_continuous(
+  #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
+    labs(x = "Ano", y = "Remuneração média (R$)", color = "",
+         title = "Remuneração Média por sexo e grau de instrução no Maranhão",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+  facet_wrap(~sexo, ncol = 2)+
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        #tema legenda
+        legend.text = element_text(size = 10L),
+        panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
+    panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1),
+        legend.position = "top",
+        legend.title = element_text(size = 16L, face = "bold"),
+        #legend.background = element_rect(fill = "white", colour = "black"),
+        legend.key.width = unit(1.5, "cm"),
+        legend.key.height = unit(1.5, "cm"),
+        strip.text.x = element_text(size=14, face = "bold"                                   ),
+        strip.background = element_blank()
+        #
+  ) +
+  guides(
+    col = guide_legend(nrow = 2)) +
+  ggthemes::scale_color_gdocs()
+  #bbc_style()
+ 
+
+```
+
+
+#### Raça ou cor do Trabalhador Portuário e Aquaviário
+
+O perfil racial dos profissionais pode ser observado no gráfico a
+seguir[^1]. Nota-se o predomínio de pardos e brancos, tanto entre os
+homens como entre as mulheres.
+
+[^1]: Como há uma discrepância da quantidade de vínculos das categorias
+    de **raça ou cor** quando comparadas por **sexo**, optou-se pela
+    **escala logarítmica** no lugar da escala aritimética (escala
+    habitual nos gráficos) para representar os dados quantidade de
+    vínculos (**eixo y**) , pois a logarítmica permite, no caso do
+    gráfico abaixo, uma visualização das tendências das quantidades de
+    vínculos por cada raça ou cor ao longo dos anos analisados.
+
+Destaca-se ainda o alto registro da ausência de identificação racial nos
+dados, o que é pauta para as ações de sensibilização dos profissionais
+de gestão com pessoas e alinhado às ações de Governança Social. O
+correto preenchimento dos dados pode auxiliar políticas de inclusão,
+qualificação e diversidade mais assertivas.
+
+```{r g_operacao_raca_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+
+
+rais %>%
+  group_by(ano, raca_cor, sexo) %>% 
+  summarise(n = n()) %>% 
+   mutate(raca_cor = forcats::fct_reorder(raca_cor, n)) %>% 
+  mutate(ano = factor(ano, lvls_ano)) %>%
+  ggplot(aes(x =ano, y = n, group = raca_cor, color = raca_cor)) +
+   geom_line(size = 2) +
+  geom_point(
+    data = . %>% filter(ano %in% c("2010", "2020")),
+      aes(x = ano, y = n), 
+      color = "black", size = 5,
+    show.legend = F) +
+   geom_text_repel(
+      data = . %>% filter(ano %in% c("2010", "2020")),
+      aes(
+        x = ano, y = n,
+        label = scales::number(
+          n,
+          scale = 1/10^3,
+          accuracy = 0.01,
+          suffix = " mil",
+          decimal.mark = ",",
+          big.mark = "."),
+        ),
+      size = 5,
+      min.segment.length  =  0.5,
+      box.padding  =  1,
+      force = 8,
+    ) +
+  # scale_y_log10(labels = label_number(scale = 1/10^3,
+  #           suffix = " mil",
+  #           accuracy = 0.1,
+  #           decimal.mark = ",",
+  #           big.mark = ".")) +
+  # scale_y_continuous(
+  #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
+    labs(x = "Ano", y = "Número de Vínculos", color = "Raça ou cor",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+  facet_wrap(~sexo,ncol = 2)+
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        #tema legenda
+        legend.text = element_text(size = 14L),
+       panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
+    panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1),
+        legend.position = "top",
+        legend.justification = c("top"),
+        legend.title = element_text(size = 16L, face = "bold"),
+        #legend.background = element_rect(fill = "white", colour = "black"),
+        legend.key.width = unit(1.5, "cm"),
+        legend.key.height = unit(.25, "cm"),
+        strip.text.x = element_text(size=14, face = "bold"                                   ),
+    strip.background = element_blank()
+        #
+  ) +
+  guides(
+    col = guide_legend(nrow = 1)) +
+  ggthemes::scale_color_gdocs()
+  #bbc_style()
+ 
+```
+
+Apesar da destacada participação de pardos, a remuneração média desses
+profissionais em 2020 era inferior a dos brancos. Nota-se que homens e
+mulheres brancos tiveram a renda constante e crescente na série,
+mantendo a assimetria em relação aos pretos e pardos.
+
+<br>
+
+```{r g_operacao_remuneracao_raca_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE, include=TRUE}
+
+rais %>%
+  filter(valor_remuneracao_media != 0.00 | !is.na(valor_remuneracao_media)) %>%
+  group_by(ano, raca_cor, sexo, .groups = 'drop') %>% 
+  summarise(n = n(),
+            media = mean(valor_remuneracao_media)) %>%
+  mutate(ano = factor(ano, lvls_ano)) %>%
+  ggplot(aes(x =ano, y = media, group = raca_cor, color = raca_cor)) +
+   geom_line(size = 2) +
+  geom_point(
+    data = . %>% filter(ano %in% c(2010, 2020)),
+      aes(x = ano, y = media), 
+      color = "black", size = 5,
+    show.legend = F) +
+     geom_text_repel(
+      data = . %>% group_by(raca_cor, sexo) %>%  filter(ano %in% c(2010, 2020)),
+      aes(
+        label = scales::number(
+          media,
+          scale = 1/10^3,
+          accuracy = 0.01,
+          suffix = " mil",
+          decimal.mark = ",",
+          big.mark = "."),
+        ),
+      size = 5,
+      min.segment.length  =  0.5,
+      box.padding  =  1,
+      force = 8,
+    ) +
+  # scale_y_log10(labels = label_number(scale = 1/10^3,
+  #           suffix = " mil",
+  #           accuracy = 0.1,
+  #           decimal.mark = ",",
+  #           big.mark = ".")) +
+  # scale_y_continuous(
+  #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
+    labs(x = "Ano", y = "Remuneração média (R$)", color = "Raça ou cor",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+  facet_wrap(~sexo, ncol = 2) +
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        #tema legenda
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+        legend.position = "top",
+        legend.justification = c("top"),
+        legend.title = element_text(size = 16L, face = "bold"),
+        #legend.background = element_rect(fill = "white", colour = "black"),
+        legend.key.width = unit(1.5, "cm"),
+        legend.key.height = unit(1.5, "cm"),
+        strip.text.x = element_text(size=14, face = "bold"                                   ),
+    strip.background = element_blank()
+        #
+        ) +
+  guides(
+    col = guide_legend(nrow = 1)) +
+  ggthemes::scale_color_gdocs()
+
+```
+
+
+```{r g_operacao_remuneracao _media_raca_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+rais %>%
+  filter(valor_remuneracao_media != 0.00 | !is.na(valor_remuneracao_media)) %>%
+  group_by(ano, raca_cor, sexo, .groups = 'drop') %>% 
+  summarise(n = n(),
+            media = mean(valor_remuneracao_media)) %>% 
+  mutate(ano = factor(ano, lvls_ano)) %>%
+  ggplot(aes(x =ano, y = media, group = raca_cor, color = raca_cor)) +
+   geom_line(size = 2) +
+  geom_point(
+    data = . %>% filter(ano %in% c("2010", "2020")),
+      aes(x = ano, y = media), 
+      color = "black", size = 5,
+    show.legend = F) +
+    geom_text_repel(
+      data = . %>% group_by(raca_cor, sexo) %>% filter(ano %in% c("2010", "2020")),
+      aes(
+        x = ano, y = n,
+        label = scales::number(
+          media,
+          scale = 1/10^3,
+          accuracy = 0.01,
+          suffix = " mil",
+          decimal.mark = ",",
+          big.mark = "."),
+        ),
+      size = 5,
+      min.segment.length  =  0.5,
+      box.padding  =  1,
+      force = 8,
+    ) +
+  # scale_y_log10(labels = label_number(scale = 1/10^3,
+  #           suffix = " mil",
+  #           accuracy = 0.1,
+  #           decimal.mark = ",",
+  #           big.mark = ".")) +
+  # scale_y_continuous(
+  #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
+    labs(title = "Remuneração Média no Brasil por Cor ou Raça",
+         x = "Ano", y = "Remuneração média (R$)", color = "")+
+  facet_wrap(~sexo, ncol = 2) +
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        #tema legenda
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
+    panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1),
+        legend.position = "top",
+        legend.justification = c("top"),
+        legend.title = element_text(size = 16L, face = "bold"),
+        #legend.background = element_rect(fill = "white", colour = "black"),
+        legend.key.width = unit(1.5, "cm"),
+        legend.key.height = unit(1.5, "cm"),
+        strip.text.x = element_text(size=14, face = "bold"                                   ),
+    strip.background = element_blank()
+        #
+        ) +
+  guides(
+    col = guide_legend(nrow = 1)) +
+  ggthemes::scale_color_gdocs()
+```
+
+
+
+No Maranhão, os profissionais identificados como pardos predominam, sendo seguidos pelos brancos e pretos entre os homens e mulheres. 
+
+
+```{r g_operacao_raca_sexo.ma, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+
+
+grupo_ma %>%
+  group_by(ano, raca_cor, sexo) %>% 
+  summarise(n = n()) %>% 
+   mutate(raca_cor = forcats::fct_reorder(raca_cor, n)) %>% 
+  mutate(ano = factor(ano, lvls_ano)) %>%
+  ggplot(aes(x =ano, y = n, group = raca_cor, color = raca_cor)) +
+   geom_line(size = 2) +
+  geom_point(
+    data = . %>% filter(ano %in% c("2010", "2020")),
+      aes(x = ano, y = n), 
+      color = "black", size = 5,
+    show.legend = F) +
+   geom_text_repel(
+      data = . %>% filter(ano %in% c("2010", "2020")),
+      aes(
+        x = ano, y = n,
+        label = scales::number(
+          n,
+          suffix = "",
+        )),
+      size = 5,
+      min.segment.length  =  0.5,
+      box.padding  =  1,
+      force = 8,
+    ) +
+  # scale_y_log10(labels = label_number(scale = 1/10^3,
+  #           suffix = " mil",
+  #           accuracy = 0.1,
+  #           decimal.mark = ",",
+  #           big.mark = ".")) +
+  # scale_y_continuous(
+  #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
+    labs(title = "Número de Vínculos no Maranhão por cor ou Raça",
+           x = "Ano", y = "Número de Vínculos", color = "")+
+   scale_y_continuous(
+     labels = label_number(big.mark = ".", decimal.mark = ",")) +
+  facet_wrap(~sexo,ncol = 2)+
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        #tema legenda
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
+    panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1),
+        legend.position = "top",
+        legend.justification = c("top"),
+        legend.title = element_text(size = 16L, face = "bold"),
+        #legend.background = element_rect(fill = "white", colour = "black"),
+        legend.key.width = unit(1.5, "cm"),
+        legend.key.height = unit(1.5, "cm"),
+        strip.text.x = element_text(size=14, face = "bold"                                   ),
+        strip.background = element_blank()
+        #
+  ) +
+  guides(
+    col = guide_legend(nrow = 1)) +
+  ggthemes::scale_color_gdocs()
+  #bbc_style()
+ 
+```
+
+
+A renda dos trabalhadores por cor ou raça no Maranhão, por sua vez, evidencia que os autodeclarados amarelos se destacam entre os homens, com remuneração média acima das demais (amarelos, de acordo com o IBGE, são aqueles que se declaram de origem asiática: japoneses, coreanos e chineses). 
+
+```{r g_operacao_remuneracao _media_raca_sexo.ma, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+
+grupo_ma %>%
+  filter(valor_remuneracao_media != 0.00 | !is.na(valor_remuneracao_media)) %>%
+  group_by(ano, raca_cor, sexo, .groups = 'drop') %>% 
+  summarise(n = n(),
+            media = mean(valor_remuneracao_media)) %>%
+  mutate(ano = factor(ano, lvls_ano)) %>%
+  ggplot(aes(x =ano, y = media, group = raca_cor, color = raca_cor)) +
+   geom_line(size = 2) +
+  geom_point(
+    data = . %>% filter(ano %in% c(2010, 2020)),
+      aes(x = ano, y = media), 
+      color = "black", size = 5,
+    show.legend = F) +
+     geom_text_repel(
+      data = . %>% group_by(raca_cor, sexo) %>%  filter(ano %in% c(2010, 2020)),
+      aes(
+        label = scales::number(
+          media,
+          scale = 1/10^3,
+          accuracy = 0.01,
+          suffix = " mil",
+          decimal.mark = ",",
+          big.mark = "."),
+        ),
+      size = 5,
+      min.segment.length  =  0.5,
+      box.padding  =  1,
+      force = 8,
+    ) +
+  # scale_y_log10(labels = label_number(scale = 1/10^3,
+  #           suffix = " mil",
+  #           accuracy = 0.1,
+  #           decimal.mark = ",",
+  #           big.mark = ".")) +
+  # scale_y_continuous(
+  #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
+    labs(x = "Ano", y = "Remuneração média no MA (R$)", color = "Raça ou cor",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+  facet_wrap(~sexo, ncol = 2) +
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        #tema legenda
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+        legend.position = "top",
+        legend.justification = c("top"),
+        legend.title = element_text(size = 16L, face = "bold"),
+        #legend.background = element_rect(fill = "white", colour = "black"),
+        legend.key.width = unit(1.5, "cm"),
+        legend.key.height = unit(1.5, "cm"),
+        strip.text.x = element_text(size=14, face = "bold"                                   ),
+    strip.background = element_blank()
+        #
+        ) +
+  guides(
+    col = guide_legend(nrow = 1)) +
+  ggthemes::scale_color_gdocs()
+```
+
+
+
+
+## Ocupações dos Trabalhadores Portuários e Aquaviários
+
+As ocupações com maior participação no setor estão no gráfico a seguir,
+bem como a remuneração média respectiva.
+
+Verifica-se que os profissionais *Marinheiros de Convés (martítimo e
+fluvial)* representam o maior contingente de profisisionais ao longo do
+período analisado, embora com tendência decrescente e em número inferior
+ao registrado em 2010.
+
+Por usa vez, os Assistentes Administrativos mantiveram uma estabilidade
+no número de vínculos, registrando cerca de 3.500 profissionais em 2020.
+
+```{r g_operacao_ocupacao, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+rais %>%
+  group_by(ano, cbo_2002) %>% 
+  summarise(n = n()) %>% 
+  mutate(ano = factor(ano, lvls_ano)) %>%
+  slice_max(n, n = 5) %>% 
+  arrange(n) %>% 
+  ggplot(aes(x = ano, y = n, group = cbo_2002, color = cbo_2002
+             )) +
+  geom_line(size = 2) +
+  geom_point(
+    data = . %>% filter(ano %in% c("2010", "2020")),
+      color = "black", size = 3) +
+   geom_text_repel(
+    data = . %>% filter(ano %in% c("2010", "2020")),
+    aes(
+      x = ano, 
+      y = n,
+      label = scales::number(
+        n, 
+        suffix = "")), 
+    nudge_x = -0.2, 
+    direction = "both", 
+    hjust = "right", 
+    size = 5) +
+  #scale_color_manual(values = cores) +
+  #scale_y_log10(labels = label_number(scale_cut = cut_short_scale())) +
+  scale_y_continuous(
+    labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",",
+                                            prefix = "")) +
+  theme_classic() +
+  theme(plot.title = element_text(
+      family = "Helvetica", size = 28, 
+      face = "bold", color = "#222222"), plot.subtitle = element_text(family = "Helvetica", size = 22, margin =margin(9, 0, 9, 0)),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        legend.text = element_text(size = 18L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
+        panel.grid.major.y  = element_line(color = "black", linetype = 3, size = 0.1),
+        legend.position = "top",
+        legend.justification = c("left", "top"),
+        legend.title = element_text(size = 16L, face = "bold"),
+        strip.text.x = element_text(size=14, face = "bold", 
+                                #hjust = .5
+                                   ),
+    strip.background = element_blank()) +
+      scale_colour_discrete(
+      name = "", 
+      labels = label_wrap_gen(width = 40)) +
+  labs(x = "Ano", y = "Número de vínculos", color = "",
+       title = "Ocupações que mais empregam dos setores Portuário e\nAquáriario (2010 - 2020)",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+    scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18)) +
+  ggthemes::scale_color_gdocs() +
+  guides(color = guide_legend(ncol = 2, keywidth = unit(1.5, "cm")))
+
+
+ 
+  
+```
+
+## Remuneração dos Trabalhadores nos Estados
+
+Verifica-se que a remuneração média dos trabalhadores portuários e aquaviários varia conforme o estado da federação. O Rio de Janeiro é o estado com a maior remuneração no período analisado, com o registro de R$ 5.668,50 em 2020. O Espírito Santo aparece em segundo lugar, com R$ 4.584,20.  
+
+O estado do Maranhão teve uma evolução signifitiva no valor da remuneração média: saltou de R$ 1.257,90 em 2010 para R$ 2.803.50 em 2020.
+
+
+
+```{r g_operacao_estado, echo=FALSE, message=FALSE, warning=FALSE, results='hide', include=FALSE}
+
+
+# Remuneracao com valor nominal. Não plotar. 
+rais %>% 
+  group_by(ano, nome_uf) %>% 
+  summarise(n = n()) %>% 
+  mutate(ano = factor(ano, lvls_ano)) %>%
+  arrange(n, .by_group = T) %>% 
+  top_n(7) %>% 
+  ggplot(aes(x = ano, y = n, group = nome_uf, color = nome_uf)) +
+   geom_line(size = 2) +
+  geom_point(
+    data = . %>%  group_by(nome_uf) %>% filter(ano %in% c("2010", "2020")),
+      aes(x = ano, y = n), 
+      color = "black", size = 3) +
+  scale_y_continuous(
+    labels = label_number(scale = 1/1000, 
+                          big.mark = ".", decimal.mark = ",")) +
+   geom_text_repel(
+    data = . %>% filter(ano %in% c("2010", "2020")),
+    aes(
+      x = ano, 
+      y = n,
+      label = scales::number(
+        n, 
+        prefix = "R$",
+        suffix = "")), 
+    nudge_x = -0.2, 
+    direction = "both", 
+    hjust = "right", 
+    size = 3) +
+  theme_classic() +
+   theme(
+        plot.title = element_text(
+          family = "Helvetica", size = 28),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
+    panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1),
+        legend.position = "top",
+        legend.justification = c("left", "top"),
+        legend.title = element_text(size = 16L, face = "bold")) +
+  labs(x = "Ano", y = "Remuneração média", color = "")+
+    ggthemes::scale_color_gdocs()
+
+
+
+  
+```
+
+```{r g_operacao_estado_rem, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+lvls <- 
+  rais %>% 
+  group_by(ano, nome_uf) %>% 
+  summarise(media = mean(valor_remuneracao_media)) %>% # média da remuneracao
+  filter(ano == 2020) %>% 
+  slice_max(media, n = 7) %>% 
+  select(nome_uf) %>% 
+  pull()
+
+rais %>% 
+    filter(valor_remuneracao_media != 0.00 | !is.na(valor_remuneracao_media)) %>%
+  group_by(ano, nome_uf) %>% 
+  summarise(media = mean(valor_remuneracao_media)) %>% # média
+  mutate(ano = factor(ano, lvls_ano)) %>%
+  filter(nome_uf %in% lvls) %>% 
+  ggplot(aes(x = ano, y = media, group = nome_uf, color = nome_uf
+             )) +
+   geom_line(size = 2) +
+  geom_point(
+    data = . %>%  group_by(nome_uf) %>% filter(ano %in% c("2010", "2020")),
+      aes(x = ano, y = media), 
+      color = "black", size = 5) +
+ geom_text_repel(
+    data = . %>% filter(ano %in% c("2010", "2020")),
+    aes(
+      x = ano, 
+      y = media,
+      label = scales::number(
+        media, 
+        decimal.mark = ",", 
+        big.mark = ".", 
+        prefix = "R$",
+        suffix = " ")), 
+    nudge_x = -0.2, 
+    direction = "both", 
+    hjust = "right", 
+    size = 4, 
+    vjust= 1) +
+  scale_y_continuous(
+    labels = label_number(scale = 1/1000, 
+                          big.mark = ".", decimal.mark = ",")) +
+  theme_classic()+
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+        legend.position = "top",
+        legend.justification = c("left", "top"),
+        legend.title = element_text(size = 16L, face = "bold")) +
+  labs(x = "Ano", y = "Remuneração média (em mil)", color = "",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+    scale_colour_discrete(name = str_wrap("Grupos da CNAE", 7), labels = label_wrap_gen(width = 14)) +
+  ggthemes::scale_color_gdocs() +
+    guides(color = guide_legend(nrow = 1, keywidth = unit(1.5, "cm")))
+  
+
+
+
+  
+```
+
+## Remuneração dos Trabalhadores nos municípios
+
+
+Ao analisar a remuneração média por município, o destaque positivo fica com o município do Rio de Janeiro, juntamente com Santos, que pagam as maiores remunerações, acima de R$ 8.500,00. 
+
+
+```{r g_operacao_municipio, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+lvls <- 
+rais %>% 
+  group_by(ano, nome_municipio) %>% 
+  summarise(n = n()) %>% 
+  filter(ano == 2020) %>% 
+  slice_max(n, n = 5) %>% 
+  select(nome_municipio) %>% 
+  pull()
+
+rais %>% 
+  group_by(ano, nome_municipio) %>% 
+  summarise(n = n()) %>% 
+  mutate(ano = factor(ano, lvls_ano)) %>%
+  filter(nome_municipio %in% lvls) %>% 
+  ggplot(aes(x = ano, y = n, group = nome_municipio, color = nome_municipio
+             )) +
+   geom_line(size = 2) +
+  geom_point(
+    data = . %>%  group_by(nome_municipio) %>% filter(ano %in% c("2010", "2020")),
+      aes(x = ano, y = n), 
+      color = "black", size = 3) +
+  scale_y_continuous(
+    labels = label_number(big.mark = ".", decimal.mark = ",")) +
+   geom_text_repel(
+    data = . %>% filter(ano %in% c("2010", "2020")),
+    aes(
+      x = ano, 
+      y = n,
+      label = scales::number(
+        n, 
+        prefix = "R$")), 
+    nudge_x = -0.2, 
+    direction = "both", 
+    hjust = "right", 
+    size = 5,
+    vjust=1) +
+  theme_classic() +
+  theme(plot.title = element_text(size = 16L, face = "bold"),
+        plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+        axis.title.y = element_text(size = 14L, face = "bold"), 
+        axis.title.x = element_text(size = 14L, face = "bold"),
+        axis.text.x = element_text(size = 12L, face = "bold"),
+        axis.text.y = element_text(size = 12L, face = "bold"),
+        legend.text = element_text(size = 14L),
+        panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1,),
+        legend.position = "top",
+        legend.justification = c("left", "top"),
+        legend.title = element_text(size = 16L, face = "bold")) +
+  labs(x = "Ano", y = "Remuneração média (em mil)", color = "",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+    scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 18)) +
+  ggthemes::scale_color_gdocs() +
+    guides(color = guide_legend(nrow = 1, keywidth = unit(1.5, "cm")))
+
+
+
+```
+
+# Trabalhadores da Gestão e Operação Portuária
+
+```{r dados_uf_teste, include=FALSE, results='hide'}
+
+uf <-
+rais %>%
+  group_by(ano, sigla_uf) %>%
+  summarise(n = n()) %>%
+  mutate(sigla_uf = fct_reorder(sigla_uf, n),
+         fill = ifelse(sigla_uf == "MA", "um", "dois")) %>% 
+  arrange(n)
+
+ord_uf <- 
+  uf %>% 
+  filter(ano == 2010) %>% 
+  select(sigla_uf) %>% 
+  pull()
+
+   uf <- uf %>% mutate(sigla_uf = factor(sigla_uf, levels = ord_uf))
+
+
+```
+
+O Brasil apresentou
+`r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(ano == 2010) %>% select(total) %>% pull() %>%  virgula()`
+vínculos de trabalho para a o setor **portuário** e **aquaviário**. Em
+`r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(total == max(total)) %>% select(ano) %>% pull()`,
+ano com a maior quantidade de vínculos da série, foram
+`r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(total == max(total)) %>% select(total) %>% pull() %>% virgula()`
+vínculos. Em 2020, último ano da série histórica, foram
+`r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(ano == "2020") %>% select(total) %>% pull() %>% virgula()`
+São Paulo e Rio de Janeiro permanceram na primeira e segunda coloção
+durante toda a série. Em 2020, por exempo, **Rio de Janeiro** possuía
+`r uf %>% filter(ano == "2020" & n == max(n)) %>% select(n) %>% pull() %>% virgula()`
+vínculos empregatícios e **São Paulo**, possuía cerca de
+`r uf %>% filter(ano == "2020" & sigla_uf == "RJ") %>% select(n) %>% pull() %>% virgula()`.
+Por outro lado, o estado do **Maranhão** possuía
+`r uf %>% filter(ano == "2020" & sigla_uf == "MA") %>% select(n) %>% pull()  %>% virgula()`
+vínculos no mesmo ano.
+
+```{r r g_operacao_uf,  echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.width=12, fig.height=16}
+
+uf %>%
+  filter(!is.na(sigla_uf)) %>% 
+  mutate(ano = factor(ano, lvls_ano)) %>% 
+ggplot(aes(x = sigla_uf, y = n,
+           fill = fill, 
+           size = .05))+
+  geom_bar(position = "dodge", stat = "identity") +
+  coord_flip() +
+  labs(x = "", y = "Número de vínculos (em mil)",
+         caption = "Fonte: Observatório Portuário - Dados da RAIS") +
+geom_text(
+  data = . %>% group_by(ano) %>% slice_max(order_by = n, n = 3), 
+    aes(label = scales::number(n, big.mark = ".", suffix = " mil")), hjust =  -.1, size = 2.5) +
+  geom_text(
+  data = . %>% filter(sigla_uf == "MA"), 
+    aes(label = scales::number(n, scale = 1/1000,  decimal.mark = ",", big.mark = ".", accuracy = .01, suffix = " mil")), hjust =  -.1, size = 2.5) +
+  ggtitle(
+    "Empregados na Operação de Terminais Portuários por estado", 
+    subtitle = str_c(
+      "Eram",
+      uf %>% filter(ano == 2010) %>%  select(n) %>% pull() %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),
+      "vínculos de trabalho em todo o país em 2010 e", uf %>% filter(ano == 2020) %>%  select(n) %>% pull() %>% sum() %>% comma(big.mark = ".", decimal.mark = ","),  "vínculos em 2020",
+      sep = " ")) +
+# geom_text(aes(label= prettyNum(n, big.mark = ".", decimal.mark = ",")), 
+  #           size =4,  
+  #           hjust=-.5, vjust=.5, colour="black") +
+  scale_fill_manual(values = c("lightblue", "#4682B4")) +
+  scale_y_continuous(
+    breaks = seq(0,3*10^4, 10^4), limits = c(0, 3.5*10^4),
+     labels = number_format(scale = 1/1000,
+                                            big.mark = ".", decimal.mark = ",")) +
+  facet_wrap(~ano, ncol = 3, scales = "fixed")  +
+  theme_classic() +
+   theme(
+    plot.title = element_text(
+      family = "Helvetica", size = 20, 
+      face = "bold", color = "#222222"), 
+    plot.subtitle = element_text(family = "Helvetica", size = 18, margin =margin(9, 0, 9, 0)),
+    plot.caption = element_text(size = 12L,face = "bold", hjust = 0), 
+    axis.title.y = element_text(size = 14L, face = "bold"), 
+    axis.title.x = element_text(size = 14L, face = "bold"),
+    axis.text.x = element_text(size = 12L, face = "bold"),
+    axis.text.y = element_text(size = 10L, face = "bold"),
+    legend.position = "none",
+    panel.grid.major.x  = element_line(color = "black", linetype = 3, size = 0.1),
+    panel.grid.major.y = element_blank(),
+    strip.text.x = element_text(size=14, face = "bold", 
+                                hjust = 0
+                                   ),
+    strip.background = element_blank()) +
+  labs( caption = "Fonte: Observatório Portuário - Dados da RAIS") 
+
+
+```
+
+# Metodologia
+
+Os dados apresentados neste relatório são originários da Relação Anual
+de Informações Sociais (RAIS).
+
+A RAIS é um registro administrativo que as organizações públicas e
+privadas são obrigadas a enviar ao Ministério da Economia anualmente.
+Seus dados, assim, abarcam estabelecimentos formais e permitem
+identificar o estoque de vínculos formais de emprego (estatutários e
+celetistas).
+
+Este relatório apresenta os dados em uma perspectiva longitudinal:
+apresenta os dados de 2010 a 2020.
+
+O recorte dos dados sobre o trabalho portuário e aquaviário foi
+realizado a partir da Classificação Nacional de Atividades Econômicas
+(CNAE).
+
+A CNAE é a classificação oficialmente adotada pelo Sistema Estatístico
+Nacional e pelos órgãos federais gestores de registros administrativos e
+está organizada em ordem decrescente de agregação das informações:
+Seções, Divisões, Grupos, Classes e Subclasses.
+
+A partir dessa divisão é possível mapear as atividades com trabalho
+portuário e aquaviário e, especificamente, de operações e gestão
+portuária.
+
+Importante destacar que os dados dos Órgãos Gestores de Mão de Obra (OGMOs) não foram analisados e incorporados a esse relatório, pois o serão nos próximos boletins. 
+
+Na tabela estão detalhadas as informações da CNAE utilizadas:
+
+```{r tabela1, echo=FALSE, message=FALSE, warning=FALSE}
+library(kableExtra)
+options(knitr.table.format = "html")
+
+rais %>% 
+  filter(!is.na(n_subclasse)) %>% 
+  select(secao, n_divisao, n_grupo, n_classe, n_subclasse) %>%
+  mutate_if(is.factor, as.character) %>% 
+  distinct(n_subclasse, .keep_all = T) %>% 
+  arrange_all() %>% 
+  kbl(align = "l", 
+      booktabs = T,
+      col.names = c("Seção", "Divisão", "Grupo", "Classe", "Subclasse"),
+      escape = F,
+      caption = "<center>Subclasses da Classificação Nacional de Atividades Econômicas 2.0 usadas <br> Seção H: Transporte, Armazenagem e Correio</center>") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>% 
+  kable_paper(full_width = F) %>%
+  column_spec(1, bold = T) %>%
+  collapse_rows(columns = 1:4, valign = "top") %>% 
+  footnote(general = "Observatório Portuário \nDados: IBGE - CNAE",
+           alphabet_title = "Fonte: ",
+            footnote_as_chunk = T) #%>% 
+  #scroll_box(width = "100%", height = "400px")
+```
+
+```{r, include=FALSE}
+g1<-
+  rais %>%
+  filter(!is.na(secao) & sigla_uf == "MA") %>% 
+  group_by(ano, secao) %>% 
+  summarise(n = n()) %>% 
+  mutate(ano = factor(ano, lvls_ano))
+```
