@@ -2,22 +2,22 @@
 title: "Mercado de Trabalho no Setor Portuário brasileiro e maranhense"
 author: "Observatório Portuário"
 output:
-  html_document:
-  #word_document:
+  #html_document:
+  word_document:
     #reference_docx: word_model.docx
-    css: custom.css
-    toc: yes
-    number_sections: yes
-    toc_float: no
-    collapsed: yes
-    smooth_scroll: yes
-    toc_depth: 4
-    keep_tex: yes
-    fig_width: 14
-    fig_height: 10
+    #css: custom.css
+    #toc: yes
+    #number_sections: yes
+    #toc_float: no
+    #collapsed: yes
+    #smooth_scroll: yes
+    #toc_depth: 4
+    #keep_tex: yes
+    fig_width: 16
+    fig_height: 12
     fig_caption: yes
-    fig_align: center
-    theme: cerulean
+    #fig_align: center
+    #theme: cerulean
     highlight: kate
   pdf_document:
     toc: yes
@@ -365,22 +365,23 @@ grafico(
   nivel1 = n_classe, 
   nivel2 = n_subclasse, 
   titulo = ""
-  )+ 
+  ) + 
   labs(color = "") +
   #bbc_style()+
-  theme(plot.subtitle= element_blank(), 
-            legend.text = element_text(size = 12), 
+  theme(
+    plot.subtitle= element_blank(), 
+    legend.text = element_text(size = 12), 
     panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
     panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1),
-       legend.position = "top",
-       legend.justification = c("left", "top"),
-       legend.title = element_text(size = 10, face = "bold"), 
-     strip.text.x = element_text(size=12, face = "bold"),
-     strip.background = element_blank()) +
-  guides(
-    color = guide_legend(
-      ncol = 1, keywidth = unit(1.5, "cm"))) +
-  ggthemes::scale_color_stata()
+    legend.position = "top",
+    legend.justification = c("left", "top"),
+    #legend.title = element_text(size = 10, face = "bold"), 
+    strip.text.x = element_text(size=12, face = "bold"),
+    strip.background = element_blank()) +
+    ggthemes::scale_color_stata() +
+    guides(color = guide_legend(ncol = 1, keywidth = unit(1.5, "cm"))) 
+
+  
 
 
 print(a)
