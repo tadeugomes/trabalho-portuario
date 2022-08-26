@@ -326,7 +326,7 @@ ggplot(
     geom_point(
       data = dataset %>% group_by({{nivel1}}, {{nivel2}}) %>% filter(n == max(n)),
       aes(x = ano, y = n),
-      color = "red", 
+      color = "red",
       size = 3
     ) +
   labs(

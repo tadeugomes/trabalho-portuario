@@ -13,8 +13,8 @@ output:
     smooth_scroll: yes
     toc_depth: 4
     keep_tex: yes
-    fig_width: 16
-    fig_height: 14
+    fig_width: 14
+    fig_height: 10
     fig_caption: yes
     fig_align: center
     theme: cerulean
@@ -37,8 +37,6 @@ font-family: "Times New Roman";
 font-size: 14px}
 </style>
 ```
-
-
 ```{r lendo, child = "Setup_alteracoes.Rmd"}
 #lendo arquivo Setup.Rmd
 #optei por esta estratégia para plotar apenas os gráficos neste arquivo
@@ -59,11 +57,15 @@ evolução do Trabalho Portuário e aquaviário no Brasil e no Maranhão.
 
 Trata-se de um setor abrangente e com atividades diversas como
 instalações portuárias, embarcações mercantes, de passageiros, pesca,
-atividades em plataformas marítimas e de repação naval que movimentam inúmeras cadeias produtivas e setores econômicos.
+atividades em plataformas marítimas e de repação naval que movimentam
+inúmeras cadeias produtivas e setores econômicos.
 
-Espera-se que as ss informações apresentadas (a metodologia está disponível na última seção) possam auxiliar o debate no setor e subsidiar a elaboração de políticas de gestão públicas e privadas. 
+Espera-se que as ss informações apresentadas (a metodologia está
+disponível na última seção) possam auxiliar o debate no setor e
+subsidiar a elaboração de políticas de gestão públicas e privadas.
 
-Este é o primeiro de uma série de quatro relatórios sobre o mercado de trabalho portuário e aquaviário brasileiro e maranhense. 
+Este é o primeiro de uma série de quatro relatórios sobre o mercado de
+trabalho portuário e aquaviário brasileiro e maranhense.
 
 Boa leitura.
 
@@ -95,7 +97,7 @@ g1<-
 
 g1 %>% 
 ggplot(aes(x = ano, y = n, group = secao)) +
-  geom_line(aes(color = secao), size = 2) +
+  geom_line(aes(color = secao), size = 2.25) +
   geom_point(color = "black", size = 3) +
   ggrepel::geom_text_repel(aes(x = ano, y = n, label = scales::number(n, scale = 1/1000, decimal.mark = ",", big.mark = ".", accuracy = 0.01, suffix = " mil")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
   bbc_style() +
@@ -106,6 +108,7 @@ ggplot(aes(x = ano, y = n, group = secao)) +
     ggthemes::scale_color_gdocs() +
   scale_y_continuous(labels = label_number(scale = 1/1000)) +
   theme(legend.position = "none",
+        plot.title = element_text(size = rel(2)),
         panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
     panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1),
         axis.text.y = element_blank(),
@@ -120,9 +123,8 @@ ggplot(aes(x = ano, y = n, group = secao)) +
 
 Ao analisar os dados por setor de atividade no contexto nacional,
 verifica-se redução do número de vínculos no grupo de profissionais
-atuantes no **Transporte aquaviário**, com uma redução de 44.420 mil
-vínculos em 2013 para 37.910 mil em 2020, com uma redução de 6.510
-vínculos.
+atuantes no **Transporte aquaviário**, com uma redução de 44.420
+vínculos em 2013 para 37.910 em 2020, com uma redução de 6.510 vínculos.
 
 Por outro lado, nota-se que o grupo de atividades agrupadas como
 **Armazenamento e Atividades Auxiliares dos Transportes** apresentou um
@@ -180,9 +182,8 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
 <br>
 
 Ao analisar os grupos de atividades com maior participação no número de
-vínculos empregatícios, destacam-se as atividades de
-**Armazenamento e Atividades Auxiliares dos Transportes** e 
-**Transporte Aquaviário**.
+vínculos empregatícios, destacam-se as atividades de **Armazenamento e
+Atividades Auxiliares dos Transportes** e **Transporte Aquaviário**.
 
 O **Armazenamento e Atividades Auxiliares dos Transportes** compreende,
 de acordo com a Classificação Nacional de Atividades Econômicas-CNAE,
@@ -208,7 +209,8 @@ contemplados no Transporte Aquaviário no país.
 
 Com o recorte, verifica-se que as atividades de **Navegação de Apoio**
 apresentam o maior número de vínculo, registrando o maior número de
-vínculos em 2020 na categoria (18.237). A categoria abarca atividades como:
+vínculos em 2020 na categoria (18.237). A categoria abarca atividades
+como:
 
 -   o transporte de mercadorias e pessoas para suprimento e apoio a
     navios e a plataformas de pesquisas e exploração de minerais e
@@ -227,11 +229,10 @@ vínculos em 2020 na categoria (18.237). A categoria abarca atividades como:
 
 Observa-se que o grupo de **Transporte por Navegação Interior**, segundo
 maior grupo em número de vínculos no **Transporte Aquaviário**,
-finalizou 2020 com 11.488 vínculos. São atividades como *o
-transporte de carga municipal, por rios, canais, lagos, lagoas, baias e
-outras vias de navegação interior, exceto travessia* e *o fretamento de
-embarcações com tripulação*, mas não inclui a *operação e gestão de
-terminais de carga*.
+finalizou 2020 com 11.488 vínculos. São atividades como *o transporte de
+carga municipal, por rios, canais, lagos, lagoas, baias e outras vias de
+navegação interior, exceto travessia* e *o fretamento de embarcações com
+tripulação*, mas não inclui a *operação e gestão de terminais de carga*.
 
 \
 <br>
@@ -281,8 +282,10 @@ print(a)
 <br>
 
 Esses dados podem detalhados um pouco mais a partir da análise das
-seções da Classificação Nacional de Atividades Econômicas (CNAE) do Instituto Brasileiro de Geografia e Estatística (IBGE), o que permite identificar quais áreas impactaram
-diretamente o estoque de empregos na área portuária e aquaviária.
+seções da Classificação Nacional de Atividades Econômicas (CNAE) do
+Instituto Brasileiro de Geografia e Estatística (IBGE), o que permite
+identificar quais áreas impactaram diretamente o estoque de empregos na
+área portuária e aquaviária.
 
 Pelo gráfico a seguir, alguns destaques do setor podem ser obtidos por
 grupo de atividade:
@@ -291,7 +294,8 @@ grupo de atividade:
     para as *Operações de Terminais*, que apresentou número crescente de
     vínculos entre 2010 e 2020, registrando 35.357 vínculos. Por outro
     lado, as atividades de Administração da Infra-estrutura Portuária
-    tiveram um declínio de 41,25%, resultado da destruição de 2.170 vínculos;
+    tiveram um declínio de 41,25%, resultado da destruição de 2.170
+    vínculos;
 
 -   O **Transporte Marítico de Carga por Cabotagem**, por sua vez, teve
     uma redução drástica de vínculos: saiu de 8.289 em 2010 para 3.316
@@ -325,13 +329,13 @@ grafico(
   labs(color = "") +
   theme(
     plot.subtitle= element_blank(), 
-            legend.text = element_text(size = 12), 
+    legend.text = element_text(size = 12), 
     panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
     panel.grid.major.y  = element_line(color = "black", linetype = "dotted", size = 0.1),
        legend.position = "top",
        legend.justification = c("left", "top"),
        legend.title = element_text(size = 10, face = "bold"), 
-    strip.text.x = element_text(size=12, face = "bold"),
+    strip.text.x = element_text(size=12),
     strip.background = element_blank()
       
   ) +
@@ -363,7 +367,7 @@ grafico(
   titulo = ""
   )+ 
   labs(color = "") +
-  bbc_style()+
+  #bbc_style()+
   theme(plot.subtitle= element_blank(), 
             legend.text = element_text(size = 12), 
     panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
@@ -382,10 +386,12 @@ grafico(
 print(a)
 
 ```
-<br>
-Os dados são um reflexo das políticas de regulação para o setor, evidenciando como as estratégias governamentais e empresariais se refletem no estoque de empregos no setor. 
 
-Na próxima seção os dados para o estado do Maranhão são apresentados. 
+<br> Os dados são um reflexo das políticas de regulação para o setor,
+evidenciando como as estratégias governamentais e empresariais se
+refletem no estoque de empregos no setor.
+
+Na próxima seção os dados para o estado do Maranhão são apresentados.
 
 # Panorama do trabalho no setor portuário e aquaviário no Maranhão
 
@@ -522,6 +528,7 @@ grafico(
   nivel2 = n_grupo, 
   titulo = "Vínculos por setor no Maranhão"
   )+
+  labs(color = "") +
   bbc_style()+
   theme(plot.subtitle= element_blank(), 
             legend.text = element_text(size = 12), 
@@ -593,20 +600,23 @@ sexo, observa-se que a participação masculina é predominante. Em 2020,
 do total de 76.317 vínculos, 65.735 eram homens, sendo apenas 10.582
 mulheres (13,87%).
 
-No Maranhão a proporção é igual: dos 1.924 vínculos, apenas 14% eram mulheres (2.629)
+No Maranhão a proporção é igual: dos 1.924 vínculos, apenas 14% eram
+mulheres (2.629)
 
 Apesar da baixa participação feminina no setor, observa-se que elas
-apresentavam maior escolaridade no contexto nacional: 44,5% tinham curso superior, contra 17,7%
-dos homens com a mesma escolaridade. De forma agregada, observa-se o
-aumento da escolarização entre 2010 e 2020, apesar do número de
-profissionais com pós-graduação ainda ser baixo.
+apresentavam maior escolaridade no contexto nacional: 44,5% tinham curso
+superior, contra 17,7% dos homens com a mesma escolaridade. De forma
+agregada, observa-se o aumento da escolarização entre 2010 e 2020,
+apesar do número de profissionais com pós-graduação ainda ser baixo.
 
-Em 2020, a quantidade de ocupações que exigiam o **ensino médio completo**
-era de 58,57% (desses, 91,25% eram do sexo masculino e apenas 8,75% do sexo
-feminino), por outro lado, 21,4% das ocupações exigiam o **Superior
-completo** (desses, 71,19% eram do sexo masculino e 28,81% do sexo feminino)
+Em 2020, a quantidade de ocupações que exigiam o **ensino médio
+completo** era de 58,57% (desses, 91,25% eram do sexo masculino e apenas
+8,75% do sexo feminino), por outro lado, 21,4% das ocupações exigiam o
+**Superior completo** (desses, 71,19% eram do sexo masculino e 28,81% do
+sexo feminino)
 
 <br>
+
 ```{r g_operacao_escol_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 # ordem_esc <- c("Fundamental incompleto", "Fundamental completo", 
 #         "Médio incompleto", "Médio completo", "Superior incompleto",
@@ -642,7 +652,11 @@ print(a)
 
 <br>
 
-O Maranhão também acompanha a tendência nacional no quesito escolarização: há o predomínio de profissionais com ensino médio completo e, em seguida, ensino superior. Apesar de crescente, o número de pessoas com pós-graduação ainda é incipiente, como se observa no gráfico:
+O Maranhão também acompanha a tendência nacional no quesito
+escolarização: há o predomínio de profissionais com ensino médio
+completo e, em seguida, ensino superior. Apesar de crescente, o número
+de pessoas com pós-graduação ainda é incipiente, como se observa no
+gráfico:
 
 <br>
 
@@ -680,7 +694,9 @@ print(grafico.escolaridade.ma)
 
 <br>
 
-Ao avaliar a remuneração média por escolaridade no país, verifica-se que os profissionais com pós-graduação têm uma renda significativamente superior aos demais níveis de escolaridade.
+Ao avaliar a remuneração média por escolaridade no país, verifica-se que
+os profissionais com pós-graduação têm uma renda significativamente
+superior aos demais níveis de escolaridade.
 
 <br>
 
@@ -760,9 +776,12 @@ rais %>%
 
 <br>
 
-A renda do trabalhador maranhense segue a tendência nacional: profissional com pós-graduação aufere rendimentos bem superiores aos dos demais profissionais. 
+A renda do trabalhador maranhense segue a tendência nacional:
+profissional com pós-graduação aufere rendimentos bem superiores aos dos
+demais profissionais.
 
 <br>
+
 ```{r g_remun_escol_sexo.ma,results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
 grupo_ma %>% 
@@ -777,10 +796,6 @@ grupo_ma %>%
         color = grau_instrucao_apos_2005)
     ) +
    geom_line(size = 2) +
-  stat_summary(aes(x = ano, 
-        y = remuneracao_media, 
-        group = grau_instrucao_apos_2005, 
-        color = grau_instrucao_apos_2005), fun.y=mean, colour="red", geom="line",group=1) +
   geom_point(
     data = . %>% filter(ano %in% c("2010", "2020")),
     color = "black", 
@@ -841,7 +856,6 @@ grupo_ma %>%
  
 
 ```
-
 
 #### Raça ou cor do Trabalhador Portuário e Aquaviário
 
@@ -927,7 +941,7 @@ rais %>%
         #
   ) +
   guides(
-    col = guide_legend(nrow = 1)) +
+    col = guide_legend(nrow = 2)) +
   ggthemes::scale_color_gdocs()
   #bbc_style()
  
@@ -1002,11 +1016,10 @@ rais %>%
         #
         ) +
   guides(
-    col = guide_legend(nrow = 1)) +
+    col = guide_legend(nrow = 2)) +
   ggthemes::scale_color_gdocs()
 
 ```
-
 
 ```{r g_operacao_remuneracao _media_raca_sexo, results='hide', echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
 rais %>%
@@ -1075,10 +1088,8 @@ rais %>%
   ggthemes::scale_color_gdocs()
 ```
 
-
-
-No Maranhão, os profissionais identificados como pardos predominam, sendo seguidos pelos brancos e pretos entre os homens e mulheres. 
-
+No Maranhão, os profissionais identificados como pardos predominam,
+sendo seguidos pelos brancos e pretos entre os homens e mulheres.
 
 ```{r g_operacao_raca_sexo.ma, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -1148,8 +1159,11 @@ grupo_ma %>%
  
 ```
 
-
-A renda dos trabalhadores por cor ou raça no Maranhão, por sua vez, evidencia que os autodeclarados amarelos se destacam entre os homens, com remuneração média acima das demais (amarelos, de acordo com o IBGE, são aqueles que se declaram de origem asiática: japoneses, coreanos e chineses). 
+A renda dos trabalhadores por cor ou raça no Maranhão, por sua vez,
+evidencia que os autodeclarados amarelos se destacam entre os homens,
+com remuneração média acima das demais (amarelos, de acordo com o IBGE,
+são aqueles que se declaram de origem asiática: japoneses, coreanos e
+chineses).
 
 ```{r g_operacao_remuneracao _media_raca_sexo.ma, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -1189,7 +1203,7 @@ grupo_ma %>%
   #           big.mark = ".")) +
   # scale_y_continuous(
   #   labels = label_number(scale = 1/1000, big.mark = ".", decimal.mark = ",")) +
-    labs(x = "Ano", y = "Remuneração média no MA (R$)", color = "Raça ou cor",
+    labs(x = "Ano", y = "Remuneração média (R$) no MA por raça ou cor", color = "",
          caption = "Fonte: Observatório Portuário - Dados da RAIS") +
   facet_wrap(~sexo, ncol = 2) +
   theme_classic() +
@@ -1216,9 +1230,6 @@ grupo_ma %>%
     col = guide_legend(nrow = 1)) +
   ggthemes::scale_color_gdocs()
 ```
-
-
-
 
 ## Ocupações dos Trabalhadores Portuários e Aquaviários
 
@@ -1299,11 +1310,14 @@ rais %>%
 
 ## Remuneração dos Trabalhadores nos Estados
 
-Verifica-se que a remuneração média dos trabalhadores portuários e aquaviários varia conforme o estado da federação. O Rio de Janeiro é o estado com a maior remuneração no período analisado, com o registro de R$ 8.5345 em 2020. O Espírito Santo aparece em segundo lugar, com R$ 6.112.  
+Verifica-se que a remuneração média dos trabalhadores portuários e
+aquaviários varia conforme o estado da federação. O Rio de Janeiro é o
+estado com a maior remuneração no período analisado, com o registro de
+R\$ 8.5345 em 2020. O Espírito Santo aparece em segundo lugar, com R\$
+6.112.
 
-O estado do Maranhão teve uma evolução signifitiva no valor da remuneração média: saltou de R$ 2.090 em 2010 para R$ 4.765 em 2020.
-
-
+O estado do Maranhão teve uma evolução signifitiva no valor da
+remuneração média: saltou de R\$ 2.090 em 2010 para R\$ 4.765 em 2020.
 
 ```{r g_operacao_estado_rem, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 lvls_estado <-
@@ -1376,9 +1390,11 @@ rais %>%
 
 ## Remuneração dos Trabalhadores nos municípios
 
-
-Ao analisar a remuneração média por município, o destaque positivo fica com os município de Macaé, Rio de Janeiro, São João da Barra e Itajaí que pagam as maiores remunerações, acima de 8 mil reais. No entanto, Macaé possui uma remuneração média superior ao segundo colocado em quase 3 mil reais.  
-
+Ao analisar a remuneração média por município, o destaque positivo fica
+com os município de Macaé, Rio de Janeiro, São João da Barra e Itajaí
+que pagam as maiores remunerações, acima de 8 mil reais. No entanto,
+Macaé possui uma remuneração média superior ao segundo colocado em quase
+3 mil reais.
 
 ```{r g_operacao_municipio, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 lvls_municipio <- 
@@ -1487,9 +1503,13 @@ vínculos de trabalho para a o setor **portuário** e **aquaviário**. Em
 `r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(total == max(total)) %>% select(ano) %>% pull()`,
 ano com a maior quantidade de vínculos da série, foram
 `r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(total == max(total)) %>% select(total) %>% pull() %>% virgula()`
-vínculos. No entanto, os dois anos seguintes ocorreram duas reduções na quantidade de vínculos. Com essas reduções, o ano 2020, último ano da série histórica, a quantidade de vínculos foi de `r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(ano == 2020) %>% select(total) %>% pull() %>%  virgula()`. Quanto aos estados,
-São Paulo e Rio de Janeiro permanceram na primeira e segunda coloção
-durante toda a série. Em 2020, por exempo, **Rio de Janeiro** possuía
+vínculos. No entanto, os dois anos seguintes ocorreram duas reduções na
+quantidade de vínculos. Com essas reduções, o ano 2020, último ano da
+série histórica, a quantidade de vínculos foi de
+`r uf %>% group_by(ano) %>% summarise(total = sum(n)) %>% filter(ano == 2020) %>% select(total) %>% pull() %>%  virgula()`.
+Quanto aos estados, São Paulo e Rio de Janeiro permanceram na primeira e
+segunda coloção durante toda a série. Em 2020, por exempo, **Rio de
+Janeiro** possuía
 `r uf %>% filter(ano == "2020" & n == max(n)) %>% select(n) %>% pull() %>% virgula()`
 vínculos empregatícios e **São Paulo**, possuía cerca de
 `r uf %>% filter(ano == "2020" & sigla_uf == "RJ") %>% select(n) %>% pull() %>% virgula()`.
@@ -1581,7 +1601,9 @@ A partir dessa divisão é possível mapear as atividades com trabalho
 portuário e aquaviário e, especificamente, de operações e gestão
 portuária.
 
-Importante destacar que os dados dos Órgãos Gestores de Mão de Obra (OGMOs) não foram analisados e incorporados a esse relatório, pois o serão nos próximos boletins. 
+Importante destacar que os dados dos Órgãos Gestores de Mão de Obra
+(OGMOs) não foram analisados e incorporados a esse relatório, pois o
+serão nos próximos boletins.
 
 Na tabela estão detalhadas as informações da CNAE utilizadas:
 
