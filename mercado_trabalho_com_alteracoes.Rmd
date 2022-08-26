@@ -145,9 +145,9 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
   geom_line(aes(color = n_divisao), size = 2) +
   geom_point(color = "black", size = 3) +
   geom_point(
-    data = . %>% group_by(n_divisao) %>% filter(n == max(n)), 
-    aes(x = ano, y = n), 
-    size = 3, color = "red") +
+    data = . %>% group_by(n_divisao) %>% filter(n == max(n)),
+    aes(x = ano, y = n),
+    size = 3) +
   geom_text_repel(aes(x = ano, y = n, label = scales::number(n, scale = 1/1000, decimal.mark = ",", big.mark = ".", accuracy = 0.01, suffix = " mil")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
   geom_label_repel(
     data = . %>% filter(ano == 2020),
@@ -337,8 +337,9 @@ grafico(
   ) +
   guides(
     color = guide_legend(
-      title = "",
-      ncol = 2, keywidth = unit(1.5, "cm"))) 
+      ncol = 2, keywidth = unit(1.5, "cm"))) +
+      scale_colour_discrete(labels = label_wrap_gen(width = 18)) 
+
 
 print(a)
 
@@ -361,6 +362,7 @@ grafico(
   nivel2 = n_subclasse, 
   titulo = ""
   )+ 
+  labs(color = "") +
   bbc_style()+
   theme(plot.subtitle= element_blank(), 
             legend.text = element_text(size = 12), 
@@ -370,8 +372,12 @@ grafico(
        legend.justification = c("left", "top"),
        legend.title = element_text(size = 10, face = "bold"), 
      strip.text.x = element_text(size=12, face = "bold"),
-     strip.background = element_blank()
-  )
+     strip.background = element_blank()) +
+  guides(
+    color = guide_legend(
+      ncol = 1, keywidth = unit(1.5, "cm"))) +
+  ggthemes::scale_color_stata()
+
 
 print(a)
 
@@ -452,10 +458,10 @@ g2 %>%
 ggplot(aes(x = ano, y = n, group = n_divisao)) +
   geom_line(aes(color = n_divisao), size = 2) +
   geom_point(color = "black", size = 3) +
-  geom_point(
-    data = . %>% group_by(n_divisao) %>% filter(n == max(n)), 
-    aes(x = ano, y = n), 
-    size = 3, color = "red") +
+  # geom_point(
+  #   data = . %>% group_by(n_divisao) %>% filter(n == max(n)), 
+  #   aes(x = ano, y = n), 
+  #   size = 3) +
  geom_text_repel(aes(x = ano, y = n, label = scales::number(n, decimal.mark = ",", big.mark = ".")), nudge_x = -0.2, direction = "y", hjust = "right", size = 4) +
   geom_label_repel(
     data = . %>% filter(ano == 2020),
@@ -478,7 +484,6 @@ ggplot(aes(x = ano, y = n, group = n_divisao)) +
   scale_colour_discrete(
       name = "", 
       labels = label_wrap_gen(width = 35)) +
-   ggthemes::scale_color_gdocs() +
   theme(
     legend.text = element_text(size = 12), 
     panel.grid.major.x  = element_line(color = "black", linetype = "dotted", size = 0.1),
@@ -527,8 +532,9 @@ grafico(
        legend.title = element_text(size = 10, face = "bold"), 
     strip.text.x = element_text(size=12, face = "bold"),
     strip.background = element_blank()) +
-  ggthemes::scale_color_gdocs() +  
-  scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 30)) 
+  ggthemes::scale_color_gdocs() +
+  guides(color = guide_legend(ncol = 3, keywidth = unit(1.5, "cm"))) 
+  #scale_colour_discrete(name = str_wrap("Grupos da CNAE", 10), labels = label_wrap_gen(width = 30)) 
 
 print(a.ma)
 ```
@@ -664,7 +670,8 @@ grafico(
   theme(
     strip.text.x = element_text(size=14, face = "bold"),
     strip.background = element_blank(),
-    legend.title = element_blank())
+    legend.title = element_blank()) +
+  ggthemes::scale_color_gdocs()
 
 print(grafico.escolaridade.ma)
 
@@ -770,6 +777,10 @@ grupo_ma %>%
         color = grau_instrucao_apos_2005)
     ) +
    geom_line(size = 2) +
+  stat_summary(aes(x = ano, 
+        y = remuneracao_media, 
+        group = grau_instrucao_apos_2005, 
+        color = grau_instrucao_apos_2005), fun.y=mean, colour="red", geom="line",group=1) +
   geom_point(
     data = . %>% filter(ano %in% c("2010", "2020")),
     color = "black", 
@@ -1301,11 +1312,11 @@ lvls_estado <-
       filter(valor_remuneracao_media != 0.00 | !is.na(valor_remuneracao_media)) %>%
   summarise(media = mean(valor_remuneracao_media)) %>% # média da remuneracao
   filter(ano == 2020) %>% 
-  slice_max(media, n = 7)# %>% 
-  # select(nome_uf) %>% 
-  # pull()
+  slice_max(media, n = 7) %>% 
+  select(nome_uf) %>% 
+  pull()
 
-View(lvls_estado)
+#View(lvls_estado)
 
 rais %>% 
     filter(valor_remuneracao_media != 0.00 | !is.na(valor_remuneracao_media)) %>%
@@ -1315,7 +1326,7 @@ rais %>%
   filter(nome_uf %in% lvls_estado) %>% 
   ggplot(aes(x = ano, y = media, group = nome_uf, color = nome_uf
              )) +
-   geom_line(size = 2) +
+   geom_line(size = 2, ) +
   geom_point(
     data = . %>%  group_by(nome_uf) %>% filter(ano %in% c("2010", "2020")),
       aes(x = ano, y = media), 
@@ -1391,7 +1402,7 @@ rais %>%
   select(nome_municipio) %>% 
   pull() 
 
-View(lvls_municipio)
+#View(lvls_municipio)
 
 
 
